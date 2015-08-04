@@ -12,8 +12,8 @@
       // Global Settings
       // ----------------------------------- 
       $rootScope.app = {
-        name: 'Angle',
-        description: 'Angular Bootstrap Admin Template',
+        name: 'DMS',
+        description: '后勤集团宿舍管理系统',
         year: ((new Date()).getFullYear()),
         layout: {
           isFixed: true,
@@ -23,13 +23,13 @@
           horizontal: false,
           isFloat: false,
           asideHover: false,
-          theme: null
+          theme: 'app/css/theme-e.css'
         },
         useFullLayout: false,
         hiddenFooter: false,
         offsidebarOpen: false,
         asideToggled: false,
-        viewAnimation: 'ng-fadeInUp'
+        viewAnimation: 'ng-fadeInRight'
       };
 
       // Setup the layout mode

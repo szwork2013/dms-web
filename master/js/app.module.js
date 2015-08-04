@@ -16,7 +16,7 @@
     'use strict';
 
     angular
-        .module('angle', [
+        .module('dms', [
             'app.core',
             'app.routes',
             'app.sidebar',
