@@ -1,25 +1,114 @@
 [
   {
-    "text": "Menu Heading",
-    "heading": "true",
-    "translate": "sidebar.heading.HEADER"
+    "text": "集团办公室",
+    "heading": "true"
   },
   {
-    "text": "Single View",
-    "sref": "app.singleview",
-    "icon": "fa fa-file-o",
-    "translate": "sidebar.nav.SINGLEVIEW"
+    "text": "个人中心",
+    "sref": "app.dashboard",
+    "icon": "icon-bar-chart"
   },
   {
-    "text": "Menu",
+    "text": "宿舍管理",
     "sref": "#",
-    "icon": "icon-folder",
+    "icon": "icon-home",
     "submenu": [
-      { "text": "Sub Menu", 
-        "sref": "app.submenu", 
-        "translate": "sidebar.nav.menu.SUBMENU" 
-      }    
-    ],
-    "translate": "sidebar.nav.menu.MENU"
+      {"text": "地理视图", "sref": "app.dormitoryMap"},
+      {"text": "列表视图", "sref": "app.dormitoryList"},
+      {"text": "入住信息", "sref": "app.accommodation"}
+    ]
+  },
+  {
+    "text": "员工管理",
+    "sref": "app.employee",
+    "icon": "icon-users"
+  },
+  {
+    "text": "住宿费审核",
+    "sref": "app.accommodationFee",
+    "icon": "icon-wallet"
+  },
+  {
+    "text": "宿舍申请管理",
+    "sref": "app.dormitoryApply",
+    "icon": "icon-docs"
+  },
+  {
+    "text": "维修申请管理",
+    "sref": "app.maintenanceApply",
+    "icon": "icon-wrench"
+  },
+  {
+    "text": "管理员功能",
+    "sref": "#",
+    "icon": "icon-settings",
+    "submenu": [
+      {"text": "系统账号管理", "sref": "app.account"},
+      {"text": "宿舍信息导入", "sref": "app.importDormitory"},
+      {"text": "员工信息导入", "sref": "app.importEmployee"}
+    ]
+  },
+  {
+    "text": "分管高层",
+    "heading": "true"
+  },
+  {
+    "text": "个人中心",
+    "sref": "app.dashboard",
+    "icon": "icon-bar-chart"
+  },
+  {
+    "text": "宿舍管理",
+    "sref": "#",
+    "icon": "icon-home",
+    "submenu": [
+      {"text": "地理视图", "sref": "app.dormitoryMap"},
+      {"text": "列表视图", "sref": "app.dormitoryList"},
+      {"text": "入住信息", "sref": "app.accommodation"}
+    ]
+  },
+  {
+    "text": "员工管理",
+    "sref": "app.employee",
+    "icon": "icon-users"
+  },
+  {
+    "text": "宿舍申请管理",
+    "sref": "app.dormitoryApply",
+    "icon": "icon-docs"
+  },
+  {
+    "text": "中心",
+    "heading": "true"
+  },
+  {
+    "text": "个人中心",
+    "sref": "app.dashboard",
+    "icon": "icon-bar-chart"
+  },
+  {
+    "text": "宿舍管理",
+    "sref": "#",
+    "icon": "icon-home",
+    "submenu": [
+      {"text": "地理视图", "sref": "app.dormitoryMap"},
+      {"text": "列表视图", "sref": "app.dormitoryList"},
+      {"text": "入住信息", "sref": "app.accommodation"}
+    ]
+  },
+  {
+    "text": "员工管理",
+    "sref": "app.employee",
+    "icon": "icon-users"
+  },
+  {
+    "text": "宿舍申请",
+    "sref": "app.dormitoryApply",
+    "icon": "icon-docs"
+  },
+  {
+    "text": "维修申请",
+    "sref": "app.maintenanceApply",
+    "icon": "icon-wrench"
   }
 ]
