@@ -59,7 +59,7 @@
     "fastclick": "1.0.6",
     "modernizr": "2.8.3",
     "animo.js": "ThrivingKings/animo.js#1.0.2",
-    "jquery-classyloader": "http://vox.space/files/jquery-classyloader.zip",
+    "classy-loader": "*",
     "whirl": "1.0.0",
     "skycons": "darkskyapp/skycons",
     "ngDialog": "0.3.11",

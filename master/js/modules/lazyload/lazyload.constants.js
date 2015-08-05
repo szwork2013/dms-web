@@ -7,7 +7,7 @@
           // jQuery based and standalone scripts
           scripts: {
             'whirl':              ['vendor/whirl/dist/whirl.css'],
-            'classyloader':       ['vendor/jquery-classyloader/js/jquery.classyloader.min.js'],
+            'classyloader':       ['vendor/classy-loader/jquery.classyloader.js'],
             'animo':              ['vendor/animo.js/animo.js'],
             'fastclick':          ['vendor/fastclick/lib/fastclick.js'],
             'modernizr':          ['vendor/modernizr/modernizr.js'],
