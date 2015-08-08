@@ -1,7 +1,5 @@
 @charset "UTF-8";
 
-@import url(//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,400italic);
-
 /*!
  * 
  * Angle - Bootstrap Admin App + AngularJS
@@ -437,7 +435,7 @@ fieldset .form-group {
  ========================================================================== */
 
 body {
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: "Arial", sans-serif;
   color: #656565;
 }
 

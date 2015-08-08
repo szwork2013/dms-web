@@ -15,11 +15,11 @@
       $rootScope.$storage = $window.localStorage;
 
       // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+      $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
           if (typeof(toState) !== 'undefined'){
             $templateCache.remove(toState.templateUrl);
           }
-      });*/
+      });
 
       // Allows to use branding color with interpolation
       // {{ colorByName('primary') }}

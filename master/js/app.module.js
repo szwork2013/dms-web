@@ -7,11 +7,15 @@
             'app.routes',
             'app.sidebar',
             'app.navsearch',
-            'app.preloader',
             'app.loadingbar',
             'app.translate',
             'app.settings',
-            'app.utils'
+            'app.utils',
+            'dms.dashboard',
+            'dms.dormitory',
+            'dms.employee',
+            'dms.accommodation',
+            'dms.application'
         ]);
 })();
 

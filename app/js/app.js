@@ -7,15 +7,25 @@
             'app.routes',
             'app.sidebar',
             'app.navsearch',
-            'app.preloader',
             'app.loadingbar',
             'app.translate',
             'app.settings',
-            'app.utils'
+            'app.utils',
+            'dms.dashboard',
+            'dms.dormitory',
+            'dms.employee',
+            'dms.accommodation',
+            'dms.application'
         ]);
 })();
 
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
+})();
 (function() {
     'use strict';
 
@@ -34,12 +44,6 @@
             'ngResource',
             'ui.utils'
         ]);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors', []);
 })();
 (function() {
     'use strict';
@@ -106,6 +110,56 @@
     'use strict';
 
     angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#5d9cec',
+          'success':                '#27c24c',
+          'info':                   '#23b7e5',
+          'warning':                '#ff902b',
+          'danger':                 '#f05050',
+          'inverse':                '#131e26',
+          'green':                  '#37bc9b',
+          'pink':                   '#f532e5',
+          'purple':                 '#7266ba',
+          'dark':                   '#3a3f51',
+          'yellow':                 '#fad732',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular
         .module('app.core')
         .config(coreConfig);
 
@@ -161,11 +215,11 @@
       $rootScope.$storage = $window.localStorage;
 
       // Uncomment this to disable template cache
-      /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+      $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
           if (typeof(toState) !== 'undefined'){
             $templateCache.remove(toState.templateUrl);
           }
-      });*/
+      });
 
       // Allows to use branding color with interpolation
       // {{ colorByName('primary') }}
@@ -212,56 +266,6 @@
 
 })();
 
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#5d9cec',
-          'success':                '#27c24c',
-          'info':                   '#23b7e5',
-          'warning':                '#ff902b',
-          'danger':                 '#f05050',
-          'inverse':                '#131e26',
-          'green':                  '#37bc9b',
-          'pink':                   '#f532e5',
-          'purple':                 '#7266ba',
-          'dark':                   '#3a3f51',
-          'yellow':                 '#fad732',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
-})();
 
 (function() {
     'use strict';
@@ -764,7 +768,7 @@
 
 /**=========================================================
  * Module: config.js
- * App routes and resources configuration
+ * dms routes and resources configuration
  =========================================================*/
 
 
@@ -783,27 +787,37 @@
         $locationProvider.html5Mode(false);
 
         // defaults to dashboard
-        $urlRouterProvider.otherwise('/app/singleview');
+        $urlRouterProvider.otherwise('/dms/dashboard');
 
         // 
-        // Application Routes
+        // dmslication Routes
         // -----------------------------------   
         $stateProvider
-          .state('app', {
-              url: '/app',
+          .state('dms', {
+              url: '/dms',
               abstract: true,
-              templateUrl: helper.basepath('app.html'),
+              controller: 'DMSController',
+              templateUrl: helper.basepath('dms.html'),
               resolve: helper.resolveFor('modernizr', 'icons')
           })
-          .state('app.singleview', {
-              url: '/singleview',
-              title: 'Single View',
-              templateUrl: helper.basepath('singleview.html')
+          .state('dms.dashboard', {
+              url: '/dashboard',
+              title: '个人中心',
+              controller: 'DashboardController',
+              templateUrl: helper.basepath('dashboard.html')
           })
-          .state('app.submenu', {
-              url: '/submenu',
-              title: 'Submenu',
-              templateUrl: helper.basepath('submenu.html')
+          .state('dms.dormitory-map', {
+              url: '/dormitory-map',
+              title: '地理视图',
+              controller: 'DormitoryMapController',
+              templateUrl: helper.basepath('dormitory-map.html')
+          })
+          .state('dms.dormitory-list', {
+              url: '/dormitory-list',
+              title: '列表视图',
+              controller: 'DormitoryListController',
+              templateUrl: helper.basepath('dormitory-list.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
           // 
           // CUSTOM RESOLVES
@@ -811,7 +825,7 @@
           //   following this object extend
           //   method
           // ----------------------------------- 
-          // .state('app.someroute', {
+          // .state('dms.someroute', {
           //   url: '/some_url',
           //   templateUrl: 'path_to_template.html',
           //   controller: 'someController',
@@ -1738,6 +1752,34 @@
             /*...*/
         ]);
 })();
+(function() {
+    'use strict';
+    angular.module('dms.accommodation', ['dms']);
+})();
+(function() {
+    'use strict';
+    angular.module('dms.application', ['dms']);
+})();
+(function() {
+    'use strict';
+    angular.module('dms.dashboard', ['dms']);
+})();
+(function() {
+    'use strict';
+    angular.module('dms.dormitory', ['dms']);
+})();
+(function() {
+    'use strict';
+    angular.module('dms.employee', ['dms']);
+})();
+(function() {
+    'use strict';
+    angular.module('dms.table', ['dms']);
+})();
+(function() {
+    'use strict';
+    angular.module('dms.util', ['dms']);
+})();
 
 // To run this code, edit file index.html or index.jade and change
 // html data-ng-app attribute from angle to myAppName
@@ -1762,5 +1804,368 @@
         function activate() {
           $log.log('I\'m a line from custom.js');
         }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms')
+        .constant('PO_VO_DICT', {
+            "GROUP_MALE" : "集体宿舍 - 男",
+            "GROUP_FEMALE" : "集体宿舍 - 女",
+            "COUPLE" : "夫妻房",
+            "MALE" : "男",
+            "FEMALE" : "女",
+            "UNKNOWN" : "其他",
+            "NONE" : "没有登记配偶",
+            "INNER" : "集团员工",
+            "OUTER" : "非集团员工"
+        })
+        .constant('VO_PO_DICT', {
+            "集体宿舍 - 男" : "GROUP_MALE",
+            "集体宿舍 - 女" : "GROUP_FEMALE",
+            "夫妻房" : "COUPLE",
+            "男" : "MALE",
+            "女" : "FEMALE",
+            "其他" : "UNKNOWN",
+            "没有登记配偶" : "NONE",
+            "集团员工" : "INNER",
+            "非集团员工" : "OUTER"
+        })
+        .constant('URL', {
+            "dormitory" : {
+                "query" : "server/dormitory-list.json"
+            }
+        })
+      ;
+
+})();
+
+(function () {
+    'use strict';
+
+    angular
+        .module('dms')
+        .controller('DMSController', DMSController);
+
+    DMSController.$inject = ['$rootScope', '$http'];
+    function DMSController($rootScope, $http) {
+        var initAddressDropdown = function () {
+			var path = "server/address-tree.json";
+			$http.get(path)
+				.success(function (response) {
+					$rootScope.addressTree = response;
+				})
+				.error(function (data, status, headers, config) {
+					alert("Address Tree init failure!");
+				});
+		};
+		
+		var initDormitoryTypeDropdown = function () {
+			$rootScope.dormitoryTypes = ['集体宿舍 - 男', '集体宿舍 - 女', '夫妻房', '其他'];
+		};
+
+		var initDropdown = function () {
+			initAddressDropdown();
+			initDormitoryTypeDropdown();
+		}
+
+		initDropdown();
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.accommodation')
+        .controller('Accommodation', Accommodation);
+
+    Accommodation.$inject = ['$rootScope', '$scope'];
+    function Accommodation($rootScope, $scope) {
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.application')
+        .controller('DormitoryApplicationController', DormitoryApplicationController);
+
+    DormitoryApplicationController.$inject = ['$rootScope', '$scope'];
+    function DormitoryApplicationController($rootScope, $scope) {
+        
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.application')
+        .controller('MaintenanceApplicationController', MaintenanceApplicationController);
+
+    MaintenanceApplicationController.$inject = ['$rootScope', '$scope'];
+    function MaintenanceApplicationController($rootScope, $scope) {
+       
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.dashboard')
+        .controller('DashboardController', DashboardController);
+
+    DashboardController.$inject = ['$rootScope', '$scope'];
+    function DashboardController($rootScope, $scope) {
+        $scope.bedInUseCnt = 101;
+        $scope.bedTotalCnt = 201;
+        $scope.maleEmployeeCnt = 301;
+        $scope.femaleEmployeeCnt = 302;
+        $scope.dormitoryApplicationCnt = 401;
+        $scope.maintenanceApplicationCnt = 501;
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.dormitory')
+        .service('DormitoryService', DormitoryService);
+    DormitoryService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
+    function DormitoryService($http, VO_PO_DICT, PO_VO_DICT, URL) {
+        
+        this.queryData = function(callback) {
+            $http.get(URL.dormitory.query).success(callback.success).error(callback.error);
+        }
+    
+        this.preprocessData = function(data) {
+            angular.forEach(data, function(item) {
+                // 生成详细地址，保留原来的信息
+                item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + " - " + item.dormitory.doorplate;
+                // 生成类型信息，保留原来的信息
+                item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
+                angular.forEach(item.employees, function(employee) {
+                    employee.genderCN = PO_VO_DICT[employee.gender];
+                    employee.spouseTypeCN = PO_VO_DICT[employee.spouseType];
+                    employee.outsideSpouse.genderCN = PO_VO_DICT[employee.outsideSpouse.gender];
+                });
+                if(item.dormitory.type == "COUPLE") {
+                    if(item.employees[0].spouseType == "INNER") {
+                        console.log(item);
+                        item.employees[0].innerSpouse = item.employees[1];
+                        item.employees[1].innerSpouse = item.employees[0];
+                    }
+                }
+            });
+            return data;
+        }
+    
+        this.postprocessData = function(data) {
+            return data;
+        }
+    }
+})();
+
+(function () {
+    'use strict';
+
+    angular
+        .module('dms.dormitory')
+        .controller('DormitoryListController', DormitoryListController);
+
+    DormitoryListController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'DormitoryService'];
+    function DormitoryListController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, DormitoryService) {
+		var vm = this;
+		var data = null;
+        // ========== 筛选 ========== 
+		$scope.select = {
+			data: {
+				campus: '',
+				address: '',
+				floor: '',
+				dormitoryTypeCN: ''
+			},
+			dropdown: {
+				campus: false,
+				address: false,
+				floor: false,
+				dormitoryTypeCN: false
+			}
+		};
+		$scope.searchkeywords = '';
+
+		$scope.dropSelect = function (name, value) {
+			$scope.select.data[name] = value;
+			$scope.select.dropdown[name] = false;
+			if (name == 'campus') {
+				$scope.select.data.address = "";
+				$scope.select.data.floor = "";
+			}
+			if (name == 'address') {
+				$scope.select.data.floor = "";
+			}
+			vm.tableParams.reload();
+		}
+
+		$scope.resetFilter = function() {
+			for(var key in $scope.select.data) {
+				$scope.select.data[key] = '';
+			}
+			$scope.searchkeywords = '';
+			vm.tableParams.reload();
+		}
+
+		$scope.$watch("searchKeywords", function () {
+			vm.tableParams.reload();
+		});
+        // =========================
+		
+		// ========== 数据显示 ==========
+		vm.tableParams = new ngTableParams({
+			page: 1,
+			count: 10
+		}, {
+			total: 0,
+			counts: [10, 20, 50],
+			getData: function ($defer, params) {
+				if (!data) {
+					DormitoryService.queryData({
+						success: function (response) {
+							if (response.status) {
+								data = DormitoryService.preprocessData(response.result);
+								showTableData($defer, params);
+							} else {
+								alert("列表获取失败");
+							}
+							console.log("success", data);
+						},
+						error: function (data, status, headers, config) {
+							alert("GET Error");
+						}
+					});
+				} else {
+					showTableData($defer, params);
+				}
+			}
+		});
+		var showTableData = function($defer, params) {
+	        var searchedData = searchData(data);
+	        var orderedData = params.sorting() ? $filter('orderBy')(searchedData, params.orderBy()) : searchedData;
+	        params.total(orderedData.length);
+	        $defer.resolve($scope.dormitories = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+	    }
+		var searchData = function(filterData) {
+	        if($scope.searchKeywords) {
+	            var keywords = $scope.searchKeywords.split(" ");
+	            var i;
+	            for(i in keywords) {
+	                filterData = $filter('filter')(filterData, keywords[i]);
+	            }
+	        }
+			
+	        if($scope.select.data.campus) filterData = $filter('filter')(filterData, { dormitory : { campus : $scope.select.data.campus}});
+	        if($scope.select.data.address) filterData = $filter('filter')(filterData, { dormitory : { address : $scope.select.data.address}});
+	        if($scope.select.data.floor) filterData = $filter('filter')(filterData, { dormitory : { floor : $scope.select.data.floor}});
+	        if($scope.select.data.dormitoryTypeCN) filterData = $filter('filter')(filterData, { dormitory : { typeCN : $scope.select.data.dormitoryTypeCN}});
+	        return filterData;
+	    }
+		// =============================
+		
+		// ========== 表格Checkbox ==========
+		$scope.checkboxes = { 'checked': false, items: {} };
+	    // 总checkbox
+	    $scope.$watch('checkboxes.checked', function(value) {
+	        angular.forEach($scope.dormitories, function(item) {
+	            if (angular.isDefined(item.dormitory.id)) {
+	                $scope.checkboxes.items[item.dormitory.id] = value;
+	            }
+	        });
+	    });
+	    // 子checkbox
+	    $scope.$watch('checkboxes.items', function(values) {
+	        if (!$scope.dormitories) {
+	            return;
+	        }
+	        var checked = 0, unchecked = 0,
+	        total = $scope.dormitories.length;
+	        angular.forEach($scope.dormitories, function(item) {
+	            checked   +=  ($scope.checkboxes.items[item.dormitory.id]) || 0;
+	            unchecked += (!$scope.checkboxes.items[item.dormitory.id]) || 0;
+	        });
+	        if ((unchecked == 0) || (checked == 0)) {
+	            $scope.checkboxes.checked = (checked == total);
+	        }
+	        angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+	    }, true);
+		// ==================================
+		
+		// ========== 表格内按钮 ==========
+	    $scope.showEmployee = function(employee) {
+	        DormitoryService.openShowEmployeeDialog(employee);
+	    }
+	    $scope.addHouseHolder = function(dormitory) {
+	        DormitoryService.openCheckInDialog(dormitory);
+	    }
+	    $scope.modifyDormitory = function(dormitory) {
+	       DormitoryService.openModifyDormitoryDialog(dormitory);
+	    }
+	    // ================================
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.dormitory')
+        .controller('DormitoryMapController', DormitoryMapController);
+
+    DormitoryMapController.$inject = ['$rootScope', '$scope'];
+    function DormitoryMapController($rootScope, $scope) {
+
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.employee')
+        .controller('EmployeeController', EmployeeController);
+
+    EmployeeController.$inject = ['$rootScope', '$scope'];
+    function EmployeeController($rootScope, $scope) {
+
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.table')
+        .controller('TableController', TableController);
+
+    TableController.$inject = ['$rootScope', '$scope'];
+    function TableController($rootScope, $scope) {
+
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.util')
+        .service('Util', Util);
+
+    function Util() {
+        
     }
 })();

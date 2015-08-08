@@ -1,0 +1,102 @@
+<h3>列表视图
+   <small>以列表的形式查询 / 修改宿舍信息</small>
+</h3>
+<div ng-controller="DormitoryListController as table" class="container-fluid">
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         <form class="hidden-xs form-inline pull-right">地址:
+            <div dropdown="dropdown" is-open="select.dropdown.campus" class="btn-group">
+               <button dropdown-toggle="" style="min-width:90px;" class="btn btn-info btn-sm">
+                  <span ng-show="select.data.campus" ng-bind="select.data.campus" class="pull-left"></span>
+                  <span ng-hide="select.data.campus" class="pull-left">所有校区</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="#" ng-click="dropSelect(&quot;campus&quot;, &quot;&quot;)">所有校区</a>
+                  </li>
+                  <li ng-repeat="(key, value) in addressTree">
+                     <a href="#" ng-click="dropSelect(&quot;campus&quot;, key)" ng-bind="key"></a>
+                  </li>
+               </ul>
+            </div>
+            <div dropdown="dropdown" is-open="select.dropdown.address" ng-show="select.data.campus" class="btn-group">
+               <button dropdown-toggle="" style="min-width:90px;" class="btn btn-info btn-sm">
+                  <span ng-show="select.data.address" ng-bind="select.data.address" class="pull-left"></span>
+                  <span ng-hide="select.data.address" class="pull-left">所有地址</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="#" ng-click="dropSelect(&quot;address&quot;, &quot;&quot;)">所有地址</a>
+                  </li>
+                  <li ng-repeat="(key, value) in addressTree[select.data.campus]">
+                     <a href="#" ng-click="dropSelect(&quot;address&quot;, key)" ng-bind="key"></a>
+                  </li>
+               </ul>
+            </div>
+            <div dropdown="dropdown" is-open="select.dropdown.floor" ng-show="select.data.campus &amp;&amp; select.data.address" class="btn-group">
+               <button dropdown-toggle="" style="min-width:90px;" class="btn btn-info btn-sm">
+                  <span ng-show="select.data.floor" ng-bind="select.data.floor" class="pull-left"></span>
+                  <span ng-hide="select.data.floor" class="pull-left">所有楼层</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="#" ng-click="dropSelect(&quot;floor&quot;, &quot;&quot;)">所有楼层</a>
+                  </li>
+                  <li ng-repeat="(key, value) in addressTree[select.data.campus][select.data.address]">
+                     <a href="#" ng-click="dropSelect(&quot;floor&quot;, key)" ng-bind="key"></a>
+                  </li>
+               </ul>
+            </div>
+            <span class="mr"></span>类型:
+            <div dropdown="dropdown" is-open="select.dropdown.dormitoryTypeCN" class="btn-group">
+               <button dropdown-toggle="" style="min-width:105px;" class="btn btn-info btn-sm">
+                  <span ng-show="select.data.dormitoryTypeCN" ng-bind="select.data.dormitoryTypeCN" class="pull-left"></span>
+                  <span ng-hide="select.data.dormitoryTypeCN" class="pull-left">所有类型</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="#" ng-click="dropSelect(&quot;dormitoryTypeCN&quot;, &quot;&quot;)">所有类型</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;dormitoryTypeCN&quot;, &quot;集体宿舍 - 男&quot;)">集体宿舍 - 男</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;dormitoryTypeCN&quot;, &quot;集体宿舍 - 女&quot;)">集体宿舍 - 女</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;dormitoryTypeCN&quot;, &quot;夫妻房&quot;)">夫妻房</a>
+                  </li>
+               </ul>
+            </div>
+            <span class="mr"></span>
+            <input type="text" ng-model="searchKeywords" placeholder="表格搜索..." class="form-control input-sm form-horizontal" />
+            <button ng-click="searchKeywords=&quot;&quot;; selectCampus(&quot;&quot;); selectType(&quot;&quot;);" class="btn btn-info btn-sm">复位</button>
+         </form>
+         <div class="panel-title">宿舍列表</div>
+      </div>
+      <table ng-table="table.tableParams" class="table">
+         <tbody>
+            <tr ng-repeat="item in $data">
+               <td width="40" header="'ng-table/headers/checkbox.html'">
+                  <div class="checkbox c-checkbox">
+                     <label>
+                        <input type="checkbox" ng-model="checkboxes.items[item.dormitory.id]" />
+                        <span class="fa fa-check"></span>
+                     </label>
+                  </div>
+               </td>
+               <td data-title="'详细地址'" sortable="'dormitory.addressDetailCN'">{{ item.dormitory.addressDetailCN }}</td>
+               <td data-title="'类型'" sortable="'dormitory.typeCN'" width="100" class="text-center">{{ item.dormitory.typeCN }}</td>
+               <td data-title="'核定'" sortable="'dormitory.capacityCnt'" width="70" class="text-center">{{ item.dormitory.capacityCnt }}</td>
+               <td data-title="'实际'" sortable="'dormitory.occupiedCnt'" width="70" class="text-center">{{ item.dormitory.occupiedCnt }}</td>
+               <td data-title="'住户'">
+                  <button ng-repeat="employee in item.employees" ng-click="showEmployee(employee)" style="margin-right:5px;min-width:55px;" class="btn btn-primary btn-xs">{{ employee.name }}</button>
+                  <button title="迁入" data-ng-click="addHouseHolder(item)" ng-if="item.dormitory.capacityCnt - item.dormitory.occupiedCnt &gt; 0" class="btn btn-green btn-xs"><i class="fa fa-plus"></i>
+                  </button>
+               </td>
+               <td data-title="'操作'" width="80" class="text-center">
+                  <button title="编辑" data-ng-click="modifyDormitory(item.dormitory)" class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i>
+                  </button>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+      <!-- 自定义表头checkbox的template-->
+      <script type="text/ng-template" id="ng-table/headers/checkbox.html">
+         <div class="checkbox c-checkbox"><label><input type="checkbox" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox" value=""/><span class="fa fa-check"></span></label></div>
+      </script>
+   </div>
+</div>

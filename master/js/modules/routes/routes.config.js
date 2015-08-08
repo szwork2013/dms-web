@@ -1,6 +1,6 @@
 /**=========================================================
  * Module: config.js
- * App routes and resources configuration
+ * dms routes and resources configuration
  =========================================================*/
 
 
@@ -19,27 +19,37 @@
         $locationProvider.html5Mode(false);
 
         // defaults to dashboard
-        $urlRouterProvider.otherwise('/app/singleview');
+        $urlRouterProvider.otherwise('/dms/dashboard');
 
         // 
-        // Application Routes
+        // dmslication Routes
         // -----------------------------------   
         $stateProvider
-          .state('app', {
-              url: '/app',
+          .state('dms', {
+              url: '/dms',
               abstract: true,
-              templateUrl: helper.basepath('app.html'),
+              controller: 'DMSController',
+              templateUrl: helper.basepath('dms.html'),
               resolve: helper.resolveFor('modernizr', 'icons')
           })
-          .state('app.singleview', {
-              url: '/singleview',
-              title: 'Single View',
-              templateUrl: helper.basepath('singleview.html')
+          .state('dms.dashboard', {
+              url: '/dashboard',
+              title: '个人中心',
+              controller: 'DashboardController',
+              templateUrl: helper.basepath('dashboard.html')
           })
-          .state('app.submenu', {
-              url: '/submenu',
-              title: 'Submenu',
-              templateUrl: helper.basepath('submenu.html')
+          .state('dms.dormitory-map', {
+              url: '/dormitory-map',
+              title: '地理视图',
+              controller: 'DormitoryMapController',
+              templateUrl: helper.basepath('dormitory-map.html')
+          })
+          .state('dms.dormitory-list', {
+              url: '/dormitory-list',
+              title: '列表视图',
+              controller: 'DormitoryListController',
+              templateUrl: helper.basepath('dormitory-list.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
           // 
           // CUSTOM RESOLVES
@@ -47,7 +57,7 @@
           //   following this object extend
           //   method
           // ----------------------------------- 
-          // .state('app.someroute', {
+          // .state('dms.someroute', {
           //   url: '/some_url',
           //   templateUrl: 'path_to_template.html',
           //   controller: 'someController',

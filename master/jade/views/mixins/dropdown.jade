@@ -1,0 +1,55 @@
+mixin addressDropGroup(label)
+  if (label)
+    | 地址: 
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.campus")
+    button.btn.btn-info.btn-sm(dropdown-toggle="", style="min-width:90px;")
+      span.pull-left(ng-show="select.data.campus" , ng-bind="select.data.campus")
+      span.pull-left(ng-hide="select.data.campus") 所有校区
+      b.caret.pull-right(style="margin-top:8px")
+    ul.dropdown-menu(role='menu')
+      li
+        a(href='#', ng-click='dropSelect("campus", "")') 所有校区
+      li(ng-repeat='(key, value) in addressTree')
+        a(href='#', ng-click='dropSelect("campus", key)', ng-bind="key")
+
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.address", ng-show="select.data.campus")
+    button.btn.btn-info.btn-sm(dropdown-toggle="", style="min-width:90px;")
+      span.pull-left(ng-show="select.data.address" , ng-bind="select.data.address")
+      span.pull-left(ng-hide="select.data.address") 所有地址
+      b.caret.pull-right(style="margin-top:8px")
+    ul.dropdown-menu(role='menu')
+      li
+        a(href='#', ng-click='dropSelect("address", "")') 所有地址
+      li(ng-repeat='(key, value) in addressTree[select.data.campus]')
+        a(href='#', ng-click='dropSelect("address", key)', ng-bind="key")
+
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.floor", ng-show="select.data.campus && select.data.address")
+    button.btn.btn-info.btn-sm(dropdown-toggle="", style="min-width:90px;")
+      span.pull-left(ng-show="select.data.floor" , ng-bind="select.data.floor")
+      span.pull-left(ng-hide="select.data.floor") 所有楼层
+      b.caret.pull-right(style="margin-top:8px")
+    ul.dropdown-menu(role='menu')
+      li
+        a(href='#', ng-click='dropSelect("floor", "")') 所有楼层
+      li(ng-repeat='(key, value) in addressTree[select.data.campus][select.data.address]')
+        a(href='#', ng-click='dropSelect("floor", key)', ng-bind="key")
+  span.mr
+
+mixin dormitoryTypeDrop(label)
+  if (label)
+    | 类型:
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.dormitoryTypeCN")
+    button.btn.btn-info.btn-sm(dropdown-toggle="", style="min-width:105px;")
+      span.pull-left(ng-show="select.data.dormitoryTypeCN" , ng-bind="select.data.dormitoryTypeCN")
+      span.pull-left(ng-hide="select.data.dormitoryTypeCN") 所有类型
+      b.caret.pull-right(style="margin-top:8px")
+    ul.dropdown-menu(role='menu')
+      li
+        a(href='#', ng-click='dropSelect("dormitoryTypeCN", "")') 所有类型
+      li
+        a(href='#', ng-click='dropSelect("dormitoryTypeCN", "集体宿舍 - 男")') 集体宿舍 - 男
+      li
+        a(href='#', ng-click='dropSelect("dormitoryTypeCN", "集体宿舍 - 女")') 集体宿舍 - 女
+      li
+        a(href='#', ng-click='dropSelect("dormitoryTypeCN", "夫妻房")') 夫妻房
+  span.mr

@@ -1,0 +1,75 @@
+<h3>个人中心
+   <small>欢迎使用南京大学后勤集团 - 宿舍管理系统！</small>
+</h3>
+<!-- START widgets box-->
+<div class="row">
+   <div class="col-lg-3 col-sm-6">
+      <!-- START widget-->
+      <div class="panel widget bg-primary">
+         <div class="row row-table">
+            <div class="col-xs-4 text-center bg-primary-dark pv-lg">
+               <em class="icon-home fa-3x"></em>
+            </div>
+            <div class="col-xs-8 pv-lg">
+               <div class="h2 mt0">
+                  <span data-ng-bind="bedInUseCnt"></span>&nbsp;/
+                  <span data-ng-bind="bedTotalCnt"></span>
+               </div>
+               <div class="text-uppercase">已用 / 总床位数</div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="col-lg-3 col-sm-6">
+      <!-- START widget-->
+      <div class="panel widget bg-purple">
+         <div class="row row-table">
+            <div class="col-xs-4 text-center bg-purple-dark pv-lg">
+               <em class="icon-users fa-3x"></em>
+            </div>
+            <div class="col-xs-8 pv-lg">
+               <div class="h2 mt0">
+                  <span data-ng-bind="maleEmployeeCnt"></span>&nbsp;/
+                  <span data-ng-bind="femaleEmployeeCnt"></span>
+               </div>
+               <div class="text-uppercase">男 / 女员工数</div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="col-lg-3 col-sm-6">
+      <!-- START widget-->
+      <div class="panel widget bg-green">
+         <div class="row row-table">
+            <div class="col-xs-4 text-center bg-green-dark pv-lg">
+               <em class="icon-docs fa-3x"></em>
+            </div>
+            <div class="col-xs-8 pv-lg">
+               <div class="h2 mt0">
+                  <span data-ng-bind="dormitoryApplicationCnt"></span>
+                  <small>条</small>
+               </div>
+               <div class="text-uppercase">入住申请</div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="col-lg-3 col-sm-6">
+      <!-- START widget-->
+      <div class="panel widget bg-warning">
+         <div class="row row-table">
+            <div class="col-xs-4 text-center bg-warning-dark pv-lg">
+               <em class="icon-wrench fa-3x"></em>
+            </div>
+            <div class="col-xs-8 pv-lg">
+               <div class="h2 mt0">
+                  <span data-ng-bind="maintenanceApplicationCnt"></span>
+                  <small>条</small>
+               </div>
+               <div class="text-uppercase">维修申请</div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- END widgets box-->

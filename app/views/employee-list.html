@@ -1,0 +1,92 @@
+<h3>员工信息
+   <small>查询 / 修改员工信息</small>
+</h3>
+<div ng-controller="EmployeeController as table" class="container-fluid">
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         <form class="pull-right hidden-xs form-inline">校区：
+            <!-- START box placeholder-->
+            <div dropdown="dropdown" is-open="select.dropdown.campus" class="btn-group">
+               <button dropdown-toggle="" style="min-width:90px;" class="btn btn-info btn-sm">
+                  <span ng-show="select.data.campus" ng-bind="select.data.campus" class="pull-left"></span>
+                  <span ng-hide="select.data.campus" class="pull-left">所有校区</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="#" ng-click="dropSelect(&quot;campus&quot;, &quot;&quot;)">所有校区</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;campus&quot;, &quot;鼓楼&quot;)">鼓楼</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;campus&quot;, &quot;仙林&quot;)">仙林</a>
+                  </li>
+               </ul>
+            </div>
+            <!-- END button group-->&nbsp;&nbsp;中心：
+            <!-- START box placeholder-->
+            <div dropdown="dropdown" is-open="select.dropdown.department" class="btn-group">
+               <button dropdown-toggle="" style="min-width:90px;" class="btn btn-info btn-sm">
+                  <span ng-show="select.data.department" ng-bind="select.data.department" class="pull-left"></span>
+                  <span ng-hide="select.data.department" class="pull-left">所有中心</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="#" ng-click="dropSelect(&quot;department&quot;, &quot;&quot;)">所有中心</a>
+                  </li>
+                  <li ng-repeat="department in departments">
+                     <a href="#" ng-click="dropSelect(&quot;department&quot;, department)" ng-bind="department"></a>
+                  </li>
+               </ul>
+            </div>
+            <!-- END button group-->&nbsp;&nbsp;性别：
+            <!-- START box placeholder-->
+            <div dropdown="dropdown" is-open="select.dropdown.genderCN" class="btn-group">
+               <button dropdown-toggle="" style="min-width:90px;" class="btn btn-info btn-sm">
+                  <span ng-show="select.data.genderCN" ng-bind="select.data.genderCN" class="pull-left"></span>
+                  <span ng-hide="select.data.genderCN" class="pull-left">所有性别</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="#" ng-click="dropSelect(&quot;genderCN&quot;, &quot;&quot;)">所有性别</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;genderCN&quot;, &quot;男&quot;)">男</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;genderCN&quot;, &quot;女&quot;)">女</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;genderCN&quot;, &quot;其他&quot;)">其他</a>
+                  </li>
+               </ul>
+            </div>
+            <!-- END button group-->
+            <input type="text" ng-model="searchKeywords" placeholder="表格搜索..." class="form-control input-sm form-horizontal" />
+            <button ng-click="resetFilter()" class="btn btn-info btn-sm">全部复位</button>
+         </form>
+         <div class="panel-title">员工信息列表</div>
+      </div>
+      <table ng-table="table.tableParams" class="table">
+         <tbody>
+            <tr ng-repeat="employeeItem in employees">
+               <td width="40" header="'ng-table/headers/checkbox.html'">
+                  <div class="checkbox c-checkbox">
+                     <label>
+                        <input type="checkbox" ng-model="checkboxes.items[employeeItem.employee.id]" />
+                        <span class="fa fa-check"></span>
+                     </label>
+                  </div>
+               </td>
+               <td data-title="'姓名'" sortable="'employee.name'" width="90" class="text-center">{{ employeeItem.employee.name }}</td>
+               <td data-title="'性别'" sortable="'employee.gender'" width="70" class="text-center">{{ employeeItem.employee.genderCN }}</td>
+               <td data-title="'身份证'" sortable="'employee.idNum'" width="200" class="text-center">{{ employeeItem.employee.idNum }}</td>
+               <td data-title="'入职时间'" sortable="'employee.dutyDate'" width="100" class="text-center">{{ employeeItem.employee.dutyDate }}</td>
+               <td data-title="'所属中心'" sortable="'employee.department'" width="100" class="text-center">{{ employeeItem.employee.department }}</td>
+               <td data-title="'工作地址'" sortable="'employee.workAddressDetailCN'" class="text-center">{{ employeeItem.employee.workAddressDetailCN }}</td>
+               <td data-title="'宿舍地址'" sortable="'dormitory.addressDetailCN'" class="text-center">{{ employeeItem.dormitory.addressDetailCN }}</td>
+               <td data-title="'操作'" width="80" class="text-center">
+                  <button title="修改" data-ng-click="modifyEmployee(employeeItem);" class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i>
+                  </button>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+      <!-- 自定义表头checkbox的template-->
+      <script type="text/ng-template" id="ng-table/headers/checkbox.html">
+         <div class="checkbox c-checkbox"><label><input type="checkbox" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox" value=""/><span class="fa fa-check"></span></label></div>
+      </script>
+   </div>
+</div>

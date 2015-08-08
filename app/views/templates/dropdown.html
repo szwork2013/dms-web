@@ -1,0 +1,14 @@
+<mixin></mixin>
+<div dropdown="dropdown" is-open="campusOpen" class="btn-group">
+   <button dropdown-toggle="" style="min-width:90px;" class="btn btn-info btn-sm">
+      <span ng-show="selectedCampus" ng-bind="selectedCampus" class="pull-left"></span>
+      <span ng-hide="selectedCampus" class="pull-left">所有校区</span><b style="margin-top:8px" class="caret pull-right"></b>
+   </button>
+   <ul role="menu" class="dropdown-menu">
+      <li><a href="#" ng-click="selectCampus(&quot;&quot;)">所有校区</a>
+      </li>
+      <li ng-repeat="(key, value) in addressTree">
+         <a href="#" ng-click="selectCampus(key)" ng-bind="key"></a>
+      </li>
+   </ul>
+</div>

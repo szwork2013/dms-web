@@ -1,0 +1,3 @@
+mixin searchField(label)
+  input.form-control.input-sm.form-horizontal(type='text', ng-model="searchKeywords", placeholder='表格搜索...')
+  button.btn.btn-info.btn-sm(ng-click='searchKeywords=""; selectCampus(""); selectType("");') 复位

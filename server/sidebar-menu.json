@@ -5,7 +5,7 @@
   },
   {
     "text": "个人中心",
-    "sref": "app.dashboard",
+    "sref": "dms.dashboard",
     "icon": "icon-bar-chart"
   },
   {
@@ -13,29 +13,32 @@
     "sref": "#",
     "icon": "icon-home",
     "submenu": [
-      {"text": "地理视图", "sref": "app.dormitoryMap"},
-      {"text": "列表视图", "sref": "app.dormitoryList"},
-      {"text": "入住信息", "sref": "app.accommodation"}
+      {"text": "地理视图", "sref": "dms.dormitory-map"},
+      {"text": "列表视图", "sref": "dms.dormitory-list"}
     ]
   },
   {
     "text": "员工管理",
-    "sref": "app.employee",
+    "sref": "dms.employee",
     "icon": "icon-users"
   },
   {
     "text": "住宿费审核",
-    "sref": "app.accommodationFee",
+    "sref": "dms.accommodationFee",
     "icon": "icon-wallet"
   },
   {
-    "text": "宿舍申请管理",
-    "sref": "app.dormitoryApply",
-    "icon": "icon-docs"
+    "text": "入住管理",
+    "sref": "#",
+    "icon": "icon-docs",
+    "submenu" : [
+      {"text": "入住审核", "sref": "dms.dormitorydmsly"},
+      {"text": "入住历史信息", "sref": "dms.accommodation"}
+    ]
   },
   {
     "text": "维修申请管理",
-    "sref": "app.maintenanceApply",
+    "sref": "dms.maintenancedmsly",
     "icon": "icon-wrench"
   },
   {
@@ -43,9 +46,9 @@
     "sref": "#",
     "icon": "icon-settings",
     "submenu": [
-      {"text": "系统账号管理", "sref": "app.account"},
-      {"text": "宿舍信息导入", "sref": "app.importDormitory"},
-      {"text": "员工信息导入", "sref": "app.importEmployee"}
+      {"text": "系统账号管理", "sref": "dms.account"},
+      {"text": "宿舍信息导入", "sref": "dms.importDormitory"},
+      {"text": "员工信息导入", "sref": "dms.importEmployee"}
     ]
   },
   {
@@ -54,7 +57,7 @@
   },
   {
     "text": "个人中心",
-    "sref": "app.dashboard",
+    "sref": "dms.dashboard",
     "icon": "icon-bar-chart"
   },
   {
@@ -62,19 +65,19 @@
     "sref": "#",
     "icon": "icon-home",
     "submenu": [
-      {"text": "地理视图", "sref": "app.dormitoryMap"},
-      {"text": "列表视图", "sref": "app.dormitoryList"},
-      {"text": "入住信息", "sref": "app.accommodation"}
+      {"text": "地理视图", "sref": "dms.dormitoryMap"},
+      {"text": "列表视图", "sref": "dms.dormitoryList"},
+      {"text": "入住信息", "sref": "dms.accommodation"}
     ]
   },
   {
     "text": "员工管理",
-    "sref": "app.employee",
+    "sref": "dms.employee",
     "icon": "icon-users"
   },
   {
     "text": "宿舍申请管理",
-    "sref": "app.dormitoryApply",
+    "sref": "dms.dormitorydmsly",
     "icon": "icon-docs"
   },
   {
@@ -83,7 +86,7 @@
   },
   {
     "text": "个人中心",
-    "sref": "app.dashboard",
+    "sref": "dms.dashboard",
     "icon": "icon-bar-chart"
   },
   {
@@ -91,24 +94,24 @@
     "sref": "#",
     "icon": "icon-home",
     "submenu": [
-      {"text": "地理视图", "sref": "app.dormitoryMap"},
-      {"text": "列表视图", "sref": "app.dormitoryList"},
-      {"text": "入住信息", "sref": "app.accommodation"}
+      {"text": "地理视图", "sref": "dms.dormitoryMap"},
+      {"text": "列表视图", "sref": "dms.dormitoryList"},
+      {"text": "入住信息", "sref": "dms.accommodation"}
     ]
   },
   {
     "text": "员工管理",
-    "sref": "app.employee",
+    "sref": "dms.employee",
     "icon": "icon-users"
   },
   {
     "text": "宿舍申请",
-    "sref": "app.dormitoryApply",
+    "sref": "dms.dormitorydmsly",
     "icon": "icon-docs"
   },
   {
     "text": "维修申请",
-    "sref": "app.maintenanceApply",
+    "sref": "dms.maintenancedmsly",
     "icon": "icon-wrench"
   }
 ]

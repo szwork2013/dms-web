@@ -1,0 +1,52 @@
+h3 个人中心
+  small 欢迎使用南京大学后勤集团 - 宿舍管理系统！
+
+// START widgets box
+.row
+  .col-lg-3.col-sm-6
+    // START widget
+    .panel.widget.bg-primary
+      .row.row-table
+        .col-xs-4.text-center.bg-primary-dark.pv-lg
+          em.icon-home.fa-3x
+        .col-xs-8.pv-lg
+          .h2.mt0 
+            span(data-ng-bind="bedInUseCnt") 
+            | &nbsp;/ 
+            span(data-ng-bind="bedTotalCnt")
+          .text-uppercase 已用 / 总床位数
+  .col-lg-3.col-sm-6
+    // START widget
+    .panel.widget.bg-purple
+      .row.row-table
+        .col-xs-4.text-center.bg-purple-dark.pv-lg
+          em.icon-users.fa-3x   
+        .col-xs-8.pv-lg
+          .h2.mt0
+            span(data-ng-bind="maleEmployeeCnt") 
+            | &nbsp;/ 
+            span(data-ng-bind="femaleEmployeeCnt") 
+          .text-uppercase 男 / 女员工数
+  .col-lg-3.col-sm-6
+    // START widget
+    .panel.widget.bg-green
+      .row.row-table
+        .col-xs-4.text-center.bg-green-dark.pv-lg
+          em.icon-docs.fa-3x
+        .col-xs-8.pv-lg
+          .h2.mt0 
+            span(data-ng-bind="dormitoryApplicationCnt") 
+            small 条
+          .text-uppercase 入住申请
+  .col-lg-3.col-sm-6
+    // START widget
+    .panel.widget.bg-warning
+      .row.row-table
+        .col-xs-4.text-center.bg-warning-dark.pv-lg
+          em.icon-wrench.fa-3x
+        .col-xs-8.pv-lg
+          .h2.mt0
+            span(data-ng-bind="maintenanceApplicationCnt") 
+            small 条
+          .text-uppercase 维修申请
+// END widgets box

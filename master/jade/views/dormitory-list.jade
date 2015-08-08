@@ -1,0 +1,43 @@
+h3 列表视图
+  small 以列表的形式查询 / 修改宿舍信息
+
+include mixins/dropdown
+include mixins/search
+
+.container-fluid(ng-controller="DormitoryListController as table")
+  .panel.panel-default
+    .panel-heading
+      form.hidden-xs.form-inline.pull-right
+        +addressDropGroup(true)
+        +dormitoryTypeDrop(true)
+        +searchField()
+      .panel-title 宿舍列表
+    table.table(ng-table='table.tableParams')
+      tbody
+        tr(ng-repeat='item in $data')
+          td(width="40", header="'ng-table/headers/checkbox.html'")
+            .checkbox.c-checkbox
+              label
+                input(type='checkbox', ng-model="checkboxes.items[item.dormitory.id]")
+                span.fa.fa-check
+          td(data-title="'详细地址'", sortable="'dormitory.addressDetailCN'") {{ item.dormitory.addressDetailCN }}
+          td.text-center(data-title="'类型'", sortable="'dormitory.typeCN'", width="100") {{ item.dormitory.typeCN }}
+          td.text-center(data-title="'核定'", sortable="'dormitory.capacityCnt'", width="70") {{ item.dormitory.capacityCnt }}
+          td.text-center(data-title="'实际'", sortable="'dormitory.occupiedCnt'", width="70") {{ item.dormitory.occupiedCnt }}
+          td(data-title="'住户'")
+            button.btn.btn-primary.btn-xs(ng-repeat="employee in item.employees", ng-click="showEmployee(employee)", style="margin-right:5px;min-width:55px;") {{ employee.name }}
+            button.btn.btn-green.btn-xs(title='迁入', data-ng-click='addHouseHolder(item)', ng-if="item.dormitory.capacityCnt - item.dormitory.occupiedCnt > 0")
+              i.fa.fa-plus
+          td.text-center(data-title="'操作'", width="80")
+            button.btn.btn-warning.btn-xs(title='编辑', data-ng-click='modifyDormitory(item.dormitory)')
+              i.fa.fa-pencil
+          //-
+            button.btn.btn-success.btn-xs(title='详情', data-ng-click='info(user)')
+                           i.fa.fa-ellipsis-h
+    // 自定义表头checkbox的template
+    script(type="text/ng-template", id="ng-table/headers/checkbox.html")
+      .checkbox.c-checkbox
+        label
+          input(type="checkbox", ng-model="checkboxes.checked", id="select_all", name="filter-checkbox", value="")
+          span.fa.fa-check
+          
