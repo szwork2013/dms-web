@@ -1,0 +1,21 @@
+<div>
+   <legend>
+      <h3 class="mt0">住户迁出</h3>
+   </legend>
+   <div class="row">
+      <div class="container-fluid">
+         <div class="text-center">将
+            <span ng-repeat="accommodation in accommodationItem.accommodations" ng-bind="accommodation.employee.name" style="padding:3px;border-radius:3px;" class="bg-primary"></span>&nbsp;从
+            <span ng-bind="accommodationItem.dormitory.addressDetailCN" style="padding:3px;border-radius:3px;" class="bg-warning-dark"></span>&nbsp;迁出？</div>
+         <br/>
+      </div>
+   </div>
+   <div class="row">
+      <div class="container-fluid">
+         <span class="pull-right">
+            <button type="button" ng-click="cancel()" class="btn btn-default mr">取消</button>
+            <button type="button" ng-click="submitCheckOut()" class="btn btn-danger">迁出</button>
+         </span>
+      </div>
+   </div>
+</div>

@@ -4,6 +4,7 @@ h3 列表视图
 include mixins/dropdown
 include mixins/search
 
+
 .container-fluid(ng-controller="DormitoryListController as table")
   .panel.panel-default
     .panel-heading
@@ -40,4 +41,3 @@ include mixins/search
         label
           input(type="checkbox", ng-model="checkboxes.checked", id="select_all", name="filter-checkbox", value="")
           span.fa.fa-check
-          

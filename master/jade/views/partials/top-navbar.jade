@@ -9,10 +9,10 @@ nav.navbar.topnavbar(role='navigation')
     .nav-wrapper
       ul.nav.navbar-nav
         li
-          a(href='#', ng-click="app.layout.isCollapsed = !app.layout.isCollapsed").hidden-xs
+          a(href='javascript:;', ng-click="app.layout.isCollapsed = !app.layout.isCollapsed").hidden-xs
             em.fa.fa-navicon
           // Button to show/hide the sidebar on mobile. Visible on mobile only.
-          a(href='#', toggle-state="aside-toggled", no-persist).visible-xs.sidebar-toggle
+          a(href='javascript:;', toggle-state="aside-toggled", no-persist).visible-xs.sidebar-toggle
             em.fa.fa-navicon
 
       ul.nav.navbar-nav.navbar-right
@@ -26,9 +26,9 @@ nav.navbar.topnavbar(role='navigation')
             li
               // START list group
               .list-group
-                a.list-group-item(href='#')
+                a.list-group-item(href='javascript:;')
                   small 修改密码
-                a.list-group-item(href='#')
+                a.list-group-item(href='javascript:;')
                   small 注销
         
         li.dropdown.dropdown-list(dropdown="")
@@ -38,14 +38,14 @@ nav.navbar.topnavbar(role='navigation')
           ul.dropdown-menu(class="animated flipInY")
             li
               .list-group
-                a.list-group-item(href='#')
+                a.list-group-item(href='javascript:;')
                   .media-box
                     .pull-left
                       em.fa.fa-comment.fa-2x.text-info
                     .media-box-body.clearfix
                         p.m0 未处理的入住申请
                         p.m0.text-muted: small 共2项
-                a.list-group-item(href='#')
+                a.list-group-item(href='javascript:;')
                   .media-box
                     .pull-left
                       em.fa.fa-wrench.fa-2x.text-warning
@@ -54,9 +54,9 @@ nav.navbar.topnavbar(role='navigation')
                         p.m0.text-muted: small 共1项
 
         li.visible-lg.visible-md
-          a(href='#', toggle-fullscreen)
+          a(href='javascript:;', toggle-fullscreen)
             em.fa.fa-expand
         
         li
-          a(href='#', toggle-state="offsidebar-open", no-persist)
+          a(href='javascript:;', toggle-state="offsidebar-open", no-persist)
             em.icon-notebook

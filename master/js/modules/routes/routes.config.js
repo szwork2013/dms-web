@@ -1,6 +1,6 @@
 /**=========================================================
  * Module: config.js
- * dms routes and resources configuration
+ * app routes and resources configuration
  =========================================================*/
 
 
@@ -19,32 +19,32 @@
         $locationProvider.html5Mode(false);
 
         // defaults to dashboard
-        $urlRouterProvider.otherwise('/dms/dashboard');
+        $urlRouterProvider.otherwise('/app/dashboard');
 
         // 
-        // dmslication Routes
+        // application Routes
         // -----------------------------------   
         $stateProvider
-          .state('dms', {
-              url: '/dms',
+          .state('app', {
+              url: '/app',
               abstract: true,
               controller: 'DMSController',
-              templateUrl: helper.basepath('dms.html'),
-              resolve: helper.resolveFor('modernizr', 'icons')
+              templateUrl: helper.basepath('app.html'),
+              resolve: helper.resolveFor('fastclick', 'modernizr', 'icons', 'screenfull', 'animo', 'slimscroll', 'toaster', 'whirl')
           })
-          .state('dms.dashboard', {
+          .state('app.dashboard', {
               url: '/dashboard',
               title: '个人中心',
               controller: 'DashboardController',
               templateUrl: helper.basepath('dashboard.html')
           })
-          .state('dms.dormitory-map', {
+          .state('app.dormitory-map', {
               url: '/dormitory-map',
               title: '地理视图',
               controller: 'DormitoryMapController',
               templateUrl: helper.basepath('dormitory-map.html')
           })
-          .state('dms.dormitory-list', {
+          .state('app.dormitory-list', {
               url: '/dormitory-list',
               title: '列表视图',
               controller: 'DormitoryListController',
@@ -57,7 +57,7 @@
           //   following this object extend
           //   method
           // ----------------------------------- 
-          // .state('dms.someroute', {
+          // .state('app.someroute', {
           //   url: '/some_url',
           //   templateUrl: 'path_to_template.html',
           //   controller: 'someController',

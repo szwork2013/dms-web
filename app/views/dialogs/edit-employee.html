@@ -1,0 +1,94 @@
+<div>
+   <legend>
+      <h3 class="mt0">员工详修改 - {{ employee.name }}</h3>
+   </legend>
+   <form class="form-horizontal">
+      <div class="form-group">
+         <label for="input-name" class="col-sm-2 control-label">姓名</label>
+         <div class="col-sm-4">
+            <input id="input-name" type="text" name="name" ng-model="employee.name" required="" class="form-control" />
+         </div>
+         <label for="input-gender" class="col-sm-2 control-label">性别</label>
+         <div class="col-sm-4">
+            <div dropdown="dropdown" is-open="genderOpen" class="btn-group">
+               <button dropdown-toggle="" style="width:120px;height:35px;" class="btn btn-default">
+                  <span ng-bind="employee.genderCN" class="pull-left"></span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="#" ng-click="selectGender(&quot;男&quot;)">男</a>
+                  </li>
+                  <li><a href="#" ng-click="selectGender(&quot;女&quot;)">女</a>
+                  </li>
+                  <li><a href="#" ng-click="selectGender(&quot;其他&quot;)">其他</a>
+                  </li>
+               </ul>
+            </div>
+         </div>
+      </div>
+      <div class="form-group">
+         <label for="input-idNum" class="col-sm-2 control-label">身份证</label>
+         <div class="col-sm-10">
+            <input id="input-idNum" type="text" name="idNum" ng-model="employee.idNum" required="" class="form-control" />
+         </div>
+      </div>
+      <div class="form-group">
+         <label for="input-department" class="col-sm-2 control-label">中心</label>
+         <div class="col-sm-4">
+            <div dropdown="dropdown" is-open="departmentOpen" class="btn-group">
+               <button dropdown-toggle="" style="width:120px;height:35px;" class="btn btn-default">
+                  <span ng-bind="employee.department" class="pull-left"></span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="#" ng-click="selectDepartment(&quot;运输&quot;)">运输</a>
+                  </li>
+                  <li><a href="#" ng-click="selectDepartment(&quot;物业&quot;)">物业</a>
+                  </li>
+                  <li><a href="#" ng-click="selectDepartment(&quot;幼儿园&quot;)">幼儿园</a>
+                  </li>
+               </ul>
+            </div>
+         </div>
+         <label for="input-dutyDate" class="col-sm-2 control-label">入职</label>
+         <div class="col-sm-4">
+            <input id="input-dutyDate" type="text" name="dutyDate" ng-model="employee.dutyDate" required="" class="form-control" />
+         </div>
+      </div>
+      <h3>配偶情况&nbsp;&nbsp;
+         <small ng-bind="employee.spouseTypeCN" style="font-size:12px;"></small>
+      </h3>
+      <hr style="margin-top: 0;" />
+   </form>
+   <form ng-if="employee.spouseType==&quot;OUTER&quot;" class="form-horizontal">
+      <div class="form-group">
+         <label for="input-outer-name" class="col-sm-2 control-label">姓名</label>
+         <div class="col-sm-4">
+            <input id="input-outer-name" type="text" name="outer-name" ng-model="employee.outsideSpouse.name" required="" class="form-control" />
+         </div>
+         <label for="input-outer-gender" class="col-sm-2 control-label">性别</label>
+         <div class="col-sm-4">
+            <input id="input-outer-gender" type="text" name="outer-gender" ng-model="employee.outsideSpouse.genderCN" required="" class="form-control" />
+         </div>
+      </div>
+      <div class="form-group">
+         <label for="input-outer-idNum" class="col-sm-2 control-label">身份证</label>
+         <div class="col-sm-10">
+            <input id="input-outer-idNum" type="text" name="outer-idNum" ng-model="employee.outsideSpouse.idNum" required="" class="form-control" />
+         </div>
+      </div>
+      <div class="form-group">
+         <label for="input-outer-workLocationDetail" class="col-sm-2 control-label">单位</label>
+         <div class="col-sm-10">
+            <input id="input-outer-workLocationDetail" type="text" name="outer-workLocationDetail" ng-model="employee.outsideSpouse.workLocationDetail" required="" class="form-control" />
+         </div>
+      </div>
+   </form>
+   <div class="row">
+      <div class="container-fluid">
+         <div class="pull-right">
+            <button type="button" ng-show="canBeDelete" ng-click="delete()" class="btn btn-danger">删除</button>
+            <button type="button" ng-click="cancel()" class="btn btn-default">返回</button>
+            <button type="button" ng-click="submitModify()" class="btn btn-warning">修改</button>
+         </div>
+      </div>
+   </div>
+</div>

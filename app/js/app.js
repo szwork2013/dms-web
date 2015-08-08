@@ -24,12 +24,6 @@
     'use strict';
 
     angular
-        .module('app.colors', []);
-})();
-(function() {
-    'use strict';
-
-    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -44,6 +38,12 @@
             'ngResource',
             'ui.utils'
         ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors', []);
 })();
 (function() {
     'use strict';
@@ -104,56 +104,6 @@
         .module('app.utils', [
           'app.colors'
           ]);
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .constant('APP_COLORS', {
-          'primary':                '#5d9cec',
-          'success':                '#27c24c',
-          'info':                   '#23b7e5',
-          'warning':                '#ff902b',
-          'danger':                 '#f05050',
-          'inverse':                '#131e26',
-          'green':                  '#37bc9b',
-          'pink':                   '#f532e5',
-          'purple':                 '#7266ba',
-          'dark':                   '#3a3f51',
-          'yellow':                 '#fad732',
-          'gray-darker':            '#232735',
-          'gray-dark':              '#3a3f51',
-          'gray':                   '#dde6e9',
-          'gray-light':             '#e4eaec',
-          'gray-lighter':           '#edf1f2'
-        })
-        ;
-})();
-/**=========================================================
- * Module: colors.js
- * Services to retrieve global colors
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.colors')
-        .service('Colors', Colors);
-
-    Colors.$inject = ['APP_COLORS'];
-    function Colors(APP_COLORS) {
-        this.byName = byName;
-
-        ////////////////
-
-        function byName(name) {
-          return (APP_COLORS[name] || '#fff');
-        }
-    }
-
 })();
 
 (function() {
@@ -266,6 +216,56 @@
 
 })();
 
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .constant('APP_COLORS', {
+          'primary':                '#5d9cec',
+          'success':                '#27c24c',
+          'info':                   '#23b7e5',
+          'warning':                '#ff902b',
+          'danger':                 '#f05050',
+          'inverse':                '#131e26',
+          'green':                  '#37bc9b',
+          'pink':                   '#f532e5',
+          'purple':                 '#7266ba',
+          'dark':                   '#3a3f51',
+          'yellow':                 '#fad732',
+          'gray-darker':            '#232735',
+          'gray-dark':              '#3a3f51',
+          'gray':                   '#dde6e9',
+          'gray-light':             '#e4eaec',
+          'gray-lighter':           '#edf1f2'
+        })
+        ;
+})();
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.colors')
+        .service('Colors', Colors);
+
+    Colors.$inject = ['APP_COLORS'];
+    function Colors(APP_COLORS) {
+        this.byName = byName;
+
+        ////////////////
+
+        function byName(name) {
+          return (APP_COLORS[name] || '#fff');
+        }
+    }
+
+})();
 
 (function() {
     'use strict';
@@ -768,7 +768,7 @@
 
 /**=========================================================
  * Module: config.js
- * dms routes and resources configuration
+ * app routes and resources configuration
  =========================================================*/
 
 
@@ -787,32 +787,32 @@
         $locationProvider.html5Mode(false);
 
         // defaults to dashboard
-        $urlRouterProvider.otherwise('/dms/dashboard');
+        $urlRouterProvider.otherwise('/app/dashboard');
 
         // 
-        // dmslication Routes
+        // application Routes
         // -----------------------------------   
         $stateProvider
-          .state('dms', {
-              url: '/dms',
+          .state('app', {
+              url: '/app',
               abstract: true,
               controller: 'DMSController',
-              templateUrl: helper.basepath('dms.html'),
-              resolve: helper.resolveFor('modernizr', 'icons')
+              templateUrl: helper.basepath('app.html'),
+              resolve: helper.resolveFor('fastclick', 'modernizr', 'icons', 'screenfull', 'animo', 'slimscroll', 'toaster', 'whirl')
           })
-          .state('dms.dashboard', {
+          .state('app.dashboard', {
               url: '/dashboard',
               title: '个人中心',
               controller: 'DashboardController',
               templateUrl: helper.basepath('dashboard.html')
           })
-          .state('dms.dormitory-map', {
+          .state('app.dormitory-map', {
               url: '/dormitory-map',
               title: '地理视图',
               controller: 'DormitoryMapController',
               templateUrl: helper.basepath('dormitory-map.html')
           })
-          .state('dms.dormitory-list', {
+          .state('app.dormitory-list', {
               url: '/dormitory-list',
               title: '列表视图',
               controller: 'DormitoryListController',
@@ -825,7 +825,7 @@
           //   following this object extend
           //   method
           // ----------------------------------- 
-          // .state('dms.someroute', {
+          // .state('app.someroute', {
           //   url: '/some_url',
           //   templateUrl: 'path_to_template.html',
           //   controller: 'someController',
