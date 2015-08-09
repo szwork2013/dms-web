@@ -29,7 +29,7 @@ include mixins/panel-title
           td.text-center(data-title="'工作地址'", sortable="'employee.workLocationDetail'") {{ item.employee.workLocationDetail }}
           td.text-center(data-title="'宿舍地址'", sortable="'dormitory.addressDetailCN'") {{ item.dormitory.addressDetailCN }}
           td.text-center(data-title="'操作'", width="80")
-            button.btn.btn-warning.btn-xs(title='修改', data-ng-click='modifyEmployee(item);')
+            button.btn.btn-warning.btn-xs(title='修改', data-ng-click='editEmployee(item);')
               i.fa.fa-pencil
     // 自定义表头checkbox的template
     script(type="text/ng-template", id="ng-table/headers/checkbox.html")

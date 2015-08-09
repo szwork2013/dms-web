@@ -22,10 +22,10 @@
                   <span ng-hide="select.data.department" class="pull-left">所有中心</span><b style="margin-top:8px" class="caret pull-right"></b>
                </button>
                <ul role="menu" class="dropdown-menu">
-                  <li><a href="#" ng-click="dropSelect(&quot;department&quot;, &quot;&quot;)">所有中心</a>
+                  <li><a href="javascript:;" ng-click="dropSelect(&quot;department&quot;, &quot;&quot;)">所有中心</a>
                   </li>
                   <li ng-repeat="department in departments">
-                     <a href="#" ng-click="dropSelect(&quot;department&quot;, department)" ng-bind="department"></a>
+                     <a href="javascript:;" ng-click="dropSelect(&quot;department&quot;, department)" ng-bind="department"></a>
                   </li>
                </ul>
             </div>
@@ -36,13 +36,13 @@
                   <span ng-hide="select.data.genderCN" class="pull-left">所有性别</span><b style="margin-top:8px" class="caret pull-right"></b>
                </button>
                <ul role="menu" class="dropdown-menu">
-                  <li><a href="#" ng-click="dropSelect(&quot;genderCN&quot;, &quot;&quot;)">所有性别</a>
+                  <li><a href="javascript:;" ng-click="dropSelect(&quot;genderCN&quot;, &quot;&quot;)">所有性别</a>
                   </li>
-                  <li><a href="#" ng-click="dropSelect(&quot;genderCN&quot;, &quot;男&quot;)">男</a>
+                  <li><a href="javascript:;" ng-click="dropSelect(&quot;genderCN&quot;, &quot;男&quot;)">男</a>
                   </li>
-                  <li><a href="#" ng-click="dropSelect(&quot;genderCN&quot;, &quot;女&quot;)">女</a>
+                  <li><a href="javascript:;" ng-click="dropSelect(&quot;genderCN&quot;, &quot;女&quot;)">女</a>
                   </li>
-                  <li><a href="#" ng-click="dropSelect(&quot;genderCN&quot;, &quot;其他&quot;)">其他</a>
+                  <li><a href="javascript:;" ng-click="dropSelect(&quot;genderCN&quot;, &quot;其他&quot;)">其他</a>
                   </li>
                </ul>
             </div>
@@ -80,7 +80,7 @@
                <td data-title="'工作地址'" sortable="'employee.workLocationDetail'" class="text-center">{{ item.employee.workLocationDetail }}</td>
                <td data-title="'宿舍地址'" sortable="'dormitory.addressDetailCN'" class="text-center">{{ item.dormitory.addressDetailCN }}</td>
                <td data-title="'操作'" width="80" class="text-center">
-                  <button title="修改" data-ng-click="modifyEmployee(item);" class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i>
+                  <button title="修改" data-ng-click="editEmployee(item);" class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i>
                   </button>
                </td>
             </tr>

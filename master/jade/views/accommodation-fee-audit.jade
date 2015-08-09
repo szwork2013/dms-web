@@ -1,0 +1,55 @@
+include mixins/dropdown
+include mixins/search
+
+.container-fluid(ng-controller="AccommodationFeeController as table")
+  .panel.panel-default
+    .panel-heading
+      form.pull-right.hidden-xs.form-inline
+        +searchField()
+      .panel-title 
+        form.form-inline
+          | 住宿费审核 -
+          +feeDepartmentDrop(false)
+          | &nbsp;- 
+          +feeDateDropGroup(false)
+          button.btn.btn-xs.btn-default(type='button', ng-click='refreshTable()')
+            span.fa.fa-refresh
+        
+    table.table(ng-table='table.tableParams')
+      tbody
+        tr(ng-repeat='accommodationFee in $data')
+          td(width="40", header="'ng-table/headers/checkbox.html'")
+            .checkbox.c-checkbox
+              label
+                input(type='checkbox', ng-model="checkboxes.items[user.id]")
+                span.fa.fa-check
+          td.text-center(data-title="'员工'", sortable="'employee.name'", width="100") 
+            .btn.btn-primary.btn-xs(ng-click="showEmployee(accommodationFee.employee)") {{accommodationFee.employee.name}}
+          td(data-title="'宿舍地址'", sortable="'dormitory.addressDetailCN'", width="120") {{accommodationFee.dormitory.addressDetailCN}}
+          td.text-center(data-title="'宿舍类型'", sortable="'dormitory.typeCN'", width="100") {{accommodationFee.dormitory.typeCN}}
+          td.text-center(data-title="'核定'", sortable="'dormitory.capacityCnt'", width="70") {{accommodationFee.dormitory.capacityCnt}}
+          td.text-center(data-title="'实际'", sortable="'dormitory.occupiedCnt'", width="70") {{accommodationFee.dormitory.occupiedCnt}}
+          //-td.text-center(data-title="'所属中心'", sortable="'employee.department'", width="100") {{accommodationFee.employee.department}}
+          //-td.text-center(data-title="'缴纳时间'", sortable="'month'", width="100") {{accommodationFee.month}}
+          td.text-center(data-title="'中心缴纳'", sortable="'departmentFee'", width="70") {{accommodationFee.departmentFee}}
+          td.text-center(data-title="'个人缴纳'", sortable="'employeeFee'", width="70") {{accommodationFee.employeeFee}}
+          td.text-center(data-title="'审核'", width="90", ng-show="accommodationFee.status=='UNCHECK'")
+            button.btn.btn-success.btn-xs(title='通过', data-ng-click='pass(accommodationFee)', style="width:25px")
+              i.fa.fa-check
+            button.btn.btn-danger.btn-xs(title='驳回', data-ng-click='reject(accommodationFee)', style="width:24px")
+              i.fa.fa-times
+          td.text-center(data-title="'审核'", width="90", ng-show="accommodationFee.status=='RECHECK'")
+            button.btn.btn-success.btn-xs(title='通过', data-ng-click='pass(accommodationFee)', style="width:25px")
+              i.fa.fa-check
+            button.btn.btn-danger.btn-xs(title='驳回', data-ng-click='reject(accommodationFee)', style="width:24px")
+              i.fa.fa-times
+            br
+            small (重审)
+          td.text-center(data-title="'审核'", width="90", ng-show="accommodationFee.status=='APPROVED'")  {{accommodationFee.statusCN}}
+          td.text-center(data-title="'审核'", width="90", ng-show="accommodationFee.status=='REJECTED'")  {{accommodationFee.statusCN}}
+    // 自定义表头checkbox的template
+    script(type="text/ng-template", id="ng-table/headers/checkbox.html")
+      .checkbox.c-checkbox
+        label
+          input(type="checkbox", ng-model="checkboxes.checked", id="select_all", name="filter-checkbox", value="")
+          span.fa.fa-check

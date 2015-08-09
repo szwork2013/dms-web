@@ -827,6 +827,13 @@
               templateUrl: helper.basepath('employee.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
+          .state('app.accommodation-fee', {
+              url: '/accommodation-fee',
+              title: '住宿费审核',
+              controller: 'AccommodationFeeController',
+              templateUrl: helper.basepath('accommodation-fee-audit.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog')
+          })
           // 
           // CUSTOM RESOLVES
           //   Add your own resolves properties
@@ -1822,7 +1829,11 @@
             "UNKNOWN" : "其他",
             "NONE" : "没有登记配偶",
             "INNER" : "集团员工",
-            "OUTER" : "非集团员工"
+            "OUTER" : "非集团员工",
+            "UNCHECK" : "待审核",
+            "RECHECK" : "待重审",
+            "APPROVED" : "已通过",
+            "REJECTED" : "不通过"
         })
         .constant('VO_PO_DICT', {
             "集体宿舍 - 男" : "GROUP_MALE",
@@ -1833,7 +1844,11 @@
             "其他" : "UNKNOWN",
             "没有登记配偶" : "NONE",
             "集团员工" : "INNER",
-            "非集团员工" : "OUTER"
+            "非集团员工" : "OUTER",
+            "待审核" : "UNCHECK",
+            "待重审" : "RECHECK",
+            "已通过" : "APPROVED",
+            "不通过" : "REJECTED"
         })
       ;
 
@@ -1849,6 +1864,9 @@
             },
             "employee" : {
                 "query" : "server/employee-list.json"
+            },
+            "accommodation" : {
+                "queryFee" : "server/accommodation-fee-list.json"
             }
         })
       ;
@@ -1863,6 +1881,194 @@
 
     Accommodation.$inject = ['$rootScope', '$scope'];
     function Accommodation($rootScope, $scope) {
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.accommodation')
+        .controller('AccommodationFeeController', AccommodationFeeController);
+
+    AccommodationFeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'AccommodationService','ShareService'];
+    function AccommodationFeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, AccommodationService, ShareService) {
+        var vm = this;
+        var data = null;
+        var updateTable = false;
+        // ========== 筛选 ========== 
+        $scope.select = {
+            data: {
+                year: '',
+                month: '',
+                department: ''
+            },
+            dropdown: {
+                year: false,
+                month: false,
+                department: false
+            }
+        };
+        $scope.searchkeywords = '';
+
+        $scope.dropSelect = function (name, value) {
+            $scope.select.data[name] = value;
+            $scope.select.dropdown[name] = false;
+            if(name == 'year') {
+                $scope.select.data.month = '';
+            }
+            vm.tableParams.reload();
+        }
+
+        $scope.resetFilter = function() {
+            for(var key in $scope.select.data) {
+                $scope.select.data[key] = '';
+            }
+            $scope.searchkeywords = '';
+            vm.tableParams.reload();
+        }
+
+        $scope.refreshTable = function() {
+            updateTable = true;
+            vm.tableParams.reload();
+        }
+
+        $scope.$watch("searchKeywords", function () {
+            vm.tableParams.reload();
+        });
+        // =========================
+        
+        // ========== 数据显示 ==========
+        vm.tableParams = new ngTableParams({
+            page: 1,
+            count: 10
+        }, {
+            total: 0,
+            counts: [10, 20, 50],
+            getData: function ($defer, params) {
+                if (!data || updateTable) {
+                    AccommodationService.queryFeeData({
+                        success: function (response) {
+                            if (response.status) {
+                                data = AccommodationService.preprocessData(response.result);
+                                showTableData($defer, params);
+                            } else {
+                                alert("列表获取失败");
+                            }
+                            updateTable = false;
+                            console.log("Query AccommodationService Fee List", data);
+                        },
+                        error: function (data, status, headers, config) {
+                            console.log(data, status, headers, config);
+                            alert("GET Error2");
+                        }
+                    },updateTable);
+                } else {
+                    showTableData($defer, params);
+                }
+            }
+        });
+        var showTableData = function($defer, params) {
+            var searchedData = searchData(data);
+            var orderedData = params.sorting() ? $filter('orderBy')(searchedData, params.orderBy()) : searchedData;
+            params.total(orderedData.length);
+            $defer.resolve($scope.dormitories = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+        var searchData = function(filterData) {
+            if($scope.searchKeywords) {
+                var keywords = $scope.searchKeywords.split(" ");
+                var i;
+                for(i in keywords) {
+                    filterData = $filter('filter')(filterData, keywords[i]);
+                }
+            }
+            
+            if($scope.select.data.campus) filterData = $filter('filter')(filterData, { employee : { workCampus : $scope.select.data.campus}});
+            if($scope.select.data.department) filterData = $filter('filter')(filterData, { employee : { department : $scope.select.data.department}});
+            if($scope.select.data.genderCN) filterData = $filter('filter')(filterData, { employee : { genderCN : $scope.select.data.genderCN}});
+            return filterData;
+        }
+        // =============================
+        
+        // ========== 表格Checkbox ==========
+        $scope.checkboxes = { 'checked': false, items: {} };
+        // 总checkbox
+        $scope.$watch('checkboxes.checked', function(value) {
+            angular.forEach($scope.dormitories, function(item) {
+                if (angular.isDefined(item.employee.id)) {
+                    $scope.checkboxes.items[item.employee.id] = value;
+                }
+            });
+        });
+        // 子checkbox
+        $scope.$watch('checkboxes.items', function(values) {
+            if (!$scope.dormitories) {
+                return;
+            }
+            var checked = 0, unchecked = 0,
+            total = $scope.dormitories.length;
+            angular.forEach($scope.dormitories, function(item) {
+                checked   +=  ($scope.checkboxes.items[item.employee.id]) || 0;
+                unchecked += (!$scope.checkboxes.items[item.employee.id]) || 0;
+            });
+            if ((unchecked == 0) || (checked == 0)) {
+                $scope.checkboxes.checked = (checked == total);
+            }
+            angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+        }, true);
+        // ==================================
+
+        $scope.showEmployee = function(employee) {
+            ShareService.setData(angular.copy(employee));
+            ngDialog.open({
+                template: 'app/views/dialogs/show-employee.html',
+                controller: function ($scope, ngDialog, ShareService) {
+                    $scope.employee = ShareService.getData();
+
+                    // ===== 对话框操作 ===== 
+                    $scope.checkOut = function() {
+                        console.log("Check Out", $scope.employee);
+                        // TODO 发送迁出消息
+                    }
+                    $scope.cancel = function() {
+                        ngDialog.close();
+                    }
+                    // ====================== 
+                }
+            });
+        }
+
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.dormitory')
+        .service('AccommodationService', AccommodationService);
+    AccommodationService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
+    function AccommodationService($http, VO_PO_DICT, PO_VO_DICT, URL, ngDialog, ShareService) {
+        
+        this.queryFeeData = function(callback) {
+            $http.get(URL.accommodation.queryFee).success(callback.success).error(callback.error);
+        }
+    
+        this.preprocessData = function(data) {
+            angular.forEach(data, function(item) {
+                item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + "层 - " + item.dormitory.doorplate;
+                item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
+                item.employee.genderCN = PO_VO_DICT[item.employee.gender];
+                item.employee.spouseTypeCN = PO_VO_DICT[item.employee.spouseType];
+                item.employee.spouseGenderCN = PO_VO_DICT[item.employee.spouseGender];
+                item.statusCN = PO_VO_DICT[item.status];
+            });
+            return data;
+        }
+    
+        this.postprocessData = function(data) {
+            return data;
+        }
     }
 })();
 
@@ -2314,6 +2520,35 @@
             angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
         }, true);
         // ==================================
+
+        $scope.editEmployee = function(employeeItem) {
+            ShareService.setData(angular.copy(employeeItem));
+            ngDialog.open({
+                template: 'app/views/dialogs/edit-employee.html',
+                controller: function ($scope, ngDialog, ShareService) {
+                    $scope.employee = ShareService.getData().employee;
+                    $scope.employee.canBeDelete = ShareService.getData().dormitory==null || ShareService.getData().dormitory=={};
+                    // ===== 对话框操作 ===== 
+                    $scope.selectGender = function(gender) {
+                        console.log(gender);
+                        $scope.genderOpen = false;
+                        $scope.employee.genderCN = gender;
+                    }
+                    $scope.selectDepartment = function(department) {
+                        $scope.departmentOpen = false;
+                        $scope.employee.department = department;
+                    }
+                    $scope.delete = function() {
+                        console.log("Delete", $scope.employee);
+                        // TODO 发送迁出消息
+                    }
+                    $scope.cancel = function() {
+                        ngDialog.close();
+                    }
+                    // ====================== 
+                }
+            });
+        }
     }
 })();
 

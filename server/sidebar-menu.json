@@ -24,7 +24,7 @@
   },
   {
     "text": "住宿费审核",
-    "sref": "app.accommodationFee",
+    "sref": "app.accommodation-fee",
     "icon": "icon-wallet"
   },
   {

@@ -9,6 +9,9 @@
             },
             "employee" : {
                 "query" : "server/employee-list.json"
+            },
+            "accommodation" : {
+                "queryFee" : "server/accommodation-fee-list.json"
             }
         })
       ;

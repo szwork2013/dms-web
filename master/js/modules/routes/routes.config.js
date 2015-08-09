@@ -58,6 +58,13 @@
               templateUrl: helper.basepath('employee.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
+          .state('app.accommodation-fee', {
+              url: '/accommodation-fee',
+              title: '住宿费审核',
+              controller: 'AccommodationFeeController',
+              templateUrl: helper.basepath('accommodation-fee-audit.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog')
+          })
           // 
           // CUSTOM RESOLVES
           //   Add your own resolves properties

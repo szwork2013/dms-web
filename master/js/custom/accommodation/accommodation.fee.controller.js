@@ -2,25 +2,25 @@
     'use strict';
 
     angular
-        .module('dms.employee')
-        .controller('EmployeeController', EmployeeController);
+        .module('dms.accommodation')
+        .controller('AccommodationFeeController', AccommodationFeeController);
 
-    EmployeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'EmployeeService','ShareService'];
-    function EmployeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, EmployeeService, ShareService) {
+    AccommodationFeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'AccommodationService','ShareService'];
+    function AccommodationFeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, AccommodationService, ShareService) {
         var vm = this;
         var data = null;
         var updateTable = false;
         // ========== 筛选 ========== 
         $scope.select = {
             data: {
-                campus: '',
-                department: '',
-                genderCN: ''
+                year: '',
+                month: '',
+                department: ''
             },
             dropdown: {
-                campus: false,
-                department: false,
-                genderCN: false
+                year: false,
+                month: false,
+                department: false
             }
         };
         $scope.searchkeywords = '';
@@ -28,6 +28,9 @@
         $scope.dropSelect = function (name, value) {
             $scope.select.data[name] = value;
             $scope.select.dropdown[name] = false;
+            if(name == 'year') {
+                $scope.select.data.month = '';
+            }
             vm.tableParams.reload();
         }
 
@@ -58,16 +61,16 @@
             counts: [10, 20, 50],
             getData: function ($defer, params) {
                 if (!data || updateTable) {
-                    EmployeeService.queryData({
+                    AccommodationService.queryFeeData({
                         success: function (response) {
                             if (response.status) {
-                                data = EmployeeService.preprocessData(response.result);
+                                data = AccommodationService.preprocessData(response.result);
                                 showTableData($defer, params);
                             } else {
                                 alert("列表获取失败");
                             }
                             updateTable = false;
-                            console.log("Query Employee List", data);
+                            console.log("Query AccommodationService Fee List", data);
                         },
                         error: function (data, status, headers, config) {
                             console.log(data, status, headers, config);
@@ -129,25 +132,16 @@
         }, true);
         // ==================================
 
-        $scope.editEmployee = function(employeeItem) {
-            ShareService.setData(angular.copy(employeeItem));
+        $scope.showEmployee = function(employee) {
+            ShareService.setData(angular.copy(employee));
             ngDialog.open({
-                template: 'app/views/dialogs/edit-employee.html',
+                template: 'app/views/dialogs/show-employee.html',
                 controller: function ($scope, ngDialog, ShareService) {
-                    $scope.employee = ShareService.getData().employee;
-                    $scope.employee.canBeDelete = ShareService.getData().dormitory==null || ShareService.getData().dormitory=={};
+                    $scope.employee = ShareService.getData();
+
                     // ===== 对话框操作 ===== 
-                    $scope.selectGender = function(gender) {
-                        console.log(gender);
-                        $scope.genderOpen = false;
-                        $scope.employee.genderCN = gender;
-                    }
-                    $scope.selectDepartment = function(department) {
-                        $scope.departmentOpen = false;
-                        $scope.employee.department = department;
-                    }
-                    $scope.delete = function() {
-                        console.log("Delete", $scope.employee);
+                    $scope.checkOut = function() {
+                        console.log("Check Out", $scope.employee);
                         // TODO 发送迁出消息
                     }
                     $scope.cancel = function() {
@@ -157,5 +151,6 @@
                 }
             });
         }
+
     }
 })();
