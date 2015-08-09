@@ -1,9 +1,5 @@
-h3 列表视图
-  small 以列表的形式查询 / 修改宿舍信息
-
 include mixins/dropdown
 include mixins/search
-
 
 .container-fluid(ng-controller="DormitoryListController as table")
   .panel.panel-default
@@ -12,7 +8,9 @@ include mixins/search
         +addressDropGroup(true)
         +dormitoryTypeDrop(true)
         +searchField()
-      .panel-title 宿舍列表
+      .panel-title 列表视图
+        button.btn.btn-xs.btn-default(type='button', ng-click='refreshTable()')
+          span.fa.fa-refresh
     table.table(ng-table='table.tableParams')
       tbody
         tr(ng-repeat='item in $data')

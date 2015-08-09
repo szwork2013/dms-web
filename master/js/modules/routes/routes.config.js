@@ -30,7 +30,7 @@
               abstract: true,
               controller: 'DMSController',
               templateUrl: helper.basepath('app.html'),
-              resolve: helper.resolveFor('fastclick', 'modernizr', 'icons', 'screenfull', 'animo', 'slimscroll', 'toaster', 'whirl')
+              resolve: helper.resolveFor('fastclick', 'modernizr', 'icons', 'screenfull', 'animo', 'slimscroll', 'toaster', 'whirl', 'ui.select')
           })
           .state('app.dashboard', {
               url: '/dashboard',
