@@ -1,3 +1,5 @@
-mixin searchField(label)
-  input.form-control.input-sm.form-horizontal(type='text', ng-model="searchKeywords", placeholder='表格搜索...')
-  button.btn.btn-info.btn-sm(ng-click='searchKeywords=""; selectCampus(""); selectType("");') 复位
+mixin searchField()
+  div.btn-group
+    input.form-control.input-sm.form-horizontal(type='search', ng-model="searchKeywords", placeholder='表格搜索...')
+    a.clear(ng-click='searchKeywords=""', style='position: absolute; right: 8px; top: 0; bottom: 0; height: 22px; margin: auto; font-size: 14px; cursor: pointer; color: #ccc;')
+      span.fa.fa-close
