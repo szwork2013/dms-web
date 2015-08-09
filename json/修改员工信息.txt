@@ -1,0 +1,65 @@
+{
+	"status":true,
+	"message":"",
+	"employee":{
+				"id":101,
+				"name":"测试人员1",
+				"gender":"MALE",
+				"idNum":"328043598432893",
+				"department":"运输",
+				"dutyDate":"2015-9-10",
+				"workCampus":"运输部",
+				"workLocationDetail":"",
+				"spouseType":"NONE",
+				"outsideSpouse":{
+					"name":"",
+					"gender":"",
+					"idNum":"",
+					"workLocationDetail":""
+				}
+	}
+}
+
+{
+	"status":true,
+	"message":"",
+	"employee":{
+				"id":102,
+				"name":"测试人员2",
+				"gender":"FEMALE",
+				"idNum":"3280334534232893",
+				"department":"膳食",
+				"dutyDate":"2015-6-22",
+				"workCampus":"食堂",
+				"workLocationDetail":"",
+				"spouseType":"INNER",
+				"outsideSpouse":{
+					"name":"测试人员3",
+					"gender":"MALE",
+					"idNum":"42345234231414",
+					"workLocationDetail":""
+				}
+	}
+}
+
+{
+	"status":true,
+	"message":"",
+	"employee":{
+				"id":103,
+				"name":"测试人员4",
+				"gender":"UNKNOWN",
+				"idNum":"3280334534232893",
+				"department":"膳食",
+				"dutyDate":"2015-6-22",
+				"workCampus":"食堂",
+				"workLocationDetail":"",
+				"spouseType":"OUTER",
+				"outsideSpouse":{
+					"name":"测试人员5",
+					"gender":"UNKNOWN",
+					"idNum":"523415623542",
+					"workLocationDetail":""
+				}
+	}
+}
