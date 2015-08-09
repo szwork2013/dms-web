@@ -15,7 +15,8 @@
             'dms.dormitory',
             'dms.employee',
             'dms.accommodation',
-            'dms.application',
+            'dms.dormitoryApplication',
+            'dms.maintenanceApplication',
             'dms.util'
         ]);
 })();

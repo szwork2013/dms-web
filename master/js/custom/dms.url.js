@@ -12,6 +12,9 @@
             },
             "accommodation" : {
                 "queryFee" : "server/accommodation-fee-list.json"
+            },
+            "dormitoryApplication" : {
+                "query" : "server/dormitory-apply-list.json"
             }
         })
       ;

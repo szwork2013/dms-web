@@ -1,0 +1,167 @@
+{
+    "status":true,
+    "message":"",
+    "count":6,
+    "result":[
+        {
+        "id":1,
+        "employees":[
+            {
+                "id":100,
+                "name":"张三",
+                "gender":"MALE",
+                "idNum":"32028114210542394",
+                "department":"运输",
+                "dutyDate":"2014-10-10",
+                "workLocationDetail":"运输部",
+                "spouseType":"NONE",
+                "outsideSpouse" : {
+                "name" : "",
+                "gender":"",
+                "idNum" : "",
+                "workLocationDetail" : ""
+                 }
+            }
+        ],
+        "date":"2015-7-15",
+        "type":"GROUP_MALE",
+        "content":"1111",
+        "status":"MANAGER_PENDING"
+        },{
+        "id":2,
+        "employees":[
+            {
+                "id":101,
+                "name":"测试女一",
+                "gender":"FEMALE",
+                "idNum":"32028114210542394",
+                "department":"膳食",
+                "dutyDate":"2014-10-10",
+                "workLocationDetail":"食堂",
+                "spouseType":"NONE",
+                "outsideSpouse" : {
+                "name" : "",
+                "gender":"",
+                "idNum" : "",
+                "workLocationDetail" : ""
+                 }
+            }
+        ],
+        "date":"2015-7-22",
+        "type":"GROUP_FEMALE",
+        "content":"2222",
+        "status":"MANAGER_APPROVED"
+        },{
+        "id":3,
+        "employees":[
+            {
+                "id":102,
+                "name":"测试夫妻男一",
+                "gender":"MALE",
+                "idNum":"32028114210542394",
+                "department":"运输",
+                "dutyDate":"2014-10-10",
+                "workLocationDetail":"运输部",
+                "spouseType":"NONE",
+                "outsideSpouse" : {
+                "name" : "测试夫妻女一",
+                "gender":"FEMALE",
+                "idNum" : "32185843924824",
+                "workLocationDetail" : ""
+                 }
+            }
+        ],
+        "date":"2015-7-18",
+        "type":"COUPLE",
+        "content":"",
+        "status":"MANAGER_REJECTED"
+        },{
+        "id":4,
+        "employees":[
+            {
+                "id":103,
+                "name":"测试人员男一",
+                "gender":"MALE",
+                "idNum":"3202811124124354232394",
+                "department":"接待",
+                "dutyDate":"2014-10-10",
+                "workLocationDetail":"招待所",
+                "spouseType":"NONE",
+                "outsideSpouse" : {
+                "name" : "",
+                "gender":"",
+                "idNum" : "",
+                "workLocationDetail" : ""
+                 }
+            }
+        ],
+        "date":"2015-6-30",
+        "type":"UNKNOWN",
+        "content":"",
+        "status":"OFFICE_APPROVED"
+        },{
+        "id":5,
+        "employees":[
+            {
+                "id":104,
+                "name":"测试人员女一",
+                "gender":"FEMALE",
+                "idNum":"32028114210542394",
+                "department":"运输",
+                "dutyDate":"2014-10-10",
+                "workLocationDetail":"运输部",
+                "spouseType":"NONE",
+                "outsideSpouse" : {
+                "name" : "",
+                "gender":"",
+                "idNum" : "",
+                "workLocationDetail" : ""
+                 }
+            }
+        ],
+        "date":"2015-6-29",
+        "type":"GROUP_FEMALE",
+        "content":"",
+        "status":"OFFICE_REJECT"
+        },{
+        "id":6,
+        "employees":[
+            {
+                "id":100,
+                "name":"测试夫妻男二",
+                "gender":"MALE",
+                "idNum":"32028114123142394",
+                "department":"膳食",
+                "dutyDate":"2014-10-1",
+                "workLocationDetail":"食堂",
+                "spouseType":"NONE",
+                "outsideSpouse" : {
+                "name" : "",
+                "gender":"",
+                "idNum" : "",
+                "workLocationDetail" : ""
+                 }
+            },{
+                "id":100,
+                "name":"测试夫妻女二",
+                "gender":"FEMALE",
+                "idNum":"3202811432442394",
+                "department":"接待",
+                "dutyDate":"2014-10-2",
+                "workLocationDetail":"招待所",
+                "spouseType":"NONE",
+                "outsideSpouse" : {
+                "name" : "",
+                "gender":"",
+                "idNum" : "",
+                "workLocationDetail" : ""
+                 }
+            }
+        ],
+        "date":"2015-7-11",
+        "type":"COUPLE",
+        "content":"",
+        "status":"OFFICE_APPROVED"
+        }
+    ]
+}

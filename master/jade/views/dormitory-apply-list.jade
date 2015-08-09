@@ -1,0 +1,38 @@
+include mixins/dropdown
+include mixins/search
+include mixins/panel-title
+
+
+.container-fluid(ng-controller="DormitoryApplicationController as table")
+  .panel.panel-default
+    .panel-heading
+      form.pull-right.hidden-xs.form-inline
+        +statusDrop(true)
+        +typeDrop(true)
+        +searchField()
+      +panelTitle('入住申请列表')
+    
+    table.table(ng-table='table.tableParams')
+      tbody
+        tr(ng-repeat='apply in $data')
+          td(width="40", header="'ng-table/headers/checkbox.html'")
+            .checkbox.c-checkbox
+              label
+                input(type='checkbox', ng-model="checkboxes.items[apply.id]")
+                span.fa.fa-check
+          td(data-title="'员工'", sortable="'employee.name'") 
+            .btn.btn-primary.btn-xs(ng-repeat="employee in apply.employees", ng-click="showEmployee(employee)", style="margin-right:5px;min-width:55px;") {{employee.name}}
+          td.text-center(data-title="'申请类型'", sortable="'typeCN'", width="100") {{apply.typeCN}}
+          td.text-center(data-title="'申请时间'", sortable="'date'", width="100") {{apply.date}}
+          td.text-center(data-title="'申请内容'", sortable="'content'", width="130") {{apply.content}}
+          td.text-center(data-title="'当前状态'", sortable="'statusCN'") {{apply.statusCN}}
+          td.text-center(data-title="'审核'", width="140")
+            button.btn.btn-primary.btn-xs(title='详情', data-ng-click='pass(apply)') 详情
+            button.btn.btn-success.btn-xs(title='分配', data-ng-click='pass(apply)') 分配
+            button.btn.btn-danger.btn-xs(title='拒绝', data-ng-click='reject(apply)') 退回
+    // 自定义表头checkbox的template
+    script(type="text/ng-template", id="ng-table/headers/checkbox.html")
+      .checkbox.c-checkbox
+        label
+          input(type="checkbox", ng-model="checkboxes.checked", id="select_all", name="filter-checkbox", value="")
+          span.fa.fa-check

@@ -134,3 +134,41 @@ mixin feeDepartmentDrop(label)
     ul.dropdown-menu(role='menu')
       li(ng-repeat='department in departments')
         a(href='javascript:;', ng-click='dropSelect("department", department)', ng-bind="department")
+
+mixin statusDrop(label)
+  if (label)
+    | 状态:
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.statusCN")
+    button.btn.btn-info.btn-sm(dropdown-toggle="", style="min-width:90px;")
+      span.pull-left(ng-show="select.data.statusCN" , ng-bind="select.data.statusCN")
+      span.pull-left(ng-hide="select.data.statusCN") 所有状态
+      b.caret.pull-right(style="margin-top:8px")
+    ul.dropdown-menu(role='menu')
+      li
+        a(href='javascript:;', ng-click='dropSelect("statusCN", "")') 所有状态
+      li
+        a(href='javascript:;', ng-click='dropSelect("statusCN", "已拒绝")') 已拒绝
+      li
+        a(href='javascript:;', ng-click='dropSelect("statusCN", "待审核")') 待审核
+      li
+        a(href='javascript:;', ng-click='dropSelect("statusCN", "已分配")') 已分配
+    span.mr
+
+mixin typeDrop(label)
+  if (label)
+    | 申请类型:
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.typeCN")
+    button.btn.btn-info.btn-sm(dropdown-toggle="", style="min-width:105px;")
+      span.pull-left(ng-show="select.data.typeCN" , ng-bind="select.data.typeCN")
+      span.pull-left(ng-hide="select.data.typeCN") 所有类型
+      b.caret.pull-right(style="margin-top:8px")
+    ul.dropdown-menu(role='menu')
+      li
+        a(href='#', ng-click='dropSelect("typeCN", "")') 所有类型
+      li
+        a(href='#', ng-click='dropSelect("typeCN", "集体宿舍 - 男")') 集体宿舍 - 男
+      li
+        a(href='#', ng-click='dropSelect("typeCN", "集体宿舍 - 女")') 集体宿舍 - 女
+      li
+        a(href='#', ng-click='dropSelect("typeCN", "夫妻房")') 夫妻房
+  span.mr

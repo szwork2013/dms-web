@@ -15,7 +15,8 @@
             'dms.dormitory',
             'dms.employee',
             'dms.accommodation',
-            'dms.application',
+            'dms.dormitoryApplication',
+            'dms.maintenanceApplication',
             'dms.util'
         ]);
 })();
@@ -56,13 +57,13 @@
     'use strict';
 
     angular
-        .module('app.loadingbar', []);
+        .module('app.navsearch', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.navsearch', []);
+        .module('app.loadingbar', []);
 })();
 (function() {
     'use strict';
@@ -90,13 +91,13 @@
     'use strict';
 
     angular
-        .module('app.sidebar', []);
+        .module('app.translate', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.translate', []);
+        .module('app.sidebar', []);
 })();
 (function() {
     'use strict';
@@ -437,50 +438,6 @@
 
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .config(loadingbarConfig)
-        ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 500;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.loadingbar')
-        .run(loadingbarRun)
-        ;
-    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
-    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
-
-      // Loading bar transition
-      // ----------------------------------- 
-      var thBar;
-      $rootScope.$on('$stateChangeStart', function() {
-          if($('.wrapper > section').length) // check if bar container exists
-            thBar = $timeout(function() {
-              cfpLoadingBar.start();
-            }, 0); // sets a latency Threshold
-      });
-      $rootScope.$on('$stateChangeSuccess', function(event) {
-          event.targetScope.$watch('$viewContentLoaded', function () {
-            $timeout.cancel(thBar);
-            cfpLoadingBar.complete();
-          });
-      });
-
-    }
-
-})();
 /**=========================================================
  * Module: navbar-search.js
  * Navbar search toggler * Auto dismiss on ESC key
@@ -590,6 +547,50 @@
     }
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .config(loadingbarConfig)
+        ;
+    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+    function loadingbarConfig(cfpLoadingBarProvider){
+      cfpLoadingBarProvider.includeBar = true;
+      cfpLoadingBarProvider.includeSpinner = false;
+      cfpLoadingBarProvider.latencyThreshold = 500;
+      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.loadingbar')
+        .run(loadingbarRun)
+        ;
+    loadingbarRun.$inject = ['$rootScope', '$timeout', 'cfpLoadingBar'];
+    function loadingbarRun($rootScope, $timeout, cfpLoadingBar){
+
+      // Loading bar transition
+      // ----------------------------------- 
+      var thBar;
+      $rootScope.$on('$stateChangeStart', function() {
+          if($('.wrapper > section').length) // check if bar container exists
+            thBar = $timeout(function() {
+              cfpLoadingBar.start();
+            }, 0); // sets a latency Threshold
+      });
+      $rootScope.$on('$stateChangeSuccess', function(event) {
+          event.targetScope.$watch('$viewContentLoaded', function () {
+            $timeout.cancel(thBar);
+            cfpLoadingBar.complete();
+          });
+      });
+
+    }
+
+})();
 (function() {
     'use strict';
 
@@ -834,6 +835,13 @@
               templateUrl: helper.basepath('accommodation-fee-audit.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
+          .state('app.dormitory-apply-list', {
+              url: '/dormitory-apply-list',
+              title: '入住申请管理',
+              controller: 'DormitoryApplicationController',
+              templateUrl: helper.basepath('dormitory-apply-list.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog')
+          })
           // 
           // CUSTOM RESOLVES
           //   Add your own resolves properties
@@ -914,6 +922,68 @@
 
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .config(translateConfig)
+        ;
+    translateConfig.$inject = ['$translateProvider'];
+    function translateConfig($translateProvider){
+  
+      $translateProvider.useStaticFilesLoader({
+          prefix : 'app/i18n/',
+          suffix : '.json'
+      });
+      $translateProvider.preferredLanguage('en');
+      $translateProvider.useLocalStorage();
+      $translateProvider.usePostCompiling(true);
+
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .run(translateRun)
+        ;
+    translateRun.$inject = ['$rootScope', '$translate'];
+    
+    function translateRun($rootScope, $translate){
+
+      // Internationalization
+      // ----------------------
+
+      $rootScope.language = {
+        // Handles language dropdown
+        listIsOpen: false,
+        // list of available languages
+        available: {
+          'en':       'English',
+          'es_AR':    'Español'
+        },
+        // display always the current ui language
+        init: function () {
+          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
+          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
+          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
+        },
+        set: function (localeId) {
+          // Set the new idiom
+          $translate.use(localeId);
+          // save a reference for the current language
+          $rootScope.language.selected = $rootScope.language.available[localeId];
+          // finally toggle dropdown
+          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+        }
+      };
+
+      $rootScope.language.init();
+
+    }
+})();
 /**=========================================================
  * Module: sidebar-menu.js
  * Handle sidebar collapsible elements
@@ -1267,68 +1337,6 @@
     }
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .config(translateConfig)
-        ;
-    translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider){
-  
-      $translateProvider.useStaticFilesLoader({
-          prefix : 'app/i18n/',
-          suffix : '.json'
-      });
-      $translateProvider.preferredLanguage('en');
-      $translateProvider.useLocalStorage();
-      $translateProvider.usePostCompiling(true);
-
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .run(translateRun)
-        ;
-    translateRun.$inject = ['$rootScope', '$translate'];
-    
-    function translateRun($rootScope, $translate){
-
-      // Internationalization
-      // ----------------------
-
-      $rootScope.language = {
-        // Handles language dropdown
-        listIsOpen: false,
-        // list of available languages
-        available: {
-          'en':       'English',
-          'es_AR':    'Español'
-        },
-        // display always the current ui language
-        init: function () {
-          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
-          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
-          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
-        },
-        set: function (localeId) {
-          // Set the new idiom
-          $translate.use(localeId);
-          // save a reference for the current language
-          $rootScope.language.selected = $rootScope.language.available[localeId];
-          // finally toggle dropdown
-          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
-        }
-      };
-
-      $rootScope.language.init();
-
-    }
-})();
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -1760,10 +1768,6 @@
 })();
 (function() {
     'use strict';
-    angular.module('dms.application', ['dms']);
-})();
-(function() {
-    'use strict';
     angular.module('dms.dashboard', ['dms']);
 })();
 (function() {
@@ -1772,7 +1776,15 @@
 })();
 (function() {
     'use strict';
+    angular.module('dms.dormitoryApplication', ['dms']);
+})();
+(function() {
+    'use strict';
     angular.module('dms.employee', ['dms']);
+})();
+(function() {
+    'use strict';
+    angular.module('dms.maintenanceApplication', ['dms']);
 })();
 (function() {
     'use strict';
@@ -1821,34 +1833,46 @@
     angular
         .module('dms')
         .constant('PO_VO_DICT', {
-            "GROUP_MALE" : "集体宿舍 - 男",
-            "GROUP_FEMALE" : "集体宿舍 - 女",
-            "COUPLE" : "夫妻房",
-            "MALE" : "男",
-            "FEMALE" : "女",
-            "UNKNOWN" : "其他",
-            "NONE" : "没有登记配偶",
-            "INNER" : "集团员工",
-            "OUTER" : "非集团员工",
-            "UNCHECK" : "待审核",
-            "RECHECK" : "待重审",
-            "APPROVED" : "已通过",
-            "REJECTED" : "不通过"
+            "GROUP_MALE"       : "集体宿舍 - 男",
+            "GROUP_FEMALE"     : "集体宿舍 - 女",
+            "COUPLE"           : "夫妻房",
+            "MALE"             : "男",
+            "FEMALE"           : "女",
+            "UNKNOWN"          : "其他",
+            "NONE"             : "没有登记配偶",
+            "INNER"            : "集团员工",
+            "OUTER"            : "非集团员工",
+            "UNCHECK"          : "待审核",
+            "RECHECK"          : "待重审",
+            "APPROVED"         : "已通过",
+            "REJECTED"         : "不通过",
+            "MANAGER_PENDING"  : "待经理审核",
+            "MANAGER_APPROVED" : "经理批准，待办公室审核",
+            "MANAGER_REJECTED" : "经理未批准",
+            "OFFICE_PENDING"   : "待办公室审核",
+            "OFFICE_APPROVED"  : "办公室已分配宿舍",
+            "OFFICE_REJECT"    : "办公室未批准"
         })
         .constant('VO_PO_DICT', {
-            "集体宿舍 - 男" : "GROUP_MALE",
-            "集体宿舍 - 女" : "GROUP_FEMALE",
-            "夫妻房" : "COUPLE",
-            "男" : "MALE",
-            "女" : "FEMALE",
-            "其他" : "UNKNOWN",
-            "没有登记配偶" : "NONE",
-            "集团员工" : "INNER",
-            "非集团员工" : "OUTER",
-            "待审核" : "UNCHECK",
-            "待重审" : "RECHECK",
-            "已通过" : "APPROVED",
-            "不通过" : "REJECTED"
+            "集体宿舍 - 男"    : "GROUP_MALE",
+            "集体宿舍 - 女"    : "GROUP_FEMALE",
+            "夫妻房"         : "COUPLE",
+            "男"           : "MALE",
+            "女"           : "FEMALE",
+            "其他"          : "UNKNOWN",
+            "没有登记配偶"      : "NONE",
+            "集团员工"        : "INNER",
+            "非集团员工"       : "OUTER",
+            "待审核"         : "UNCHECK",
+            "待重审"         : "RECHECK",
+            "已通过"         : "APPROVED",
+            "不通过"         : "REJECTED",
+            "待经理审核"       :"MANAGER_PENDING",
+            "经理批准，待办公室审核" :"MANAGER_APPROVED",
+            "经理未批准"       :"MANAGER_REJECTED",
+            "待办公室审核"      :"OFFICE_PENDING",
+            "办公室已分配宿舍"    :"OFFICE_APPROVED",
+            "办公室未批准"      :"OFFICE_REJECT"
         })
       ;
 
@@ -1867,6 +1891,9 @@
             },
             "accommodation" : {
                 "queryFee" : "server/accommodation-fee-list.json"
+            },
+            "dormitoryApplication" : {
+                "query" : "server/dormitory-apply-list.json"
             }
         })
       ;
@@ -2069,32 +2096,6 @@
         this.postprocessData = function(data) {
             return data;
         }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('dms.application')
-        .controller('DormitoryApplicationController', DormitoryApplicationController);
-
-    DormitoryApplicationController.$inject = ['$rootScope', '$scope'];
-    function DormitoryApplicationController($rootScope, $scope) {
-        
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('dms.application')
-        .controller('MaintenanceApplicationController', MaintenanceApplicationController);
-
-    MaintenanceApplicationController.$inject = ['$rootScope', '$scope'];
-    function MaintenanceApplicationController($rootScope, $scope) {
-       
     }
 })();
 
@@ -2394,6 +2395,167 @@
     'use strict';
 
     angular
+        .module('dms.dormitoryApplication')
+        .controller('DormitoryApplicationController', DormitoryApplicationController);
+
+    DormitoryApplicationController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'DormitoryApplicationService','ShareService'];
+    function DormitoryApplicationController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, DormitoryApplicationService, ShareService) {
+        var vm = this;
+        var data = null;
+        var updateTable = false;
+        // ========== 筛选 ========== 
+        $scope.select = {
+            data: {
+                statusCN: '',
+                typeCN: ''
+            },
+            dropdown: {
+                statusCN: false,
+                typeCN: false
+            }
+        };
+        $scope.searchkeywords = '';
+
+        $scope.dropSelect = function (name, value) {
+            $scope.select.data[name] = value;
+            $scope.select.dropdown[name] = false;
+            vm.tableParams.reload();
+        }
+
+        $scope.resetFilter = function() {
+            for(var key in $scope.select.data) {
+                $scope.select.data[key] = '';
+            }
+            $scope.searchkeywords = '';
+            vm.tableParams.reload();
+        }
+
+        $scope.refreshTable = function() {
+            updateTable = true;
+            vm.tableParams.reload();
+        }
+
+        $scope.$watch("searchKeywords", function () {
+            vm.tableParams.reload();
+        });
+        // =========================
+        
+        // ========== 数据显示 ==========
+        vm.tableParams = new ngTableParams({
+            page: 1,
+            count: 10
+        }, {
+            total: 0,
+            counts: [10, 20, 50],
+            getData: function ($defer, params) {
+                if (!data || updateTable) {
+                    DormitoryApplicationService.queryData({
+                        success: function (response) {
+                            if (response.status) {
+                                data = DormitoryApplicationService.preprocessData(response.result);
+                                showTableData($defer, params);
+                            } else {
+                                alert("列表获取失败");
+                            }
+                            updateTable = false;
+                            console.log("Query Dormitory Application List", data);
+                        },
+                        error: function (data, status, headers, config) {
+                            alert("GET Error");
+                        }
+                    },updateTable);
+                } else {
+                    showTableData($defer, params);
+                }
+            }
+        });
+        var showTableData = function($defer, params) {
+            var searchedData = searchData(data);
+            var orderedData = params.sorting() ? $filter('orderBy')(searchedData, params.orderBy()) : searchedData;
+            params.total(orderedData.length);
+            $defer.resolve($scope.dormitories = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+        var searchData = function(filterData) {
+            if($scope.searchKeywords) {
+                var keywords = $scope.searchKeywords.split(" ");
+                var i;
+                for(i in keywords) {
+                    filterData = $filter('filter')(filterData, keywords[i]);
+                }
+            }
+            
+            if($scope.select.data.statusCN) filterData = $filter('filter')(filterData, { statusCN : $scope.select.data.statusCN});
+            if($scope.select.data.typeCN) filterData = $filter('filter')(filterData, { typeCN : $scope.select.data.typeCN});
+            return filterData;
+        }
+        // =============================
+        
+        // ========== 表格Checkbox ==========
+        $scope.checkboxes = { 'checked': false, items: {} };
+        // 总checkbox
+        $scope.$watch('checkboxes.checked', function(value) {
+            angular.forEach($scope.dormitories, function(item) {
+                if (angular.isDefined(item.dormitory.id)) {
+                    $scope.checkboxes.items[item.dormitory.id] = value;
+                }
+            });
+        });
+        // 子checkbox
+        $scope.$watch('checkboxes.items', function(values) {
+            if (!$scope.dormitories) {
+                return;
+            }
+            var checked = 0, unchecked = 0,
+            total = $scope.dormitories.length;
+            angular.forEach($scope.dormitories, function(item) {
+                checked   +=  ($scope.checkboxes.items[item.dormitory.id]) || 0;
+                unchecked += (!$scope.checkboxes.items[item.dormitory.id]) || 0;
+            });
+            if ((unchecked == 0) || (checked == 0)) {
+                $scope.checkboxes.checked = (checked == total);
+            }
+            angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+        }, true);
+        // ==================================
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.dormitoryApplication')
+        .service('DormitoryApplicationService', DormitoryApplicationService);
+    DormitoryApplicationService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
+    function DormitoryApplicationService($http, VO_PO_DICT, PO_VO_DICT, URL, ngDialog, ShareService) {
+        
+        this.queryData = function(callback) {
+            $http.get(URL.dormitoryApplication.query).success(callback.success).error(callback.error);
+        }
+    
+        this.preprocessData = function(data) {
+            angular.forEach(data, function(item) {
+                item.statusCN = PO_VO_DICT[item.status];
+                item.typeCN = PO_VO_DICT[item.type];
+                angular.forEach(item.employees, function(employee) {
+                    employee.genderCN = PO_VO_DICT[employee.gender];
+                    employee.spouseTypeCN = PO_VO_DICT[employee.spouseType];
+                    employee.spouseGenderCN = PO_VO_DICT[employee.spouseGender];
+                });
+            });
+            return data;
+        }
+    
+        this.postprocessData = function(data) {
+            return data;
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
         .module('dms.employee')
         .controller('EmployeeController', EmployeeController);
 
@@ -2579,6 +2741,135 @@
         this.postprocessData = function(data) {
             return data;
         }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.maintenanceApplication')
+        .controller('MaintenanceApplicationController', MaintenanceApplicationController);
+
+    MaintenanceApplicationController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'DormitoryApplicationService','ShareService'];
+    function MaintenanceApplicationController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, DormitoryApplicationService, ShareService) {
+        var vm = this;
+        var data = null;
+        var updateTable = false;
+        // ========== 筛选 ========== 
+        $scope.select = {
+            data: {
+                statusCN: '',
+                typeCN: ''
+            },
+            dropdown: {
+                statusCN: false,
+                typeCN: false
+            }
+        };
+        $scope.searchkeywords = '';
+
+        $scope.dropSelect = function (name, value) {
+            $scope.select.data[name] = value;
+            $scope.select.dropdown[name] = false;
+            vm.tableParams.reload();
+        }
+
+        $scope.resetFilter = function() {
+            for(var key in $scope.select.data) {
+                $scope.select.data[key] = '';
+            }
+            $scope.searchkeywords = '';
+            vm.tableParams.reload();
+        }
+
+        $scope.refreshTable = function() {
+            updateTable = true;
+            vm.tableParams.reload();
+        }
+
+        $scope.$watch("searchKeywords", function () {
+            vm.tableParams.reload();
+        });
+        // =========================
+        
+        // ========== 数据显示 ==========
+        vm.tableParams = new ngTableParams({
+            page: 1,
+            count: 10
+        }, {
+            total: 0,
+            counts: [10, 20, 50],
+            getData: function ($defer, params) {
+                if (!data || updateTable) {
+                    DormitoryApplicationService.queryData({
+                        success: function (response) {
+                            if (response.status) {
+                                data = DormitoryApplicationService.preprocessData(response.result);
+                                showTableData($defer, params);
+                            } else {
+                                alert("列表获取失败");
+                            }
+                            updateTable = false;
+                            console.log("Query Dormitory Application List", data);
+                        },
+                        error: function (data, status, headers, config) {
+                            alert("GET Error");
+                        }
+                    },updateTable);
+                } else {
+                    showTableData($defer, params);
+                }
+            }
+        });
+        var showTableData = function($defer, params) {
+            var searchedData = searchData(data);
+            var orderedData = params.sorting() ? $filter('orderBy')(searchedData, params.orderBy()) : searchedData;
+            params.total(orderedData.length);
+            $defer.resolve($scope.dormitories = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+        var searchData = function(filterData) {
+            if($scope.searchKeywords) {
+                var keywords = $scope.searchKeywords.split(" ");
+                var i;
+                for(i in keywords) {
+                    filterData = $filter('filter')(filterData, keywords[i]);
+                }
+            }
+            
+            if($scope.select.data.statusCN) filterData = $filter('filter')(filterData, { statusCN : $scope.select.data.statusCN});
+            if($scope.select.data.typeCN) filterData = $filter('filter')(filterData, { typeCN : $scope.select.data.typeCN});
+            return filterData;
+        }
+        // =============================
+        
+        // ========== 表格Checkbox ==========
+        $scope.checkboxes = { 'checked': false, items: {} };
+        // 总checkbox
+        $scope.$watch('checkboxes.checked', function(value) {
+            angular.forEach($scope.dormitories, function(item) {
+                if (angular.isDefined(item.dormitory.id)) {
+                    $scope.checkboxes.items[item.dormitory.id] = value;
+                }
+            });
+        });
+        // 子checkbox
+        $scope.$watch('checkboxes.items', function(values) {
+            if (!$scope.dormitories) {
+                return;
+            }
+            var checked = 0, unchecked = 0,
+            total = $scope.dormitories.length;
+            angular.forEach($scope.dormitories, function(item) {
+                checked   +=  ($scope.checkboxes.items[item.dormitory.id]) || 0;
+                unchecked += (!$scope.checkboxes.items[item.dormitory.id]) || 0;
+            });
+            if ((unchecked == 0) || (checked == 0)) {
+                $scope.checkboxes.checked = (checked == total);
+            }
+            angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+        }, true);
+        // ==================================
     }
 })();
 
