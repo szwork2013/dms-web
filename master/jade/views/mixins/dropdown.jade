@@ -53,3 +53,52 @@ mixin dormitoryTypeDrop(label)
       li
         a(href='javascript:;', ng-click='dropSelect("dormitoryTypeCN", "夫妻房")') 夫妻房
   span.mr
+
+mixin campusDrop(label)
+  if (label)
+    | 校区: 
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.campus")
+    button.btn.btn-info.btn-sm(dropdown-toggle="", style="min-width:90px;")
+      span.pull-left(ng-show="select.data.campus" , ng-bind="select.data.campus")
+      span.pull-left(ng-hide="select.data.campus") 所有校区
+      b.caret.pull-right(style="margin-top:8px")
+    ul.dropdown-menu(role='menu')
+      li
+        a(href='javascript:;', ng-click='dropSelect("campus", "")') 所有校区
+      li(ng-repeat='(key, value) in addressTree')
+        a(href='javascript:;', ng-click='dropSelect("campus", key)', ng-bind="key")
+  span.mr
+
+mixin departmentDrop(label)
+  if (label)
+    | 中心:
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.department")
+    button.btn.btn-info.btn-sm(dropdown-toggle="", style="min-width:90px;")
+      span.pull-left(ng-show="select.data.department" , ng-bind="select.data.department")
+      span.pull-left(ng-hide="select.data.department") 所有中心
+      b.caret.pull-right(style="margin-top:8px")
+    ul.dropdown-menu(role='menu')
+      li
+        a(href='#', ng-click='dropSelect("department", "")') 所有中心
+      li(ng-repeat='department in departments')
+        a(href='#', ng-click='dropSelect("department", department)', ng-bind="department")
+  span.mr
+
+mixin genderDrop(label)
+  if (label)
+    | 性别:
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.genderCN")
+    button.btn.btn-info.btn-sm(dropdown-toggle="", style="min-width:90px;")
+      span.pull-left(ng-show="select.data.genderCN" , ng-bind="select.data.genderCN")
+      span.pull-left(ng-hide="select.data.genderCN") 所有性别
+      b.caret.pull-right(style="margin-top:8px")
+    ul.dropdown-menu(role='menu')
+      li
+        a(href='#', ng-click='dropSelect("genderCN", "")') 所有性别
+      li
+        a(href='#', ng-click='dropSelect("genderCN", "男")') 男
+      li
+        a(href='#', ng-click='dropSelect("genderCN", "女")') 女
+      li
+        a(href='#', ng-click='dropSelect("genderCN", "其他")') 其他
+  span.mr

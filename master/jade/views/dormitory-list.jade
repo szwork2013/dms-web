@@ -1,5 +1,6 @@
 include mixins/dropdown
 include mixins/search
+include mixins/panel-title
 
 .container-fluid(ng-controller="DormitoryListController as table")
   .panel.panel-default
@@ -8,9 +9,8 @@ include mixins/search
         +addressDropGroup(true)
         +dormitoryTypeDrop(true)
         +searchField()
-      .panel-title 列表视图
-        button.btn.btn-xs.btn-default(type='button', ng-click='refreshTable()')
-          span.fa.fa-refresh
+      +panelTitle('宿舍信息列表')
+
     table.table(ng-table='table.tableParams')
       tbody
         tr(ng-repeat='item in $data')

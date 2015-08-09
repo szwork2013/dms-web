@@ -1,0 +1,40 @@
+include mixins/dropdown
+include mixins/search
+include mixins/panel-title
+
+.container-fluid(ng-controller="EmployeeController as table")
+  .panel.panel-default
+    .panel-heading
+      form.pull-right.hidden-xs.form-inline
+        +campusDrop(true)
+        +departmentDrop(true)
+        +genderDrop(true)
+        +searchField()
+      +panelTitle('员工信息列表')
+    
+    table.table(ng-table='table.tableParams')
+      tbody
+        tr(ng-repeat='item in $data')
+          td(width="40", header="'ng-table/headers/checkbox.html'")
+            .checkbox.c-checkbox
+              label
+                input(type='checkbox', ng-model="checkboxes.items[item.employee.id]")
+                span.fa.fa-check
+          td.text-center(data-title="'姓名'", sortable="'employee.name'", width="90") {{ item.employee.name }}
+          td.text-center(data-title="'性别'", sortable="'employee.gender'", width="70") {{ item.employee.genderCN }}
+          td.text-center(data-title="'身份证'", sortable="'employee.idNum'", width="200") {{ item.employee.idNum }}
+          td.text-center(data-title="'入职时间'", sortable="'employee.dutyDate'", width="100") {{ item.employee.dutyDate }}
+          td.text-center(data-title="'所属中心'", sortable="'employee.department'", width="100") {{ item.employee.department }}
+          td.text-center(data-title="'工作校区'", sortable="'employee.workCampus'") {{ item.employee.workCampus }}
+          td.text-center(data-title="'工作地址'", sortable="'employee.workLocationDetail'") {{ item.employee.workLocationDetail }}
+          td.text-center(data-title="'宿舍地址'", sortable="'dormitory.addressDetailCN'") {{ item.dormitory.addressDetailCN }}
+          td.text-center(data-title="'操作'", width="80")
+            button.btn.btn-warning.btn-xs(title='修改', data-ng-click='modifyEmployee(item);')
+              i.fa.fa-pencil
+    // 自定义表头checkbox的template
+    script(type="text/ng-template", id="ng-table/headers/checkbox.html")
+      .checkbox.c-checkbox
+        label
+          input(type="checkbox", ng-model="checkboxes.checked", id="select_all", name="filter-checkbox", value="")
+          span.fa.fa-check
+  

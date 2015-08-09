@@ -25,11 +25,6 @@
             "集团员工" : "INNER",
             "非集团员工" : "OUTER"
         })
-        .constant('URL', {
-            "dormitory" : {
-                "query" : "server/dormitory-list.json"
-            }
-        })
       ;
 
 })();

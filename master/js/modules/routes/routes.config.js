@@ -51,6 +51,13 @@
               templateUrl: helper.basepath('dormitory-list.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
+          .state('app.employee', {
+              url: '/employee',
+              title: '员工列表',
+              controller: 'EmployeeController',
+              templateUrl: helper.basepath('employee.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog')
+          })
           // 
           // CUSTOM RESOLVES
           //   Add your own resolves properties
