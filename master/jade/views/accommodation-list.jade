@@ -7,28 +7,29 @@ include mixins/panel-title
   .panel.panel-default
     .panel-heading
       form.pull-right.hidden-xs.form-inline
-        +campusDrop(true)
+        +addressDropGroup(true)
         +typeDrop(true)
         +searchField()
       +panelTitle('入住信息列表')
     
     table.table(ng-table='table.tableParams')
       tbody
-        tr(ng-repeat='accommodation in $data')
+        tr(ng-repeat='accommodationItem in $data')
           td(width="40", header="'ng-table/headers/checkbox.html'")
             .checkbox.c-checkbox
               label
-                input(type='checkbox', ng-model="checkboxes.items[accommodation.id]")
+                input(type='checkbox', ng-model="checkboxes.items[accommodationItem.id]")
                 span.fa.fa-check
           td(data-title="'员工'", sortable="'employee.name'") 
-            .btn.btn-primary.btn-xs(ng-repeat="employee in accommodation.employees", ng-click="showEmployee(employee)", style="margin-right:5px;min-width:55px;") {{employee.name}}
-          td.text-center(data-title="'宿舍类型'", sortable="'dormitory.typeCN'", width="100") {{accommodation.dormitory.typeCN}}
-          td.text-center(data-title="'宿舍地址'", sortable="'dormitory.addressDetailCN'", width="130") {{accommodation.dormitory.addressDetailCN}}
-          td.text-center(data-title="'迁入时间'", sortable="'checkInDate'") {{accommodation.checkInDate}}
-          td.text-center(data-title="'迁出时间'", sortable="'checkOutDate'") {{accommodation.checkOutDate}}
-          td.text-center(data-title="'当前状态'", sortable="'statusCN'") {{accommodation.statusCN}}
+            .btn.btn-primary.btn-xs(ng-repeat="accommodation in accommodationItem.accommodations", ng-click="showEmployee(accommodation.employee)", style="margin-right:5px;min-width:55px;") {{accommodation.employee.name}}
+          td.text-center(data-title="'宿舍地址'", sortable="'dormitory.addressDetailCN'") {{accommodationItem.dormitory.addressDetailCN}}
+          td.text-center(data-title="'宿舍类型'", sortable="'dormitory.typeCN'") {{accommodationItem.dormitory.typeCN}}
+          td.text-center(data-title="'迁入时间'", sortable="'accommodations[0].checkInDate'") {{accommodationItem.accommodations[0].checkInDate}}
+          td.text-center(data-title="'迁出时间'", sortable="'accommodations[0].checkOutDate'", ng-if="accommodationItem.accommodations[0].checkOutDate") {{accommodationItem.accommodations[0].checkOutDate}}
+          td.text-center(data-title="'迁出时间'", sortable="'accommodations[0].checkOutDate'", ng-if="!accommodationItem.accommodations[0].checkOutDate") /
+          td.text-center(data-title="'当前状态'", sortable="'statusCN'") {{accommodationItem.statusCN}}
           td.text-center(data-title="'操作'", width="70")
-            button.btn.btn-danger.btn-xs(title='迁出', data-ng-click='checkout(accommodation)')
+            button.btn.btn-danger.btn-xs(title='迁出', data-ng-click='checkout(accommodationItem)')
               span.fa.fa-sign-out
     // 自定义表头checkbox的template
     script(type="text/ng-template", id="ng-table/headers/checkbox.html")

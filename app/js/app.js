@@ -33,6 +33,12 @@
     'use strict';
 
     angular
+        .module('app.lazyload', []);
+})();
+(function() {
+    'use strict';
+
+    angular
         .module('app.core', [
             'ngRoute',
             'ngAnimate',
@@ -47,12 +53,6 @@
             'ngResource',
             'ui.utils'
         ]);
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.lazyload', []);
 })();
 (function() {
     'use strict';
@@ -86,13 +86,13 @@
     'use strict';
 
     angular
-        .module('app.settings', []);
+        .module('app.sidebar', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.sidebar', []);
+        .module('app.settings', []);
 })();
 (function() {
     'use strict';
@@ -158,117 +158,6 @@
     }
 
 })();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .config(coreConfig);
-
-    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide'];
-    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide){
-      
-      var core = angular.module('app.core');
-      // registering components after bootstrap
-      core.controller = $controllerProvider.register;
-      core.directive  = $compileProvider.directive;
-      core.filter     = $filterProvider.register;
-      core.factory    = $provide.factory;
-      core.service    = $provide.service;
-      core.constant   = $provide.constant;
-      core.value      = $provide.value;
-
-    }
-
-})();
-/**=========================================================
- * Module: constants.js
- * Define constants to inject across the application
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .constant('APP_MEDIAQUERY', {
-          'desktopLG':             1200,
-          'desktop':                992,
-          'tablet':                 768,
-          'mobile':                 480
-        })
-      ;
-
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.core')
-        .run(appRun);
-
-    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
-    
-    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
-      
-      // Set reference to access them from any scope
-      $rootScope.$state = $state;
-      $rootScope.$stateParams = $stateParams;
-      $rootScope.$storage = $window.localStorage;
-
-      // Uncomment this to disable template cache
-      $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-          if (typeof(toState) !== 'undefined'){
-            $templateCache.remove(toState.templateUrl);
-          }
-      });
-
-      // Allows to use branding color with interpolation
-      // {{ colorByName('primary') }}
-      $rootScope.colorByName = Colors.byName;
-
-      // cancel click event easily
-      $rootScope.cancel = function($event) {
-        $event.stopPropagation();
-      };
-
-      // Hooks Example
-      // ----------------------------------- 
-
-      // Hook not found
-      $rootScope.$on('$stateNotFound',
-        function(event, unfoundState/*, fromState, fromParams*/) {
-            console.log(unfoundState.to); // "lazy.state"
-            console.log(unfoundState.toParams); // {a:1, b:2}
-            console.log(unfoundState.options); // {inherit:false} + default options
-        });
-      // Hook error
-      $rootScope.$on('$stateChangeError',
-        function(event, toState, toParams, fromState, fromParams, error){
-          console.log(error);
-        });
-      // Hook success
-      $rootScope.$on('$stateChangeSuccess',
-        function(/*event, toState, toParams, fromState, fromParams*/) {
-          // display new view from top
-          $window.scrollTo(0, 0);
-          // Save the route title
-          $rootScope.currTitle = $state.current.title;
-        });
-
-      // Load a title dynamically
-      $rootScope.currTitle = $state.current.title;
-      $rootScope.pageTitle = function() {
-        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
-        document.title = title;
-        return title;
-      };      
-
-    }
-
-})();
-
 
 (function() {
     'use strict';
@@ -438,6 +327,117 @@
         ;
 
 })();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .config(coreConfig);
+
+    coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide'];
+    function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide){
+      
+      var core = angular.module('app.core');
+      // registering components after bootstrap
+      core.controller = $controllerProvider.register;
+      core.directive  = $compileProvider.directive;
+      core.filter     = $filterProvider.register;
+      core.factory    = $provide.factory;
+      core.service    = $provide.service;
+      core.constant   = $provide.constant;
+      core.value      = $provide.value;
+
+    }
+
+})();
+/**=========================================================
+ * Module: constants.js
+ * Define constants to inject across the application
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .constant('APP_MEDIAQUERY', {
+          'desktopLG':             1200,
+          'desktop':                992,
+          'tablet':                 768,
+          'mobile':                 480
+        })
+      ;
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.core')
+        .run(appRun);
+
+    appRun.$inject = ['$rootScope', '$state', '$stateParams',  '$window', '$templateCache', 'Colors'];
+    
+    function appRun($rootScope, $state, $stateParams, $window, $templateCache, Colors) {
+      
+      // Set reference to access them from any scope
+      $rootScope.$state = $state;
+      $rootScope.$stateParams = $stateParams;
+      $rootScope.$storage = $window.localStorage;
+
+      // Uncomment this to disable template cache
+      $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+          if (typeof(toState) !== 'undefined'){
+            $templateCache.remove(toState.templateUrl);
+          }
+      });
+
+      // Allows to use branding color with interpolation
+      // {{ colorByName('primary') }}
+      $rootScope.colorByName = Colors.byName;
+
+      // cancel click event easily
+      $rootScope.cancel = function($event) {
+        $event.stopPropagation();
+      };
+
+      // Hooks Example
+      // ----------------------------------- 
+
+      // Hook not found
+      $rootScope.$on('$stateNotFound',
+        function(event, unfoundState/*, fromState, fromParams*/) {
+            console.log(unfoundState.to); // "lazy.state"
+            console.log(unfoundState.toParams); // {a:1, b:2}
+            console.log(unfoundState.options); // {inherit:false} + default options
+        });
+      // Hook error
+      $rootScope.$on('$stateChangeError',
+        function(event, toState, toParams, fromState, fromParams, error){
+          console.log(error);
+        });
+      // Hook success
+      $rootScope.$on('$stateChangeSuccess',
+        function(/*event, toState, toParams, fromState, fromParams*/) {
+          // display new view from top
+          $window.scrollTo(0, 0);
+          // Save the route title
+          $rootScope.currTitle = $state.current.title;
+        });
+
+      // Load a title dynamically
+      $rootScope.currTitle = $state.current.title;
+      $rootScope.pageTitle = function() {
+        var title = $rootScope.app.name + ' - ' + ($rootScope.currTitle || $rootScope.app.description);
+        document.title = title;
+        return title;
+      };      
+
+    }
+
+})();
+
 
 (function() {
     'use strict';
@@ -873,63 +873,6 @@
 })();
 
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.settings')
-        .run(settingsRun);
-
-    settingsRun.$inject = ['$rootScope', '$localStorage'];
-
-    function settingsRun($rootScope, $localStorage){
-
-      // Global Settings
-      // ----------------------------------- 
-      $rootScope.app = {
-        name: 'DMS',
-        description: '后勤集团宿舍管理系统',
-        year: ((new Date()).getFullYear()),
-        layout: {
-          isFixed: true,
-          isCollapsed: false,
-          isBoxed: false,
-          isRTL: false,
-          horizontal: false,
-          isFloat: false,
-          asideHover: false,
-          theme: 'app/css/theme-e.css'
-        },
-        useFullLayout: false,
-        hiddenFooter: false,
-        offsidebarOpen: false,
-        asideToggled: false,
-        viewAnimation: 'ng-fadeInRight'
-      };
-
-      // Setup the layout mode
-      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
-
-      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
-      // if( angular.isDefined($localStorage.layout) )
-      //   $rootScope.app.layout = $localStorage.layout;
-      // else
-      //   $localStorage.layout = $rootScope.app.layout;
-      //
-      // $rootScope.$watch('app.layout', function () {
-      //   $localStorage.layout = $rootScope.app.layout;
-      // }, true);
-
-      // Close submenu when sidebar change from collapsed to normal
-      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
-        if( newValue === false )
-          $rootScope.$broadcast('closeSidebarMenu');
-      });
-
-    }
-
-})();
-
 /**=========================================================
  * Module: sidebar-menu.js
  * Handle sidebar collapsible elements
@@ -1281,6 +1224,63 @@
           });
         }
     }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.settings')
+        .run(settingsRun);
+
+    settingsRun.$inject = ['$rootScope', '$localStorage'];
+
+    function settingsRun($rootScope, $localStorage){
+
+      // Global Settings
+      // ----------------------------------- 
+      $rootScope.app = {
+        name: 'DMS',
+        description: '后勤集团宿舍管理系统',
+        year: ((new Date()).getFullYear()),
+        layout: {
+          isFixed: true,
+          isCollapsed: false,
+          isBoxed: false,
+          isRTL: false,
+          horizontal: false,
+          isFloat: false,
+          asideHover: false,
+          theme: 'app/css/theme-e.css'
+        },
+        useFullLayout: false,
+        hiddenFooter: false,
+        offsidebarOpen: false,
+        asideToggled: false,
+        viewAnimation: 'ng-fadeInRight'
+      };
+
+      // Setup the layout mode
+      $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
+
+      // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
+      // if( angular.isDefined($localStorage.layout) )
+      //   $rootScope.app.layout = $localStorage.layout;
+      // else
+      //   $localStorage.layout = $rootScope.app.layout;
+      //
+      // $rootScope.$watch('app.layout', function () {
+      //   $localStorage.layout = $rootScope.app.layout;
+      // }, true);
+
+      // Close submenu when sidebar change from collapsed to normal
+      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
+        if( newValue === false )
+          $rootScope.$broadcast('closeSidebarMenu');
+      });
+
+    }
+
 })();
 
 (function() {
@@ -1923,17 +1923,21 @@
 
     AccommodationController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'AccommodationService','ShareService'];
     function AccommodationController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, AccommodationService, ShareService) {
-    var vm = this;
+        var vm = this;
         var data = null;
         var updateTable = false;
         // ========== 筛选 ========== 
         $scope.select = {
             data: {
                 campus: '',
+                address: '',
+                floor: '',
                 dormitoryTypeCN: ''
             },
             dropdown: {
                 campus: false,
+                address: false,
+                floor: false,
                 dormitoryTypeCN: false
             }
         };
@@ -1944,6 +1948,13 @@
             $scope.select.dropdown[name] = false;
             if(name == 'year') {
                 $scope.select.data.month = '';
+            }
+            if (name == 'campus') {
+                $scope.select.data.address = "";
+                $scope.select.data.floor = "";
+            }
+            if (name == 'address') {
+                $scope.select.data.floor = "";
             }
             vm.tableParams.reload();
         }
@@ -2010,8 +2021,9 @@
                     filterData = $filter('filter')(filterData, keywords[i]);
                 }
             }
-            
             if($scope.select.data.campus) filterData = $filter('filter')(filterData, { dormitory : { campus : $scope.select.data.campus}});
+            if($scope.select.data.address) filterData = $filter('filter')(filterData, { dormitory : { address : $scope.select.data.address}});
+            if($scope.select.data.floor) filterData = $filter('filter')(filterData, { dormitory : { floor : $scope.select.data.floor}});
             if($scope.select.data.dormitoryTypeCN) filterData = $filter('filter')(filterData, { dormitoryTypeCN : { department : $scope.select.data.dormitoryTypeCN}});
             return filterData;
         }
@@ -2083,12 +2095,14 @@
     
         this.preprocessData = function(data) {
             angular.forEach(data, function(item) {
-                // item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + "层 - " + item.dormitory.doorplate;
-                // item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
-                // item.employee.genderCN = PO_VO_DICT[item.employee.gender];
-                // item.employee.spouseTypeCN = PO_VO_DICT[item.employee.spouseType];
-                // item.employee.spouseGenderCN = PO_VO_DICT[item.employee.spouseGender];
-                // item.statusCN = PO_VO_DICT[item.status];
+                item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + "层 - " + item.dormitory.doorplate;
+                item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
+                angular.forEach(item.accommodations, function(accommodation) {
+                    accommodation.employee.genderCN = PO_VO_DICT[accommodation.employee.gender];
+                    accommodation.employee.spouseTypeCN = PO_VO_DICT[accommodation.employee.spouseType];
+                    accommodation.employee.spouseGenderCN = PO_VO_DICT[accommodation.employee.spouseGender];
+                });
+                item.statusCN = item.accommodations[0].checkOutDate ? "已迁出":"在住";
             });
             return data;
         }

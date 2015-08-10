@@ -7,17 +7,21 @@
 
     AccommodationController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'AccommodationService','ShareService'];
     function AccommodationController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, AccommodationService, ShareService) {
-    var vm = this;
+        var vm = this;
         var data = null;
         var updateTable = false;
         // ========== 筛选 ========== 
         $scope.select = {
             data: {
                 campus: '',
+                address: '',
+                floor: '',
                 dormitoryTypeCN: ''
             },
             dropdown: {
                 campus: false,
+                address: false,
+                floor: false,
                 dormitoryTypeCN: false
             }
         };
@@ -28,6 +32,13 @@
             $scope.select.dropdown[name] = false;
             if(name == 'year') {
                 $scope.select.data.month = '';
+            }
+            if (name == 'campus') {
+                $scope.select.data.address = "";
+                $scope.select.data.floor = "";
+            }
+            if (name == 'address') {
+                $scope.select.data.floor = "";
             }
             vm.tableParams.reload();
         }
@@ -94,8 +105,9 @@
                     filterData = $filter('filter')(filterData, keywords[i]);
                 }
             }
-            
             if($scope.select.data.campus) filterData = $filter('filter')(filterData, { dormitory : { campus : $scope.select.data.campus}});
+            if($scope.select.data.address) filterData = $filter('filter')(filterData, { dormitory : { address : $scope.select.data.address}});
+            if($scope.select.data.floor) filterData = $filter('filter')(filterData, { dormitory : { floor : $scope.select.data.floor}});
             if($scope.select.data.dormitoryTypeCN) filterData = $filter('filter')(filterData, { dormitoryTypeCN : { department : $scope.select.data.dormitoryTypeCN}});
             return filterData;
         }

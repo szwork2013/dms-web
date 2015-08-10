@@ -13,12 +13,14 @@
     
         this.preprocessData = function(data) {
             angular.forEach(data, function(item) {
-                // item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + "层 - " + item.dormitory.doorplate;
-                // item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
-                // item.employee.genderCN = PO_VO_DICT[item.employee.gender];
-                // item.employee.spouseTypeCN = PO_VO_DICT[item.employee.spouseType];
-                // item.employee.spouseGenderCN = PO_VO_DICT[item.employee.spouseGender];
-                // item.statusCN = PO_VO_DICT[item.status];
+                item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + "层 - " + item.dormitory.doorplate;
+                item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
+                angular.forEach(item.accommodations, function(accommodation) {
+                    accommodation.employee.genderCN = PO_VO_DICT[accommodation.employee.gender];
+                    accommodation.employee.spouseTypeCN = PO_VO_DICT[accommodation.employee.spouseType];
+                    accommodation.employee.spouseGenderCN = PO_VO_DICT[accommodation.employee.spouseGender];
+                });
+                item.statusCN = item.accommodations[0].checkOutDate ? "已迁出":"在住";
             });
             return data;
         }
