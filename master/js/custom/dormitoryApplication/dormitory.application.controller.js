@@ -124,5 +124,51 @@
             angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
         }, true);
         // ==================================
+
+        $scope.showEmployee = function(employee) {
+            ShareService.setData(angular.copy(employee));
+            ngDialog.open({
+                template: 'app/views/dialogs/show-employee.html',
+                controller: function ($scope, ngDialog, ShareService) {
+                    $scope.employee = ShareService.getData();
+
+                    // ===== 对话框操作 ===== 
+                    $scope.checkOut = function() {
+                        console.log("Check Out", $scope.employee);
+                        // TODO 发送迁出消息
+                    }
+                    $scope.cancel = function() {
+                        ngDialog.close();
+                    }
+                    // ====================== 
+                }
+            });
+        }
+
+        $scope.showDorApplyDetail = function(apply) {
+            ShareService.setData(angular.copy(apply));
+            ngDialog.open({
+                template: 'app/views/dialogs/show-dormitory-apply.html',
+                controller: function ($scope, ngDialog, ShareService) {
+                    $scope.apply = ShareService.getData();
+                    console.log($scope.apply);
+                    // ===== 对话框操作 ===== 
+                    $scope.resolveApply = function() {
+                        console.log("Check Out", $scope.apply);
+                        // TODO 发送迁出消息
+                    }
+                    $scope.cancel = function() {
+                        ngDialog.close();
+                    }
+                    // ====================== 
+                }
+            });
+        }
+
+        $scope.resolveApply = function(employee) {
+        }
+
+        $scope.rejectApply = function(employee) {
+        }
     }
 })();

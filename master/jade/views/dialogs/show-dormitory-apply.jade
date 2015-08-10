@@ -1,71 +1,98 @@
 div
   legend
-    h3.mt0 员工详情 - {{ employee.name }}
+    h3.mt0 入住申请
   form.form-horizontal
+    .form-group
+      label.col-sm-12(for='input-type') 申请类型
+      .col-sm-12
+        input#input-type.form-control(type='text', name="type", ng-model="apply.type", required='', disabled='')
+    .form-group
+      label.col-sm-12(for='input-date') 申请时间
+      .col-sm-12
+        input#input-date.form-control(type='text', name="date", ng-model="apply.date", required='', disabled='')
+    .form-group
+      label.col-sm-12(for='input-content') 申请理由
+      .col-sm-12
+        input#input-content.form-control(type='text', name="content", ng-model="apply.content", required='', disabled='')
+
+  form.form-horizontal
+    h4.text-center 入住人员 1
     .form-group
       label.col-sm-2.control-label(for='input-name') 姓名
       .col-sm-4
-        input#input-name.form-control(type='text', name="name", ng-model="employee.name", required='', disabled='')
+        input#input-name.form-control(type='text', name="name", ng-model="apply.employees[0].name", required='', disabled='')
       label.col-sm-2.control-label(for='input-gender') 性别
       .col-sm-4
-        input#input-gender.form-control(type='text', name="gender", ng-model="employee.genderCN", required='', disabled='')
+        input#input-gender.form-control(type='text', name="gender", ng-model="apply.employees[0].genderCN", required='', disabled='')
     .form-group
       label.col-sm-2.control-label(for='input-idNum') 身份证
       .col-sm-10
-        input#input-idNum.form-control(type='text', name="idNum", ng-model="employee.idNum", required='', disabled='')
+        input#input-idNum.form-control(type='text', name="idNum", ng-model="apply.employees[0].idNum", required='', disabled='')
     .form-group
       label.col-sm-2.control-label(for='input-department') 中心
       .col-sm-4
-        input#input-department.form-control(type='text', name="department", ng-model="employee.department", required='', disabled='')
+        input#input-department.form-control(type='text', name="department", ng-model="apply.employees[0].department", required='', disabled='')
       label.col-sm-2.control-label(for='input-dutyDate') 入职
       .col-sm-4
-        input#input-dutyDate.form-control(type='text', name="dutyDate", ng-model="employee.dutyDate", required='', disabled='')
-    //- 配偶需要分情况组织界面
-    h3 配偶情况&nbsp;&nbsp;
-      small(ng-bind="employee.spouseTypeCN", style="font-size:12px;")
-    hr(style="margin-top: 0;")
-  //- 校外配偶
-  form.form-horizontal(ng-if='employee.spouseType=="OUTER"')
+        input#input-dutyDate.form-control(type='text', name="dutyDate", ng-model="apply.employees[0].dutyDate", required='', disabled='')
     .form-group
-      label.col-sm-2.control-label(for='input-outer-name') 姓名
+      label.col-sm-2.control-label(for='input-department') 校区
       .col-sm-4
-        input#input-outer-name.form-control(type='text', name="outer-name", ng-model="employee.outsideSpouse.name", required='',disabled='')
-      label.col-sm-2.control-label(for='input-outer-gender') 性别
+        input#input-workCampus.form-control(type='text', name="workCampus", ng-model="apply.employees[0].workCampus", required='', disabled='')
+      label.col-sm-2.control-label(for='input-workLocationDetail') 单位
       .col-sm-4
-        input#input-outer-gender.form-control(type='text', name="outer-gender", ng-model="employee.outsideSpouse.genderCN", required='',disabled='')
+        input#input-workLocationDetail.form-control(type='text', name="workLocationDetail", ng-model="apply.employees[0].workLocationDetail", required='', disabled='')
+
+
+  form.form-horizontal(ng-if="apply.employees[0].spouseType=='INNER'")
+    h4.text-center 入住人员（配偶）（集团员工）
     .form-group
-      label.col-sm-2.control-label(for='input-outer-idNum') 身份证
+      label.col-sm-2.control-label(for='input-name') 姓名
+      .col-sm-4
+        input#input-name.form-control(type='text', name="name", ng-model="apply.employees[1].name", required='', disabled='')
+      label.col-sm-2.control-label(for='input-gender') 性别
+      .col-sm-4
+        input#input-gender.form-control(type='text', name="gender", ng-model="apply.employees[1].genderCN", required='', disabled='')
+    .form-group
+      label.col-sm-2.control-label(for='input-idNum') 身份证
       .col-sm-10
-        input#input-outer-idNum.form-control(type='text', name="outer-idNum", ng-model="employee.outsideSpouse.idNum", required='',disabled='')
+        input#input-idNum.form-control(type='text', name="idNum", ng-model="apply.employees[1].idNum", required='', disabled='')
     .form-group
-      label.col-sm-2.control-label(for='input-outer-workLocationDetail') 单位
+      label.col-sm-2.control-label(for='input-department') 中心
+      .col-sm-4
+        input#input-department.form-control(type='text', name="department", ng-model="apply.employees[1].department", required='', disabled='')
+      label.col-sm-2.control-label(for='input-dutyDate') 入职
+      .col-sm-4
+        input#input-dutyDate.form-control(type='text', name="dutyDate", ng-model="apply.employees[1].dutyDate", required='', disabled='')
+    .form-group
+      label.col-sm-2.control-label(for='input-department') 校区
+      .col-sm-4
+        input#input-workCampus.form-control(type='text', name="workCampus", ng-model="apply.employees[1].workCampus", required='')
+      label.col-sm-2.control-label(for='input-workLocationDetail') 单位
+      .col-sm-4
+        input#input-workLocationDetail.form-control(type='text', name="workLocationDetail", ng-model="apply.employees[1].workLocationDetail", required='')
+
+  form.form-horizontal(ng-if="apply.employees[0].spouseType=='OUTER'")
+    h4.text-center 入住人员（配偶）（非集团员工）
+    .form-group
+      label.col-sm-2.control-label(for='input-spouseName') 姓名
+      .col-sm-4
+        input#input-spouseName.form-control(type='text', name="spouseName", ng-model="apply.employees[0].spouseName", required='', disabled='')
+      label.col-sm-2.control-label(for='input-spouseGenderCN') 性别
+      .col-sm-4
+        input#input-spouseGenderCN.form-control(type='text', name="spouseGenderCN", ng-model="apply.employees[0].spouseGenderCN", required='', disabled='')
+    .form-group
+      label.col-sm-2.control-label(for='input-spouseIdNum') 身份证
       .col-sm-10
-        input#input-outer-workLocationDetail.form-control(type='text', name="outer-workLocationDetail", ng-model="employee.outsideSpouse.workLocationDetail", required='',disabled='')
-  //- 校内配偶
-  form.form-horizontal(ng-if='employee.spouseType=="INNER"')
+        input#input-spouseIdNum.form-control(type='text', name="spouseIdNum", ng-model="apply.employees[0].spouseIdNum", required='', disabled='')
     .form-group
-      label.col-sm-2.control-label(for='input-inner-name') 姓名
+      label.col-sm-2.control-label(for='input-spouseWorkLocationDetail') 工作地址
       .col-sm-4
-        input#input-inner-name.form-control(type='text', name="inner-name", ng-model="employee.innerSpouse.name", required='',disabled='')
-      label.col-sm-2.control-label(for='input-inner-gender') 性别
-      .col-sm-4
-        input#input-inner-gender.form-control(type='text', name="inner-gender", ng-model="employee.innerSpouse.genderCN", required='',disabled='')
-    .form-group
-      label.col-sm-2.control-label(for='input-inner-idNum') 身份证
-      .col-sm-10
-        input#input-inner-idNum.form-control(type='text', name="inner-idNum", ng-model="employee.innerSpouse.idNum", required='',disabled='')
-    .form-group
-      label.col-sm-2.control-label(for='input-inner-department') 中心
-      .col-sm-4
-        input#input-inner-department.form-control(type='text', name="inner-department", ng-model="employee.innerSpouse.department", required='',disabled='')
-      label.col-sm-2.control-label(for='input-inner-dutyDate') 入职
-      .col-sm-4
-        input#input-inner-dutyDate.form-control(type='text', name="inner-dutyDate", ng-model="employee.innerSpouse.dutyDate", required='',disabled='')
+        input#input-spouseWorkLocationDetail.form-control(type='text', name="spouseWorkLocationDetail", ng-model="apply.employees[0].spouseWorkLocationDetail", required='', disabled='')
+
   .row
     .container-fluid 
-      .pull-left(style="margin-top: 6px;")
-        small 如需修改员工信息，请使用
-          a(href="#") 员工管理
       .pull-right
         button.btn.btn-default(type='button', ng-click='cancel()') 返回
-        //-button.btn.btn-warning(type='button', ng-click='checkOut()') 迁出
+        button.btn.btn-success(type='button', ng-click='resolve()') 分配
+        button.btn.btn-danger(type='button', ng-click='reject()') 拒绝

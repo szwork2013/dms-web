@@ -68,9 +68,15 @@
                <td data-title="'申请内容'" sortable="'content'" width="130" class="text-center">{{apply.content}}</td>
                <td data-title="'当前状态'" sortable="'statusCN'" class="text-center">{{apply.statusCN}}</td>
                <td data-title="'审核'" width="140" class="text-center">
-                  <button title="详情" data-ng-click="pass(apply)" class="btn btn-primary btn-xs">详情</button>
-                  <button title="分配" data-ng-click="pass(apply)" class="btn btn-success btn-xs">分配</button>
-                  <button title="拒绝" data-ng-click="reject(apply)" class="btn btn-danger btn-xs">退回</button>
+                  <button title="详情" data-ng-click="showDorApplyDetail(apply)" class="btn btn-info btn-xs">
+                     <span class="fa fa-reorder"></span>
+                  </button>
+                  <button title="分配" data-ng-click="resolveApply(apply)" class="btn btn-success btn-xs">
+                     <span class="fa fa-sign-in"></span>
+                  </button>
+                  <button title="拒绝" data-ng-click="rejectApply(apply)" class="btn btn-danger btn-xs">
+                     <span class="fa fa-ban"></span>
+                  </button>
                </td>
             </tr>
          </tbody>

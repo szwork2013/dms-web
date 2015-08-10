@@ -40,6 +40,13 @@ div
       label.col-sm-2.control-label(for='input-dutyDate') 入职
       .col-sm-4
         input#input-dutyDate.form-control(type='text', name="dutyDate", ng-model="employee.dutyDate", required='')
+    .form-group
+      label.col-sm-2.control-label(for='input-department') 校区
+      .col-sm-4
+        input#input-workCampus.form-control(type='text', name="workCampus", ng-model="employee.workCampus", required='')
+      label.col-sm-2.control-label(for='input-workLocationDetail') 单位
+      .col-sm-4
+        input#input-workLocationDetail.form-control(type='text', name="workLocationDetail", ng-model="employee.workLocationDetail", required='')
     //- 配偶需要分情况组织界面
     h3 配偶情况&nbsp;&nbsp;
       small(ng-bind="employee.spouseTypeCN", style="font-size:12px;")

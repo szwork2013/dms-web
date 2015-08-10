@@ -27,9 +27,12 @@ include mixins/panel-title
           td.text-center(data-title="'申请内容'", sortable="'content'", width="130") {{apply.content}}
           td.text-center(data-title="'当前状态'", sortable="'statusCN'") {{apply.statusCN}}
           td.text-center(data-title="'审核'", width="140")
-            button.btn.btn-primary.btn-xs(title='详情', data-ng-click='pass(apply)') 详情
-            button.btn.btn-success.btn-xs(title='分配', data-ng-click='pass(apply)') 分配
-            button.btn.btn-danger.btn-xs(title='拒绝', data-ng-click='reject(apply)') 退回
+            button.btn.btn-info.btn-xs(title='详情', data-ng-click='showDorApplyDetail(apply)') 
+              span.fa.fa-reorder
+            button.btn.btn-success.btn-xs(title='分配', data-ng-click='resolveApply(apply)')
+              span.fa.fa-sign-in
+            button.btn.btn-danger.btn-xs(title='拒绝', data-ng-click='rejectApply(apply)')
+              span.fa.fa-ban
     // 自定义表头checkbox的template
     script(type="text/ng-template", id="ng-table/headers/checkbox.html")
       .checkbox.c-checkbox
