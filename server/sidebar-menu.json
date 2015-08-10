@@ -104,7 +104,7 @@
   },
   {
     "text": "宿舍申请",
-    "sref": "app.dormitoryapply",
+    "sref": "app.dormitory-apply-wizard",
     "icon": "icon-docs"
   },
   {

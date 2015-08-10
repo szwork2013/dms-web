@@ -93,6 +93,13 @@
               templateUrl: helper.basepath('account-list.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
+          .state('app.dormitory-apply-wizard', {
+              url: '/dormitory-apply-wizard',
+              title: '宿舍申请向导',
+              controller: 'DormitoryApplyWizardController',
+              templateUrl: helper.basepath('dormitory-apply-wizard.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog', 'parsley')
+          })
           // 
           // CUSTOM RESOLVES
           //   Add your own resolves properties

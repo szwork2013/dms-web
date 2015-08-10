@@ -93,8 +93,11 @@
     'use strict';
 
     angular
-        .module('app.translate', []);
+        .module('app.utils', [
+          'app.colors'
+          ]);
 })();
+
 (function() {
     'use strict';
 
@@ -105,11 +108,8 @@
     'use strict';
 
     angular
-        .module('app.utils', [
-          'app.colors'
-          ]);
+        .module('app.translate', []);
 })();
-
 (function() {
     'use strict';
 
@@ -865,6 +865,13 @@
               templateUrl: helper.basepath('account-list.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
+          .state('app.dormitory-apply-wizard', {
+              url: '/dormitory-apply-wizard',
+              title: '宿舍申请向导',
+              controller: 'DormitoryApplyWizardController',
+              templateUrl: helper.basepath('dormitory-apply-wizard.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog', 'parsley')
+          })
           // 
           // CUSTOM RESOLVES
           //   Add your own resolves properties
@@ -943,421 +950,6 @@
 
     }
 
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .config(translateConfig)
-        ;
-    translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider){
-  
-      $translateProvider.useStaticFilesLoader({
-          prefix : 'app/i18n/',
-          suffix : '.json'
-      });
-      $translateProvider.preferredLanguage('en');
-      $translateProvider.useLocalStorage();
-      $translateProvider.usePostCompiling(true);
-
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .run(translateRun)
-        ;
-    translateRun.$inject = ['$rootScope', '$translate'];
-    
-    function translateRun($rootScope, $translate){
-
-      // Internationalization
-      // ----------------------
-
-      $rootScope.language = {
-        // Handles language dropdown
-        listIsOpen: false,
-        // list of available languages
-        available: {
-          'en':       'English',
-          'es_AR':    'Español'
-        },
-        // display always the current ui language
-        init: function () {
-          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
-          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
-          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
-        },
-        set: function (localeId) {
-          // Set the new idiom
-          $translate.use(localeId);
-          // save a reference for the current language
-          $rootScope.language.selected = $rootScope.language.available[localeId];
-          // finally toggle dropdown
-          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
-        }
-      };
-
-      $rootScope.language.init();
-
-    }
-})();
-/**=========================================================
- * Module: sidebar-menu.js
- * Handle sidebar collapsible elements
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.sidebar')
-        .controller('SidebarController', SidebarController);
-
-    SidebarController.$inject = ['$rootScope', '$scope', '$state', 'SidebarLoader', 'Utils'];
-    function SidebarController($rootScope, $scope, $state, SidebarLoader,  Utils) {
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-          var collapseList = [];
-
-          // demo: when switch from collapse to hover, close all items
-          $rootScope.$watch('app.layout.asideHover', function(oldVal, newVal){
-            if ( newVal === false && oldVal === true) {
-              closeAllBut(-1);
-            }
-          });
-
-
-          // Load menu from json file
-          // ----------------------------------- 
-
-          SidebarLoader.getMenu(sidebarReady);
-          
-          function sidebarReady(items) {
-            $scope.menuItems = items;
-          }
-
-          // Handle sidebar and collapse items
-          // ----------------------------------
-          
-          $scope.getMenuItemPropClasses = function(item) {
-            return (item.heading ? 'nav-heading' : '') +
-                   (isActive(item) ? ' active' : '') ;
-          };
-
-          $scope.addCollapse = function($index, item) {
-            collapseList[$index] = $rootScope.app.layout.asideHover ? true : !isActive(item);
-          };
-
-          $scope.isCollapse = function($index) {
-            return (collapseList[$index]);
-          };
-
-          $scope.toggleCollapse = function($index, isParentItem) {
-
-            // collapsed sidebar doesn't toggle drodopwn
-            if( Utils.isSidebarCollapsed() || $rootScope.app.layout.asideHover ) return true;
-
-            // make sure the item index exists
-            if( angular.isDefined( collapseList[$index] ) ) {
-              if ( ! $scope.lastEventFromChild ) {
-                collapseList[$index] = !collapseList[$index];
-                closeAllBut($index);
-              }
-            }
-            else if ( isParentItem ) {
-              closeAllBut(-1);
-            }
-            
-            $scope.lastEventFromChild = isChild($index);
-
-            return true;
-          
-          };
-
-          // Controller helpers
-          // ----------------------------------- 
-
-            // Check item and children active state
-            function isActive(item) {
-
-              if(!item) return;
-
-              if( !item.sref || item.sref === '#') {
-                var foundActive = false;
-                angular.forEach(item.submenu, function(value) {
-                  if(isActive(value)) foundActive = true;
-                });
-                return foundActive;
-              }
-              else
-                return $state.is(item.sref) || $state.includes(item.sref);
-            }
-
-            function closeAllBut(index) {
-              index += '';
-              for(var i in collapseList) {
-                if(index < 0 || index.indexOf(i) < 0)
-                  collapseList[i] = true;
-              }
-            }
-
-            function isChild($index) {
-              /*jshint -W018*/
-              return (typeof $index === 'string') && !($index.indexOf('-') < 0);
-            }
-        
-        } // activate
-    }
-
-})();
-
-/**=========================================================
- * Module: sidebar.js
- * Wraps the sidebar and handles collapsed state
- =========================================================*/
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.sidebar')
-        .directive('sidebar', sidebar);
-
-    sidebar.$inject = ['$rootScope', '$timeout', '$window', 'Utils'];
-    function sidebar ($rootScope, $timeout, $window, Utils) {
-        var $win = angular.element($window);
-        var directive = {
-            // bindToController: true,
-            // controller: Controller,
-            // controllerAs: 'vm',
-            link: link,
-            restrict: 'EA',
-            template: '<nav class="sidebar" ng-transclude></nav>',
-            transclude: true,
-            replace: true
-            // scope: {}
-        };
-        return directive;
-
-        function link(scope, element, attrs) {
-
-          var currentState = $rootScope.$state.current.name;
-          var $sidebar = element;
-
-          var eventName = Utils.isTouch() ? 'click' : 'mouseenter' ;
-          var subNav = $();
-
-          $sidebar.on( eventName, '.nav > li', function() {
-
-            if( Utils.isSidebarCollapsed() || $rootScope.app.layout.asideHover ) {
-
-              subNav.trigger('mouseleave');
-              subNav = toggleMenuItem( $(this), $sidebar);
-
-              // Used to detect click and touch events outside the sidebar          
-              sidebarAddBackdrop();
-
-            }
-
-          });
-
-          scope.$on('closeSidebarMenu', function() {
-            removeFloatingNav();
-          });
-
-          // Normalize state when resize to mobile
-          $win.on('resize', function() {
-            if( ! Utils.isMobile() )
-          	asideToggleOff();
-          });
-
-          // Adjustment on route changes
-          $rootScope.$on('$stateChangeStart', function(event, toState) {
-            currentState = toState.name;
-            // Hide sidebar automatically on mobile
-            asideToggleOff();
-
-            $rootScope.$broadcast('closeSidebarMenu');
-          });
-
-      	  // Autoclose when click outside the sidebar
-          if ( angular.isDefined(attrs.sidebarAnyclickClose) ) {
-            
-            var wrapper = $('.wrapper');
-            var sbclickEvent = 'click.sidebar';
-            
-            $rootScope.$watch('app.asideToggled', watchExternalClicks);
-
-          }
-
-          //////
-
-          function watchExternalClicks(newVal) {
-            // if sidebar becomes visible
-            if ( newVal === true ) {
-              $timeout(function(){ // render after current digest cycle
-                wrapper.on(sbclickEvent, function(e){
-                  // if not child of sidebar
-                  if( ! $(e.target).parents('.aside').length ) {
-                    asideToggleOff();
-                  }
-                });
-              });
-            }
-            else {
-              // dettach event
-              wrapper.off(sbclickEvent);
-            }
-          }
-
-          function asideToggleOff() {
-            $rootScope.app.asideToggled = false;
-            if(!scope.$$phase) scope.$apply(); // anti-pattern but sometimes necessary
-      	  }
-        }
-        
-        ///////
-
-        function sidebarAddBackdrop() {
-          var $backdrop = $('<div/>', { 'class': 'dropdown-backdrop'} );
-          $backdrop.insertAfter('.aside-inner').on('click mouseenter', function () {
-            removeFloatingNav();
-          });
-        }
-
-        // Open the collapse sidebar submenu items when on touch devices 
-        // - desktop only opens on hover
-        function toggleTouchItem($element){
-          $element
-            .siblings('li')
-            .removeClass('open')
-            .end()
-            .toggleClass('open');
-        }
-
-        // Handles hover to open items under collapsed menu
-        // ----------------------------------- 
-        function toggleMenuItem($listItem, $sidebar) {
-
-          removeFloatingNav();
-
-          var ul = $listItem.children('ul');
-          
-          if( !ul.length ) return $();
-          if( $listItem.hasClass('open') ) {
-            toggleTouchItem($listItem);
-            return $();
-          }
-
-          var $aside = $('.aside');
-          var $asideInner = $('.aside-inner'); // for top offset calculation
-          // float aside uses extra padding on aside
-          var mar = parseInt( $asideInner.css('padding-top'), 0) + parseInt( $aside.css('padding-top'), 0);
-          var subNav = ul.clone().appendTo( $aside );
-          
-          toggleTouchItem($listItem);
-
-          var itemTop = ($listItem.position().top + mar) - $sidebar.scrollTop();
-          var vwHeight = $win.height();
-
-          subNav
-            .addClass('nav-floating')
-            .css({
-              position: $rootScope.app.layout.isFixed ? 'fixed' : 'absolute',
-              top:      itemTop,
-              bottom:   (subNav.outerHeight(true) + itemTop > vwHeight) ? 0 : 'auto'
-            });
-
-          subNav.on('mouseleave', function() {
-            toggleTouchItem($listItem);
-            subNav.remove();
-          });
-
-          return subNav;
-        }
-
-        function removeFloatingNav() {
-          $('.dropdown-backdrop').remove();
-          $('.sidebar-subnav.nav-floating').remove();
-          $('.sidebar li.open').removeClass('open');
-        }
-    }
-
-
-})();
-
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.sidebar')
-        .service('SidebarLoader', SidebarLoader);
-
-    SidebarLoader.$inject = ['$http'];
-    function SidebarLoader($http) {
-        this.getMenu = getMenu;
-
-        ////////////////
-
-        function getMenu(onReady, onError) {
-          var menuJson = 'server/sidebar-menu.json',
-              menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
-            
-          onError = onError || function() { alert('Failure loading menu'); };
-
-          $http
-            .get(menuURL)
-            .success(onReady)
-            .error(onError);
-        }
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.sidebar')
-        .controller('UserBlockController', UserBlockController);
-
-    UserBlockController.$inject = ['$rootScope'];
-    function UserBlockController($rootScope) {
-
-        activate();
-
-        ////////////////
-
-        function activate() {
-          $rootScope.user = {
-            name:     'John',
-            job:      'ng-developer',
-            picture:  'app/img/user/02.jpg'
-          };
-
-          // Hides/show user avatar on sidebar
-          $rootScope.toggleUserBlock = function(){
-            $rootScope.$broadcast('toggleUserBlock');
-          };
-
-          $rootScope.userBlockVisible = true;
-          
-          $rootScope.$on('toggleUserBlock', function(/*event, args*/) {
-
-            $rootScope.userBlockVisible = ! $rootScope.userBlockVisible;
-            
-          });
-        }
-    }
 })();
 
 /**=========================================================
@@ -1785,13 +1377,428 @@
     }
 })();
 
+/**=========================================================
+ * Module: sidebar-menu.js
+ * Handle sidebar collapsible elements
+ =========================================================*/
+
 (function() {
     'use strict';
-    angular.module('dms.accommodation', ['dms']);
+
+    angular
+        .module('app.sidebar')
+        .controller('SidebarController', SidebarController);
+
+    SidebarController.$inject = ['$rootScope', '$scope', '$state', 'SidebarLoader', 'Utils'];
+    function SidebarController($rootScope, $scope, $state, SidebarLoader,  Utils) {
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+          var collapseList = [];
+
+          // demo: when switch from collapse to hover, close all items
+          $rootScope.$watch('app.layout.asideHover', function(oldVal, newVal){
+            if ( newVal === false && oldVal === true) {
+              closeAllBut(-1);
+            }
+          });
+
+
+          // Load menu from json file
+          // ----------------------------------- 
+
+          SidebarLoader.getMenu(sidebarReady);
+          
+          function sidebarReady(items) {
+            $scope.menuItems = items;
+          }
+
+          // Handle sidebar and collapse items
+          // ----------------------------------
+          
+          $scope.getMenuItemPropClasses = function(item) {
+            return (item.heading ? 'nav-heading' : '') +
+                   (isActive(item) ? ' active' : '') ;
+          };
+
+          $scope.addCollapse = function($index, item) {
+            collapseList[$index] = $rootScope.app.layout.asideHover ? true : !isActive(item);
+          };
+
+          $scope.isCollapse = function($index) {
+            return (collapseList[$index]);
+          };
+
+          $scope.toggleCollapse = function($index, isParentItem) {
+
+            // collapsed sidebar doesn't toggle drodopwn
+            if( Utils.isSidebarCollapsed() || $rootScope.app.layout.asideHover ) return true;
+
+            // make sure the item index exists
+            if( angular.isDefined( collapseList[$index] ) ) {
+              if ( ! $scope.lastEventFromChild ) {
+                collapseList[$index] = !collapseList[$index];
+                closeAllBut($index);
+              }
+            }
+            else if ( isParentItem ) {
+              closeAllBut(-1);
+            }
+            
+            $scope.lastEventFromChild = isChild($index);
+
+            return true;
+          
+          };
+
+          // Controller helpers
+          // ----------------------------------- 
+
+            // Check item and children active state
+            function isActive(item) {
+
+              if(!item) return;
+
+              if( !item.sref || item.sref === '#') {
+                var foundActive = false;
+                angular.forEach(item.submenu, function(value) {
+                  if(isActive(value)) foundActive = true;
+                });
+                return foundActive;
+              }
+              else
+                return $state.is(item.sref) || $state.includes(item.sref);
+            }
+
+            function closeAllBut(index) {
+              index += '';
+              for(var i in collapseList) {
+                if(index < 0 || index.indexOf(i) < 0)
+                  collapseList[i] = true;
+              }
+            }
+
+            function isChild($index) {
+              /*jshint -W018*/
+              return (typeof $index === 'string') && !($index.indexOf('-') < 0);
+            }
+        
+        } // activate
+    }
+
+})();
+
+/**=========================================================
+ * Module: sidebar.js
+ * Wraps the sidebar and handles collapsed state
+ =========================================================*/
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar')
+        .directive('sidebar', sidebar);
+
+    sidebar.$inject = ['$rootScope', '$timeout', '$window', 'Utils'];
+    function sidebar ($rootScope, $timeout, $window, Utils) {
+        var $win = angular.element($window);
+        var directive = {
+            // bindToController: true,
+            // controller: Controller,
+            // controllerAs: 'vm',
+            link: link,
+            restrict: 'EA',
+            template: '<nav class="sidebar" ng-transclude></nav>',
+            transclude: true,
+            replace: true
+            // scope: {}
+        };
+        return directive;
+
+        function link(scope, element, attrs) {
+
+          var currentState = $rootScope.$state.current.name;
+          var $sidebar = element;
+
+          var eventName = Utils.isTouch() ? 'click' : 'mouseenter' ;
+          var subNav = $();
+
+          $sidebar.on( eventName, '.nav > li', function() {
+
+            if( Utils.isSidebarCollapsed() || $rootScope.app.layout.asideHover ) {
+
+              subNav.trigger('mouseleave');
+              subNav = toggleMenuItem( $(this), $sidebar);
+
+              // Used to detect click and touch events outside the sidebar          
+              sidebarAddBackdrop();
+
+            }
+
+          });
+
+          scope.$on('closeSidebarMenu', function() {
+            removeFloatingNav();
+          });
+
+          // Normalize state when resize to mobile
+          $win.on('resize', function() {
+            if( ! Utils.isMobile() )
+          	asideToggleOff();
+          });
+
+          // Adjustment on route changes
+          $rootScope.$on('$stateChangeStart', function(event, toState) {
+            currentState = toState.name;
+            // Hide sidebar automatically on mobile
+            asideToggleOff();
+
+            $rootScope.$broadcast('closeSidebarMenu');
+          });
+
+      	  // Autoclose when click outside the sidebar
+          if ( angular.isDefined(attrs.sidebarAnyclickClose) ) {
+            
+            var wrapper = $('.wrapper');
+            var sbclickEvent = 'click.sidebar';
+            
+            $rootScope.$watch('app.asideToggled', watchExternalClicks);
+
+          }
+
+          //////
+
+          function watchExternalClicks(newVal) {
+            // if sidebar becomes visible
+            if ( newVal === true ) {
+              $timeout(function(){ // render after current digest cycle
+                wrapper.on(sbclickEvent, function(e){
+                  // if not child of sidebar
+                  if( ! $(e.target).parents('.aside').length ) {
+                    asideToggleOff();
+                  }
+                });
+              });
+            }
+            else {
+              // dettach event
+              wrapper.off(sbclickEvent);
+            }
+          }
+
+          function asideToggleOff() {
+            $rootScope.app.asideToggled = false;
+            if(!scope.$$phase) scope.$apply(); // anti-pattern but sometimes necessary
+      	  }
+        }
+        
+        ///////
+
+        function sidebarAddBackdrop() {
+          var $backdrop = $('<div/>', { 'class': 'dropdown-backdrop'} );
+          $backdrop.insertAfter('.aside-inner').on('click mouseenter', function () {
+            removeFloatingNav();
+          });
+        }
+
+        // Open the collapse sidebar submenu items when on touch devices 
+        // - desktop only opens on hover
+        function toggleTouchItem($element){
+          $element
+            .siblings('li')
+            .removeClass('open')
+            .end()
+            .toggleClass('open');
+        }
+
+        // Handles hover to open items under collapsed menu
+        // ----------------------------------- 
+        function toggleMenuItem($listItem, $sidebar) {
+
+          removeFloatingNav();
+
+          var ul = $listItem.children('ul');
+          
+          if( !ul.length ) return $();
+          if( $listItem.hasClass('open') ) {
+            toggleTouchItem($listItem);
+            return $();
+          }
+
+          var $aside = $('.aside');
+          var $asideInner = $('.aside-inner'); // for top offset calculation
+          // float aside uses extra padding on aside
+          var mar = parseInt( $asideInner.css('padding-top'), 0) + parseInt( $aside.css('padding-top'), 0);
+          var subNav = ul.clone().appendTo( $aside );
+          
+          toggleTouchItem($listItem);
+
+          var itemTop = ($listItem.position().top + mar) - $sidebar.scrollTop();
+          var vwHeight = $win.height();
+
+          subNav
+            .addClass('nav-floating')
+            .css({
+              position: $rootScope.app.layout.isFixed ? 'fixed' : 'absolute',
+              top:      itemTop,
+              bottom:   (subNav.outerHeight(true) + itemTop > vwHeight) ? 0 : 'auto'
+            });
+
+          subNav.on('mouseleave', function() {
+            toggleTouchItem($listItem);
+            subNav.remove();
+          });
+
+          return subNav;
+        }
+
+        function removeFloatingNav() {
+          $('.dropdown-backdrop').remove();
+          $('.sidebar-subnav.nav-floating').remove();
+          $('.sidebar li.open').removeClass('open');
+        }
+    }
+
+
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar')
+        .service('SidebarLoader', SidebarLoader);
+
+    SidebarLoader.$inject = ['$http'];
+    function SidebarLoader($http) {
+        this.getMenu = getMenu;
+
+        ////////////////
+
+        function getMenu(onReady, onError) {
+          var menuJson = 'server/sidebar-menu.json',
+              menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
+            
+          onError = onError || function() { alert('Failure loading menu'); };
+
+          $http
+            .get(menuURL)
+            .success(onReady)
+            .error(onError);
+        }
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.sidebar')
+        .controller('UserBlockController', UserBlockController);
+
+    UserBlockController.$inject = ['$rootScope'];
+    function UserBlockController($rootScope) {
+
+        activate();
+
+        ////////////////
+
+        function activate() {
+          $rootScope.user = {
+            name:     'John',
+            job:      'ng-developer',
+            picture:  'app/img/user/02.jpg'
+          };
+
+          // Hides/show user avatar on sidebar
+          $rootScope.toggleUserBlock = function(){
+            $rootScope.$broadcast('toggleUserBlock');
+          };
+
+          $rootScope.userBlockVisible = true;
+          
+          $rootScope.$on('toggleUserBlock', function(/*event, args*/) {
+
+            $rootScope.userBlockVisible = ! $rootScope.userBlockVisible;
+            
+          });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .config(translateConfig)
+        ;
+    translateConfig.$inject = ['$translateProvider'];
+    function translateConfig($translateProvider){
+  
+      $translateProvider.useStaticFilesLoader({
+          prefix : 'app/i18n/',
+          suffix : '.json'
+      });
+      $translateProvider.preferredLanguage('en');
+      $translateProvider.useLocalStorage();
+      $translateProvider.usePostCompiling(true);
+
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .run(translateRun)
+        ;
+    translateRun.$inject = ['$rootScope', '$translate'];
+    
+    function translateRun($rootScope, $translate){
+
+      // Internationalization
+      // ----------------------
+
+      $rootScope.language = {
+        // Handles language dropdown
+        listIsOpen: false,
+        // list of available languages
+        available: {
+          'en':       'English',
+          'es_AR':    'Español'
+        },
+        // display always the current ui language
+        init: function () {
+          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
+          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
+          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
+        },
+        set: function (localeId) {
+          // Set the new idiom
+          $translate.use(localeId);
+          // save a reference for the current language
+          $rootScope.language.selected = $rootScope.language.available[localeId];
+          // finally toggle dropdown
+          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+        }
+      };
+
+      $rootScope.language.init();
+
+    }
 })();
 (function() {
     'use strict';
     angular.module('dms.accommodationFee', ['dms']);
+})();
+(function() {
+    'use strict';
+    angular.module('dms.accommodation', ['dms']);
 })();
 (function() {
     'use strict';
@@ -1807,11 +1814,11 @@
 })();
 (function() {
     'use strict';
-    angular.module('dms.employee', ['dms']);
+    angular.module('dms.dormitoryApplication', ['dms']);
 })();
 (function() {
     'use strict';
-    angular.module('dms.dormitoryApplication', ['dms']);
+    angular.module('dms.employee', ['dms']);
 })();
 (function() {
     'use strict';
@@ -1945,6 +1952,194 @@
       ;
 
 })();
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.accommodationFee')
+        .controller('AccommodationFeeController', AccommodationFeeController);
+
+    AccommodationFeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'AccommodationFeeService','ShareService'];
+    function AccommodationFeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, AccommodationFeeService, ShareService) {
+        var vm = this;
+        var data = null;
+        var updateTable = false;
+        // ========== 筛选 ========== 
+        $scope.select = {
+            data: {
+                year: '',
+                month: '',
+                department: ''
+            },
+            dropdown: {
+                year: false,
+                month: false,
+                department: false
+            }
+        };
+        $scope.searchkeywords = '';
+
+        $scope.dropSelect = function (name, value) {
+            $scope.select.data[name] = value;
+            $scope.select.dropdown[name] = false;
+            if(name == 'year') {
+                $scope.select.data.month = '';
+            }
+            vm.tableParams.reload();
+        }
+
+        $scope.resetFilter = function() {
+            for(var key in $scope.select.data) {
+                $scope.select.data[key] = '';
+            }
+            $scope.searchkeywords = '';
+            vm.tableParams.reload();
+        }
+
+        $scope.refreshTable = function() {
+            updateTable = true;
+            vm.tableParams.reload();
+        }
+
+        $scope.$watch("searchKeywords", function () {
+            vm.tableParams.reload();
+        });
+        // =========================
+        
+        // ========== 数据显示 ==========
+        vm.tableParams = new ngTableParams({
+            page: 1,
+            count: 10
+        }, {
+            total: 0,
+            counts: [10, 20, 50],
+            getData: function ($defer, params) {
+                if (!data || updateTable) {
+                    AccommodationFeeService.queryData({
+                        success: function (response) {
+                            if (response.status) {
+                                data = AccommodationFeeService.preprocessData(response.result);
+                                showTableData($defer, params);
+                            } else {
+                                alert("列表获取失败");
+                            }
+                            updateTable = false;
+                            console.log("Query AccommodationService Fee List", data);
+                        },
+                        error: function (data, status, headers, config) {
+                            console.log(data, status, headers, config);
+                            alert("GET Error2");
+                        }
+                    },updateTable);
+                } else {
+                    showTableData($defer, params);
+                }
+            }
+        });
+        var showTableData = function($defer, params) {
+            var searchedData = searchData(data);
+            var orderedData = params.sorting() ? $filter('orderBy')(searchedData, params.orderBy()) : searchedData;
+            params.total(orderedData.length);
+            $defer.resolve($scope.dormitories = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+        var searchData = function(filterData) {
+            if($scope.searchKeywords) {
+                var keywords = $scope.searchKeywords.split(" ");
+                var i;
+                for(i in keywords) {
+                    filterData = $filter('filter')(filterData, keywords[i]);
+                }
+            }
+            
+            if($scope.select.data.campus) filterData = $filter('filter')(filterData, { employee : { workCampus : $scope.select.data.campus}});
+            if($scope.select.data.department) filterData = $filter('filter')(filterData, { employee : { department : $scope.select.data.department}});
+            if($scope.select.data.genderCN) filterData = $filter('filter')(filterData, { employee : { genderCN : $scope.select.data.genderCN}});
+            return filterData;
+        }
+        // =============================
+        
+        // ========== 表格Checkbox ==========
+        $scope.checkboxes = { 'checked': false, items: {} };
+        // 总checkbox
+        $scope.$watch('checkboxes.checked', function(value) {
+            angular.forEach($scope.dormitories, function(item) {
+                if (angular.isDefined(item.employee.id)) {
+                    $scope.checkboxes.items[item.employee.id] = value;
+                }
+            });
+        });
+        // 子checkbox
+        $scope.$watch('checkboxes.items', function(values) {
+            if (!$scope.dormitories) {
+                return;
+            }
+            var checked = 0, unchecked = 0,
+            total = $scope.dormitories.length;
+            angular.forEach($scope.dormitories, function(item) {
+                checked   +=  ($scope.checkboxes.items[item.employee.id]) || 0;
+                unchecked += (!$scope.checkboxes.items[item.employee.id]) || 0;
+            });
+            if ((unchecked == 0) || (checked == 0)) {
+                $scope.checkboxes.checked = (checked == total);
+            }
+            angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+        }, true);
+        // ==================================
+
+        $scope.showEmployee = function(employee) {
+            ShareService.setData(angular.copy(employee));
+            ngDialog.open({
+                template: 'app/views/dialogs/show-employee.html',
+                controller: function ($scope, ngDialog, ShareService) {
+                    $scope.employee = ShareService.getData();
+
+                    // ===== 对话框操作 ===== 
+                    $scope.checkOut = function() {
+                        console.log("Check Out", $scope.employee);
+                        // TODO 发送迁出消息
+                    }
+                    $scope.cancel = function() {
+                        ngDialog.close();
+                    }
+                    // ====================== 
+                }
+            });
+        }
+
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.accommodationFee')
+        .service('AccommodationFeeService', AccommodationFeeService);
+    AccommodationFeeService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
+    function AccommodationFeeService($http, VO_PO_DICT, PO_VO_DICT, URL, ngDialog, ShareService) {
+        
+        this.queryData = function(callback) {
+            $http.get(URL.accommodationFee.query).success(callback.success).error(callback.error);
+        }
+    
+        this.preprocessData = function(data) {
+            angular.forEach(data, function(item) {
+                item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + "层 - " + item.dormitory.doorplate;
+                item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
+                item.employee.genderCN = PO_VO_DICT[item.employee.gender];
+                item.employee.spouseTypeCN = PO_VO_DICT[item.employee.spouseType];
+                item.employee.spouseGenderCN = PO_VO_DICT[item.employee.spouseGender];
+                item.statusCN = PO_VO_DICT[item.status];
+            });
+            return data;
+        }
+    
+        this.postprocessData = function(data) {
+            return data;
+        }
+    }
+})();
+
 (function() {
     'use strict';
 
@@ -2134,194 +2329,6 @@
                     accommodation.employee.spouseGenderCN = PO_VO_DICT[accommodation.employee.spouseGender];
                 });
                 item.statusCN = item.accommodations[0].checkOutDate ? "已迁出":"在住";
-            });
-            return data;
-        }
-    
-        this.postprocessData = function(data) {
-            return data;
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('dms.accommodationFee')
-        .controller('AccommodationFeeController', AccommodationFeeController);
-
-    AccommodationFeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'AccommodationFeeService','ShareService'];
-    function AccommodationFeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, AccommodationFeeService, ShareService) {
-        var vm = this;
-        var data = null;
-        var updateTable = false;
-        // ========== 筛选 ========== 
-        $scope.select = {
-            data: {
-                year: '',
-                month: '',
-                department: ''
-            },
-            dropdown: {
-                year: false,
-                month: false,
-                department: false
-            }
-        };
-        $scope.searchkeywords = '';
-
-        $scope.dropSelect = function (name, value) {
-            $scope.select.data[name] = value;
-            $scope.select.dropdown[name] = false;
-            if(name == 'year') {
-                $scope.select.data.month = '';
-            }
-            vm.tableParams.reload();
-        }
-
-        $scope.resetFilter = function() {
-            for(var key in $scope.select.data) {
-                $scope.select.data[key] = '';
-            }
-            $scope.searchkeywords = '';
-            vm.tableParams.reload();
-        }
-
-        $scope.refreshTable = function() {
-            updateTable = true;
-            vm.tableParams.reload();
-        }
-
-        $scope.$watch("searchKeywords", function () {
-            vm.tableParams.reload();
-        });
-        // =========================
-        
-        // ========== 数据显示 ==========
-        vm.tableParams = new ngTableParams({
-            page: 1,
-            count: 10
-        }, {
-            total: 0,
-            counts: [10, 20, 50],
-            getData: function ($defer, params) {
-                if (!data || updateTable) {
-                    AccommodationFeeService.queryData({
-                        success: function (response) {
-                            if (response.status) {
-                                data = AccommodationFeeService.preprocessData(response.result);
-                                showTableData($defer, params);
-                            } else {
-                                alert("列表获取失败");
-                            }
-                            updateTable = false;
-                            console.log("Query AccommodationService Fee List", data);
-                        },
-                        error: function (data, status, headers, config) {
-                            console.log(data, status, headers, config);
-                            alert("GET Error2");
-                        }
-                    },updateTable);
-                } else {
-                    showTableData($defer, params);
-                }
-            }
-        });
-        var showTableData = function($defer, params) {
-            var searchedData = searchData(data);
-            var orderedData = params.sorting() ? $filter('orderBy')(searchedData, params.orderBy()) : searchedData;
-            params.total(orderedData.length);
-            $defer.resolve($scope.dormitories = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-        }
-        var searchData = function(filterData) {
-            if($scope.searchKeywords) {
-                var keywords = $scope.searchKeywords.split(" ");
-                var i;
-                for(i in keywords) {
-                    filterData = $filter('filter')(filterData, keywords[i]);
-                }
-            }
-            
-            if($scope.select.data.campus) filterData = $filter('filter')(filterData, { employee : { workCampus : $scope.select.data.campus}});
-            if($scope.select.data.department) filterData = $filter('filter')(filterData, { employee : { department : $scope.select.data.department}});
-            if($scope.select.data.genderCN) filterData = $filter('filter')(filterData, { employee : { genderCN : $scope.select.data.genderCN}});
-            return filterData;
-        }
-        // =============================
-        
-        // ========== 表格Checkbox ==========
-        $scope.checkboxes = { 'checked': false, items: {} };
-        // 总checkbox
-        $scope.$watch('checkboxes.checked', function(value) {
-            angular.forEach($scope.dormitories, function(item) {
-                if (angular.isDefined(item.employee.id)) {
-                    $scope.checkboxes.items[item.employee.id] = value;
-                }
-            });
-        });
-        // 子checkbox
-        $scope.$watch('checkboxes.items', function(values) {
-            if (!$scope.dormitories) {
-                return;
-            }
-            var checked = 0, unchecked = 0,
-            total = $scope.dormitories.length;
-            angular.forEach($scope.dormitories, function(item) {
-                checked   +=  ($scope.checkboxes.items[item.employee.id]) || 0;
-                unchecked += (!$scope.checkboxes.items[item.employee.id]) || 0;
-            });
-            if ((unchecked == 0) || (checked == 0)) {
-                $scope.checkboxes.checked = (checked == total);
-            }
-            angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
-        }, true);
-        // ==================================
-
-        $scope.showEmployee = function(employee) {
-            ShareService.setData(angular.copy(employee));
-            ngDialog.open({
-                template: 'app/views/dialogs/show-employee.html',
-                controller: function ($scope, ngDialog, ShareService) {
-                    $scope.employee = ShareService.getData();
-
-                    // ===== 对话框操作 ===== 
-                    $scope.checkOut = function() {
-                        console.log("Check Out", $scope.employee);
-                        // TODO 发送迁出消息
-                    }
-                    $scope.cancel = function() {
-                        ngDialog.close();
-                    }
-                    // ====================== 
-                }
-            });
-        }
-
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('dms.accommodationFee')
-        .service('AccommodationFeeService', AccommodationFeeService);
-    AccommodationFeeService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
-    function AccommodationFeeService($http, VO_PO_DICT, PO_VO_DICT, URL, ngDialog, ShareService) {
-        
-        this.queryData = function(callback) {
-            $http.get(URL.accommodationFee.query).success(callback.success).error(callback.error);
-        }
-    
-        this.preprocessData = function(data) {
-            angular.forEach(data, function(item) {
-                item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + "层 - " + item.dormitory.doorplate;
-                item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
-                item.employee.genderCN = PO_VO_DICT[item.employee.gender];
-                item.employee.spouseTypeCN = PO_VO_DICT[item.employee.spouseType];
-                item.employee.spouseGenderCN = PO_VO_DICT[item.employee.spouseGender];
-                item.statusCN = PO_VO_DICT[item.status];
             });
             return data;
         }
@@ -2816,198 +2823,6 @@
     'use strict';
 
     angular
-        .module('dms.employee')
-        .controller('EmployeeController', EmployeeController);
-
-    EmployeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'EmployeeService','ShareService'];
-    function EmployeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, EmployeeService, ShareService) {
-        var vm = this;
-        var data = null;
-        var updateTable = false;
-        // ========== 筛选 ========== 
-        $scope.select = {
-            data: {
-                campus: '',
-                department: '',
-                genderCN: ''
-            },
-            dropdown: {
-                campus: false,
-                department: false,
-                genderCN: false
-            }
-        };
-        $scope.searchkeywords = '';
-
-        $scope.dropSelect = function (name, value) {
-            $scope.select.data[name] = value;
-            $scope.select.dropdown[name] = false;
-            vm.tableParams.reload();
-        }
-
-        $scope.resetFilter = function() {
-            for(var key in $scope.select.data) {
-                $scope.select.data[key] = '';
-            }
-            $scope.searchkeywords = '';
-            vm.tableParams.reload();
-        }
-
-        $scope.refreshTable = function() {
-            updateTable = true;
-            vm.tableParams.reload();
-        }
-
-        $scope.$watch("searchKeywords", function () {
-            vm.tableParams.reload();
-        });
-        // =========================
-        
-        // ========== 数据显示 ==========
-        vm.tableParams = new ngTableParams({
-            page: 1,
-            count: 10
-        }, {
-            total: 0,
-            counts: [10, 20, 50],
-            getData: function ($defer, params) {
-                if (!data || updateTable) {
-                    EmployeeService.queryData({
-                        success: function (response) {
-                            if (response.status) {
-                                data = EmployeeService.preprocessData(response.result);
-                                showTableData($defer, params);
-                            } else {
-                                alert("列表获取失败");
-                            }
-                            updateTable = false;
-                            console.log("Query Employee List", data);
-                        },
-                        error: function (data, status, headers, config) {
-                            console.log(data, status, headers, config);
-                            alert("GET Error2");
-                        }
-                    },updateTable);
-                } else {
-                    showTableData($defer, params);
-                }
-            }
-        });
-        var showTableData = function($defer, params) {
-            var searchedData = searchData(data);
-            var orderedData = params.sorting() ? $filter('orderBy')(searchedData, params.orderBy()) : searchedData;
-            params.total(orderedData.length);
-            $defer.resolve($scope.dormitories = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-        }
-        var searchData = function(filterData) {
-            if($scope.searchKeywords) {
-                var keywords = $scope.searchKeywords.split(" ");
-                var i;
-                for(i in keywords) {
-                    filterData = $filter('filter')(filterData, keywords[i]);
-                }
-            }
-            
-            if($scope.select.data.campus) filterData = $filter('filter')(filterData, { employee : { workCampus : $scope.select.data.campus}});
-            if($scope.select.data.department) filterData = $filter('filter')(filterData, { employee : { department : $scope.select.data.department}});
-            if($scope.select.data.genderCN) filterData = $filter('filter')(filterData, { employee : { genderCN : $scope.select.data.genderCN}});
-            return filterData;
-        }
-        // =============================
-        
-        // ========== 表格Checkbox ==========
-        $scope.checkboxes = { 'checked': false, items: {} };
-        // 总checkbox
-        $scope.$watch('checkboxes.checked', function(value) {
-            angular.forEach($scope.dormitories, function(item) {
-                if (angular.isDefined(item.employee.id)) {
-                    $scope.checkboxes.items[item.employee.id] = value;
-                }
-            });
-        });
-        // 子checkbox
-        $scope.$watch('checkboxes.items', function(values) {
-            if (!$scope.dormitories) {
-                return;
-            }
-            var checked = 0, unchecked = 0,
-            total = $scope.dormitories.length;
-            angular.forEach($scope.dormitories, function(item) {
-                checked   +=  ($scope.checkboxes.items[item.employee.id]) || 0;
-                unchecked += (!$scope.checkboxes.items[item.employee.id]) || 0;
-            });
-            if ((unchecked == 0) || (checked == 0)) {
-                $scope.checkboxes.checked = (checked == total);
-            }
-            angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
-        }, true);
-        // ==================================
-
-        $scope.editEmployee = function(employeeItem) {
-            ShareService.setData(angular.copy(employeeItem));
-            ngDialog.open({
-                template: 'app/views/dialogs/edit-employee.html',
-                controller: function ($scope, ngDialog, ShareService) {
-                    $scope.employee = ShareService.getData().employee;
-                    $scope.employee.canBeDelete = ShareService.getData().dormitory==null || ShareService.getData().dormitory=={};
-                    // ===== 对话框操作 ===== 
-                    $scope.selectGender = function(gender) {
-                        console.log(gender);
-                        $scope.genderOpen = false;
-                        $scope.employee.genderCN = gender;
-                    }
-                    $scope.selectDepartment = function(department) {
-                        $scope.departmentOpen = false;
-                        $scope.employee.department = department;
-                    }
-                    $scope.delete = function() {
-                        console.log("Delete", $scope.employee);
-                        // TODO 发送迁出消息
-                    }
-                    $scope.cancel = function() {
-                        ngDialog.close();
-                    }
-                    // ====================== 
-                }
-            });
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('dms.dormitory')
-        .service('EmployeeService', EmployeeService);
-    EmployeeService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
-    function EmployeeService($http, VO_PO_DICT, PO_VO_DICT, URL, ngDialog, ShareService) {
-        
-        this.queryData = function(callback) {
-            $http.get(URL.employee.query).success(callback.success).error(callback.error);
-        }
-    
-        this.preprocessData = function(data) {
-            angular.forEach(data, function(item) {
-                item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + "层 - " + item.dormitory.doorplate;
-                item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
-                item.employee.genderCN = PO_VO_DICT[item.employee.gender];
-                item.employee.spouseTypeCN = PO_VO_DICT[item.employee.spouseType];
-                item.employee.spouseGenderCN = PO_VO_DICT[item.employee.spouseGender];
-            });
-            return data;
-        }
-    
-        this.postprocessData = function(data) {
-            return data;
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
         .module('dms.dormitoryApplication')
         .controller('DormitoryApplicationController', DormitoryApplicationController);
 
@@ -3201,6 +3016,211 @@
                     employee.spouseTypeCN = PO_VO_DICT[employee.spouseType];
                     employee.spouseGenderCN = PO_VO_DICT[employee.spouseGender];
                 });
+            });
+            return data;
+        }
+    
+        this.postprocessData = function(data) {
+            return data;
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.dormitoryApplication')
+        .controller('DormitoryApplyWizardController', DormitoryApplyWizardController);
+
+    DormitoryApplyWizardController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'DormitoryApplicationService','ShareService'];
+    function DormitoryApplyWizardController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, DormitoryApplicationService, ShareService) {
+        
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.employee')
+        .controller('EmployeeController', EmployeeController);
+
+    EmployeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'EmployeeService','ShareService'];
+    function EmployeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, EmployeeService, ShareService) {
+        var vm = this;
+        var data = null;
+        var updateTable = false;
+        // ========== 筛选 ========== 
+        $scope.select = {
+            data: {
+                campus: '',
+                department: '',
+                genderCN: ''
+            },
+            dropdown: {
+                campus: false,
+                department: false,
+                genderCN: false
+            }
+        };
+        $scope.searchkeywords = '';
+
+        $scope.dropSelect = function (name, value) {
+            $scope.select.data[name] = value;
+            $scope.select.dropdown[name] = false;
+            vm.tableParams.reload();
+        }
+
+        $scope.resetFilter = function() {
+            for(var key in $scope.select.data) {
+                $scope.select.data[key] = '';
+            }
+            $scope.searchkeywords = '';
+            vm.tableParams.reload();
+        }
+
+        $scope.refreshTable = function() {
+            updateTable = true;
+            vm.tableParams.reload();
+        }
+
+        $scope.$watch("searchKeywords", function () {
+            vm.tableParams.reload();
+        });
+        // =========================
+        
+        // ========== 数据显示 ==========
+        vm.tableParams = new ngTableParams({
+            page: 1,
+            count: 10
+        }, {
+            total: 0,
+            counts: [10, 20, 50],
+            getData: function ($defer, params) {
+                if (!data || updateTable) {
+                    EmployeeService.queryData({
+                        success: function (response) {
+                            if (response.status) {
+                                data = EmployeeService.preprocessData(response.result);
+                                showTableData($defer, params);
+                            } else {
+                                alert("列表获取失败");
+                            }
+                            updateTable = false;
+                            console.log("Query Employee List", data);
+                        },
+                        error: function (data, status, headers, config) {
+                            console.log(data, status, headers, config);
+                            alert("GET Error2");
+                        }
+                    },updateTable);
+                } else {
+                    showTableData($defer, params);
+                }
+            }
+        });
+        var showTableData = function($defer, params) {
+            var searchedData = searchData(data);
+            var orderedData = params.sorting() ? $filter('orderBy')(searchedData, params.orderBy()) : searchedData;
+            params.total(orderedData.length);
+            $defer.resolve($scope.dormitories = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+        var searchData = function(filterData) {
+            if($scope.searchKeywords) {
+                var keywords = $scope.searchKeywords.split(" ");
+                var i;
+                for(i in keywords) {
+                    filterData = $filter('filter')(filterData, keywords[i]);
+                }
+            }
+            
+            if($scope.select.data.campus) filterData = $filter('filter')(filterData, { employee : { workCampus : $scope.select.data.campus}});
+            if($scope.select.data.department) filterData = $filter('filter')(filterData, { employee : { department : $scope.select.data.department}});
+            if($scope.select.data.genderCN) filterData = $filter('filter')(filterData, { employee : { genderCN : $scope.select.data.genderCN}});
+            return filterData;
+        }
+        // =============================
+        
+        // ========== 表格Checkbox ==========
+        $scope.checkboxes = { 'checked': false, items: {} };
+        // 总checkbox
+        $scope.$watch('checkboxes.checked', function(value) {
+            angular.forEach($scope.dormitories, function(item) {
+                if (angular.isDefined(item.employee.id)) {
+                    $scope.checkboxes.items[item.employee.id] = value;
+                }
+            });
+        });
+        // 子checkbox
+        $scope.$watch('checkboxes.items', function(values) {
+            if (!$scope.dormitories) {
+                return;
+            }
+            var checked = 0, unchecked = 0,
+            total = $scope.dormitories.length;
+            angular.forEach($scope.dormitories, function(item) {
+                checked   +=  ($scope.checkboxes.items[item.employee.id]) || 0;
+                unchecked += (!$scope.checkboxes.items[item.employee.id]) || 0;
+            });
+            if ((unchecked == 0) || (checked == 0)) {
+                $scope.checkboxes.checked = (checked == total);
+            }
+            angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+        }, true);
+        // ==================================
+
+        $scope.editEmployee = function(employeeItem) {
+            ShareService.setData(angular.copy(employeeItem));
+            ngDialog.open({
+                template: 'app/views/dialogs/edit-employee.html',
+                controller: function ($scope, ngDialog, ShareService) {
+                    $scope.employee = ShareService.getData().employee;
+                    $scope.employee.canBeDelete = ShareService.getData().dormitory==null || ShareService.getData().dormitory=={};
+                    // ===== 对话框操作 ===== 
+                    $scope.selectGender = function(gender) {
+                        console.log(gender);
+                        $scope.genderOpen = false;
+                        $scope.employee.genderCN = gender;
+                    }
+                    $scope.selectDepartment = function(department) {
+                        $scope.departmentOpen = false;
+                        $scope.employee.department = department;
+                    }
+                    $scope.delete = function() {
+                        console.log("Delete", $scope.employee);
+                        // TODO 发送迁出消息
+                    }
+                    $scope.cancel = function() {
+                        ngDialog.close();
+                    }
+                    // ====================== 
+                }
+            });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.dormitory')
+        .service('EmployeeService', EmployeeService);
+    EmployeeService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
+    function EmployeeService($http, VO_PO_DICT, PO_VO_DICT, URL, ngDialog, ShareService) {
+        
+        this.queryData = function(callback) {
+            $http.get(URL.employee.query).success(callback.success).error(callback.error);
+        }
+    
+        this.preprocessData = function(data) {
+            angular.forEach(data, function(item) {
+                item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + "层 - " + item.dormitory.doorplate;
+                item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
+                item.employee.genderCN = PO_VO_DICT[item.employee.gender];
+                item.employee.spouseTypeCN = PO_VO_DICT[item.employee.spouseType];
+                item.employee.spouseGenderCN = PO_VO_DICT[item.employee.spouseGender];
             });
             return data;
         }
