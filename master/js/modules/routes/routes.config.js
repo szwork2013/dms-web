@@ -62,7 +62,7 @@
               url: '/accommodation-fee',
               title: '住宿费审核',
               controller: 'AccommodationFeeController',
-              templateUrl: helper.basepath('accommodation-fee-audit.html'),
+              templateUrl: helper.basepath('accommodation-fee-list.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
           .state('app.dormitory-apply', {
@@ -77,6 +77,13 @@
               title: '入住历史记录',
               controller: 'DormitoryApplicationController',
               templateUrl: helper.basepath('accommodation-list.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog')
+          })
+          .state('app.maintenance', {
+              url: '/maintenance',
+              title: '维修申请管理',
+              controller: 'MaintenanceApplicationController',
+              templateUrl: helper.basepath('maintenance-apply-list.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
           // 

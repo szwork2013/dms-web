@@ -1,0 +1,95 @@
+<div ng-controller="AccommodationFeeController as table" class="container-fluid">
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         <form class="pull-right hidden-xs form-inline">
+            <div class="btn-group">
+               <input type="search" ng-model="searchKeywords" placeholder="表格搜索..." class="form-control input-sm form-horizontal" />
+               <a ng-click="searchKeywords=&quot;&quot;" style="position: absolute; right: 8px; top: 0; bottom: 0; height: 22px; margin: auto; font-size: 14px; cursor: pointer; color: #ccc;" class="clear">
+                  <span class="fa fa-close"></span>
+               </a>
+            </div>
+         </form>
+         <div class="panel-title">
+            <form class="form-inline">住宿费审核 -
+               <div dropdown="dropdown" is-open="select.dropdown.department" class="btn-group">
+                  <button dropdown-toggle="" style="min-width:75px;" class="btn btn-default btn-xs">
+                     <span ng-show="select.data.department" ng-bind="select.data.department" class="pull-left"></span>
+                     <span ng-hide="select.data.department" class="pull-left">选择中心</span><b style="margin-top:8px" class="caret pull-right"></b>
+                  </button>
+                  <ul role="menu" class="dropdown-menu">
+                     <li ng-repeat="department in departments">
+                        <a href="javascript:;" ng-click="dropSelect(&quot;department&quot;, department)" ng-bind="department"></a>
+                     </li>
+                  </ul>
+               </div>&nbsp;-
+               <div dropdown="dropdown" is-open="select.dropdown.year" class="btn-group">
+                  <button dropdown-toggle="" style="min-width:80px;" class="btn btn-default btn-xs">
+                     <span ng-show="select.data.year" class="pull-left">{{ select.data.year }} 年</span>
+                     <span ng-hide="select.data.year" class="pull-left">选择年份</span><b style="margin-top:8px" class="caret pull-right"></b>
+                  </button>
+                  <ul role="menu" class="dropdown-menu">
+                     <li ng-repeat="(key, value) in dateTree"><a href="javascript:;" ng-click="dropSelect(&quot;year&quot;, key)">{{key}}</a>
+                     </li>
+                  </ul>
+               </div>
+               <div dropdown="dropdown" is-open="select.dropdown.month" class="btn-group">
+                  <button dropdown-toggle="" style="min-width:75px;" class="btn btn-default btn-xs">
+                     <span ng-show="select.data.month" class="pull-left">{{ select.data.month }} 月</span>
+                     <span ng-hide="select.data.month" class="pull-left">选择月份</span><b style="margin-top:8px" class="caret pull-right"></b>
+                  </button>
+                  <ul role="menu" class="dropdown-menu">
+                     <li ng-repeat="month in dateTree[selectedYear]"><a href="javascript:;" ng-click="dropSelect(&quot;month&quot;, month)">{{month}}</a>
+                     </li>
+                  </ul>
+               </div>
+               <button type="button" ng-click="refreshTable()" class="btn btn-xs btn-default">
+                  <span class="fa fa-refresh"></span>
+               </button>
+            </form>
+         </div>
+      </div>
+      <table ng-table="table.tableParams" class="table">
+         <tbody>
+            <tr ng-repeat="accommodationFee in $data">
+               <td width="40" header="'ng-table/headers/checkbox.html'">
+                  <div class="checkbox c-checkbox">
+                     <label>
+                        <input type="checkbox" ng-model="checkboxes.items[user.id]" />
+                        <span class="fa fa-check"></span>
+                     </label>
+                  </div>
+               </td>
+               <td data-title="'员工'" sortable="'employee.name'" width="100" class="text-center">
+                  <div ng-click="showEmployee(accommodationFee.employee)" class="btn btn-primary btn-xs">{{accommodationFee.employee.name}}</div>
+               </td>
+               <td data-title="'宿舍地址'" sortable="'dormitory.addressDetailCN'" width="120">{{accommodationFee.dormitory.addressDetailCN}}</td>
+               <td data-title="'宿舍类型'" sortable="'dormitory.typeCN'" width="100" class="text-center">{{accommodationFee.dormitory.typeCN}}</td>
+               <td data-title="'核定'" sortable="'dormitory.capacityCnt'" width="70" class="text-center">{{accommodationFee.dormitory.capacityCnt}}</td>
+               <td data-title="'实际'" sortable="'dormitory.occupiedCnt'" width="70" class="text-center">{{accommodationFee.dormitory.occupiedCnt}}</td>
+               <td data-title="'中心缴纳'" sortable="'departmentFee'" width="70" class="text-center">{{accommodationFee.departmentFee}}</td>
+               <td data-title="'个人缴纳'" sortable="'employeeFee'" width="70" class="text-center">{{accommodationFee.employeeFee}}</td>
+               <td data-title="'审核'" width="90" ng-show="accommodationFee.status=='UNCHECK'" class="text-center">
+                  <button title="通过" data-ng-click="pass(accommodationFee)" style="width:25px" class="btn btn-success btn-xs"><i class="fa fa-check"></i>
+                  </button>
+                  <button title="驳回" data-ng-click="reject(accommodationFee)" style="width:24px" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>
+                  </button>
+               </td>
+               <td data-title="'审核'" width="90" ng-show="accommodationFee.status=='RECHECK'" class="text-center">
+                  <button title="通过" data-ng-click="pass(accommodationFee)" style="width:25px" class="btn btn-success btn-xs"><i class="fa fa-check"></i>
+                  </button>
+                  <button title="驳回" data-ng-click="reject(accommodationFee)" style="width:24px" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>
+                  </button>
+                  <br/>
+                  <small>(重审)</small>
+               </td>
+               <td data-title="'审核'" width="90" ng-show="accommodationFee.status=='APPROVED'" class="text-center">{{accommodationFee.statusCN}}</td>
+               <td data-title="'审核'" width="90" ng-show="accommodationFee.status=='REJECTED'" class="text-center">{{accommodationFee.statusCN}}</td>
+            </tr>
+         </tbody>
+      </table>
+      <!-- 自定义表头checkbox的template-->
+      <script type="text/ng-template" id="ng-table/headers/checkbox.html">
+         <div class="checkbox c-checkbox"><label><input type="checkbox" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox" value=""/><span class="fa fa-check"></span></label></div>
+      </script>
+   </div>
+</div>

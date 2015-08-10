@@ -18,6 +18,9 @@
             },
             "dormitoryApplication" : {
                 "query" : "server/dormitory-apply-list.json"
+            },
+            "maintenanceApplication" : {
+                "query" : "server/maintenance-apply-list.json"
             }
         })
       ;

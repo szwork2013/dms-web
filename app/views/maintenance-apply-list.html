@@ -1,0 +1,87 @@
+<div ng-controller="MaintenanceApplicationController as table" class="container-fluid">
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         <form class="pull-right hidden-xs form-inline">时间:
+            <div dropdown="dropdown" is-open="select.dropdown.year" class="btn-group">
+               <button dropdown-toggle="" style="min-width:90px;" class="btn btn-info btn-sm">
+                  <span ng-show="select.data.year" class="pull-left">{{ select.data.year }} 年</span>
+                  <span ng-hide="select.data.year" class="pull-left">选择年份</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li ng-repeat="(key, value) in dateTree"><a href="javascript:;" ng-click="dropSelect(&quot;year&quot;, key)">{{key}}</a>
+                  </li>
+               </ul>
+            </div>
+            <div dropdown="dropdown" is-open="select.dropdown.month" class="btn-group">
+               <button dropdown-toggle="" style="min-width:90px;" class="btn btn-default btn-sm">
+                  <span ng-show="select.data.month" class="pull-left">{{ select.data.month }} 月</span>
+                  <span ng-hide="select.data.month" class="pull-left">选择月份</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li ng-repeat="month in dateTree[selectedYear]"><a href="javascript:;" ng-click="dropSelect(&quot;month&quot;, month)">{{month}}</a>
+                  </li>
+               </ul>
+            </div>
+            <span class="mr"></span>状态:
+            <div dropdown="dropdown" is-open="select.dropdown.statusCN" class="btn-group">
+               <button dropdown-toggle="" style="min-width:90px;" class="btn btn-info btn-sm">
+                  <span ng-show="select.data.statusCN" ng-bind="select.data.statusCN" class="pull-left"></span>
+                  <span ng-hide="select.data.statusCN" class="pull-left">所有状态</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="javascript:;" ng-click="dropSelect(&quot;statusCN&quot;, &quot;&quot;)">所有状态</a>
+                  </li>
+                  <li><a href="javascript:;" ng-click="dropSelect(&quot;statusCN&quot;, &quot;待办&quot;)">待办</a>
+                  </li>
+                  <li><a href="javascript:;" ng-click="dropSelect(&quot;statusCN&quot;, &quot;已办结&quot;)">已办结</a>
+                  </li>
+               </ul>
+               <span class="mr"></span>
+            </div>
+            <div class="btn-group">
+               <input type="search" ng-model="searchKeywords" placeholder="表格搜索..." class="form-control input-sm form-horizontal" />
+               <a ng-click="searchKeywords=&quot;&quot;" style="position: absolute; right: 8px; top: 0; bottom: 0; height: 22px; margin: auto; font-size: 14px; cursor: pointer; color: #ccc;" class="clear">
+                  <span class="fa fa-close"></span>
+               </a>
+            </div>
+         </form>
+         <div class="panel-title">维修申请管理
+            <button type="button" ng-click="refreshTable()" class="btn btn-xs btn-default">
+               <span class="fa fa-refresh"></span>
+            </button>
+         </div>
+      </div>
+      <table ng-table="table.tableParams" class="table">
+         <tbody>
+            <tr ng-repeat="apply in $data">
+               <td width="40" header="'ng-table/headers/checkbox.html'">
+                  <div class="checkbox c-checkbox">
+                     <label>
+                        <input type="checkbox" ng-model="checkboxes.items[user.id]" />
+                        <span class="fa fa-check"></span>
+                     </label>
+                  </div>
+               </td>
+               <td data-title="'员工'" sortable="'applicant.name'" class="text-center">
+                  <div ng-click="showEmployee(apply.applicant)" class="btn btn-primary btn-xs">{{apply.applicant.name}}</div>
+               </td>
+               <td data-title="'宿舍地址'" sortable="'dormitory.addressDetailCN'">{{apply.dormitory.addressDetailCN}}</td>
+               <td data-title="'宿舍类型'" sortable="'dormitory.typeCN'" class="text-center">{{apply.dormitory.typeCN}}</td>
+               <td data-title="'故障描述'" sortable="'description'" class="text-center">{{apply.description}}</td>
+               <td data-title="'申报时间'" sortable="'applyDate'" class="text-center">{{apply.applyDate}}</td>
+               <td data-title="'办结时间'" sortable="'finishDate'" ng-show="apply.finishDate" class="text-center">{{apply.finishDate}}</td>
+               <td data-title="'办结时间'" sortable="'finishDate'" ng-hide="apply.finishDate" class="text-center">/</td>
+               <td data-title="'当前状态'" width="90" class="text-center">{{apply.statusCN}}</td>
+               <td data-title="'操作'" width="90" class="text-center">
+                  <span ng-show="apply.finishDate">/</span>
+                  <button title="通过" data-ng-click="resolve(apply)" ng-hide="apply.finishDate" class="btn btn-primary btn-xs">办结</button>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+      <!-- 自定义表头checkbox的template-->
+      <script type="text/ng-template" id="ng-table/headers/checkbox.html">
+         <div class="checkbox c-checkbox"><label><input type="checkbox" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox" value=""/><span class="fa fa-check"></span></label></div>
+      </script>
+   </div>
+</div>

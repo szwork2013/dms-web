@@ -1,0 +1,39 @@
+include mixins/dropdown
+include mixins/search
+include mixins/panel-title
+
+.container-fluid(ng-controller="MaintenanceApplicationController as table")
+  .panel.panel-default
+    .panel-heading
+      form.pull-right.hidden-xs.form-inline
+        +dateDropGroup(true)
+        +maintenanceStatusDrop(true)
+        +searchField()
+      +panelTitle('维修申请管理')
+                
+    table.table(ng-table='table.tableParams')
+      tbody
+        tr(ng-repeat='apply in $data')
+          td(width="40", header="'ng-table/headers/checkbox.html'")
+            .checkbox.c-checkbox
+              label
+                input(type='checkbox', ng-model="checkboxes.items[user.id]")
+                span.fa.fa-check
+          td.text-center(data-title="'员工'", sortable="'applicant.name'") 
+            .btn.btn-primary.btn-xs(ng-click="showEmployee(apply.applicant)") {{apply.applicant.name}}
+          td(data-title="'宿舍地址'", sortable="'dormitory.addressDetailCN'") {{apply.dormitory.addressDetailCN}}
+          td.text-center(data-title="'宿舍类型'", sortable="'dormitory.typeCN'") {{apply.dormitory.typeCN}}
+          td.text-center(data-title="'故障描述'", sortable="'description'") {{apply.description}}
+          td.text-center(data-title="'申报时间'", sortable="'applyDate'") {{apply.applyDate}}
+          td.text-center(data-title="'办结时间'", sortable="'finishDate'", ng-show="apply.finishDate") {{apply.finishDate}}
+          td.text-center(data-title="'办结时间'", sortable="'finishDate'", ng-hide="apply.finishDate") /
+          td.text-center(data-title="'当前状态'", width="90") {{apply.statusCN}}
+          td.text-center(data-title="'操作'", width="90")
+            span(ng-show="apply.finishDate") /
+            button.btn.btn-primary.btn-xs(title='通过', data-ng-click='resolve(apply)', ng-hide="apply.finishDate") 办结
+    // 自定义表头checkbox的template
+    script(type="text/ng-template", id="ng-table/headers/checkbox.html")
+      .checkbox.c-checkbox
+        label
+          input(type="checkbox", ng-model="checkboxes.checked", id="select_all", name="filter-checkbox", value="")
+          span.fa.fa-check

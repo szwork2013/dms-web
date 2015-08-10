@@ -38,7 +38,7 @@
   },
   {
     "text": "维修申请管理",
-    "sref": "app.maintenanceapply",
+    "sref": "app.maintenance",
     "icon": "icon-wrench"
   },
   {

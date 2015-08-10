@@ -172,3 +172,41 @@ mixin typeDrop(label)
       li
         a(href='#', ng-click='dropSelect("typeCN", "夫妻房")') 夫妻房
   span.mr
+
+mixin dateDropGroup(label)
+  if (label)
+    | 时间:
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.year")
+    button.btn.btn-info.btn-sm(dropdown-toggle="", style="min-width:90px;")
+      span.pull-left(ng-show="select.data.year") {{ select.data.year }} 年
+      span.pull-left(ng-hide="select.data.year") 选择年份
+      b.caret.pull-right(style="margin-top:8px")
+    ul.dropdown-menu(role='menu')
+      li(ng-repeat="(key, value) in dateTree")
+        a(href='javascript:;', ng-click='dropSelect("year", key)') {{key}}
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.month")
+      button.btn.btn-default.btn-sm(dropdown-toggle="", style="min-width:90px;")
+        span.pull-left(ng-show="select.data.month") {{ select.data.month }} 月
+        span.pull-left(ng-hide="select.data.month") 选择月份
+        b.caret.pull-right(style="margin-top:8px")
+      ul.dropdown-menu(role='menu')
+        li(ng-repeat="month in dateTree[selectedYear]")
+          a(href='javascript:;', ng-click='dropSelect("month", month)') {{month}}
+  span.mr
+
+mixin maintenanceStatusDrop(label)
+  if (label)
+    | 状态:
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.statusCN")
+    button.btn.btn-info.btn-sm(dropdown-toggle="", style="min-width:90px;")
+      span.pull-left(ng-show="select.data.statusCN" , ng-bind="select.data.statusCN")
+      span.pull-left(ng-hide="select.data.statusCN") 所有状态
+      b.caret.pull-right(style="margin-top:8px")
+    ul.dropdown-menu(role='menu')
+      li
+        a(href='javascript:;', ng-click='dropSelect("statusCN", "")') 所有状态
+      li
+        a(href='javascript:;', ng-click='dropSelect("statusCN", "待办")') 待办
+      li
+        a(href='javascript:;', ng-click='dropSelect("statusCN", "已办结")') 已办结
+    span.mr

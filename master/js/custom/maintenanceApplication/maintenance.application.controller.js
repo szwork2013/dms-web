@@ -5,20 +5,22 @@
         .module('dms.maintenanceApplication')
         .controller('MaintenanceApplicationController', MaintenanceApplicationController);
 
-    MaintenanceApplicationController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'DormitoryApplicationService','ShareService'];
-    function MaintenanceApplicationController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, DormitoryApplicationService, ShareService) {
+    MaintenanceApplicationController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'MaintenanceService','ShareService'];
+    function MaintenanceApplicationController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, MaintenanceService, ShareService) {
         var vm = this;
         var data = null;
         var updateTable = false;
         // ========== 筛选 ========== 
         $scope.select = {
             data: {
-                statusCN: '',
-                typeCN: ''
+                year: '',
+                month: '',
+                statusCN: ''
             },
             dropdown: {
-                statusCN: false,
-                typeCN: false
+                year: false,
+                month: false,
+                statusCN: false
             }
         };
         $scope.searchkeywords = '';
@@ -56,10 +58,10 @@
             counts: [10, 20, 50],
             getData: function ($defer, params) {
                 if (!data || updateTable) {
-                    DormitoryApplicationService.queryData({
+                    MaintenanceService.queryData({
                         success: function (response) {
                             if (response.status) {
-                                data = DormitoryApplicationService.preprocessData(response.result);
+                                data = MaintenanceService.preprocessData(response.result);
                                 showTableData($defer, params);
                             } else {
                                 alert("列表获取失败");
@@ -92,7 +94,6 @@
             }
             
             if($scope.select.data.statusCN) filterData = $filter('filter')(filterData, { statusCN : $scope.select.data.statusCN});
-            if($scope.select.data.typeCN) filterData = $filter('filter')(filterData, { typeCN : $scope.select.data.typeCN});
             return filterData;
         }
         // =============================
@@ -124,5 +125,25 @@
             angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
         }, true);
         // ==================================
+
+        $scope.showEmployee = function(employee) {
+            ShareService.setData(angular.copy(employee));
+            ngDialog.open({
+                template: 'app/views/dialogs/show-employee.html',
+                controller: function ($scope, ngDialog, ShareService) {
+                    $scope.employee = ShareService.getData();
+
+                    // ===== 对话框操作 ===== 
+                    $scope.checkOut = function() {
+                        console.log("Check Out", $scope.employee);
+                        // TODO 发送迁出消息
+                    }
+                    $scope.cancel = function() {
+                        ngDialog.close();
+                    }
+                    // ====================== 
+                }
+            });
+        }
     }
 })();
