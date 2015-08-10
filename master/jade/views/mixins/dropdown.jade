@@ -210,3 +210,22 @@ mixin maintenanceStatusDrop(label)
       li
         a(href='javascript:;', ng-click='dropSelect("statusCN", "已办结")') 已办结
     span.mr
+
+mixin accountTypeDrop(label)
+  if (label)
+    | 账号类型:
+  .btn-group(dropdown='dropdown', is-open="select.dropdown.typeCN")
+    button.btn.btn-info.btn-sm(dropdown-toggle="", style="min-width:90px;")
+      span.pull-left(ng-show="select.data.typeCN" , ng-bind="select.data.typeCN")
+      span.pull-left(ng-hide="select.data.typeCN") 所有类型
+      b.caret.pull-right(style="margin-top:8px")
+    ul.dropdown-menu(role='menu')
+      li
+        a(href='#', ng-click='dropSelect("typeCN", "")') 所有类型
+      li
+        a(href='#', ng-click='dropSelect("typeCN", "集团办公室")') 集团办公室
+      li
+        a(href='#', ng-click='dropSelect("typeCN", "分管高层")') 分管高层
+      li
+        a(href='#', ng-click='dropSelect("typeCN", "中心")') 中心
+  span.mr

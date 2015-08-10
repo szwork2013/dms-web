@@ -22,7 +22,10 @@
             "MANAGER_REJECTED" : "经理未批准",
             "OFFICE_PENDING"   : "待办公室审核",
             "OFFICE_APPROVED"  : "办公室已分配宿舍",
-            "OFFICE_REJECT"    : "办公室未批准"
+            "OFFICE_REJECT"    : "办公室未批准",
+            "OFFICE"           : "集团办公室",
+            "VICE_MANAGER"     : "分管高层",
+            "ZHONG_XIN"        : "中心"
         })
         .constant('VO_PO_DICT', {
             "集体宿舍 - 男"    : "GROUP_MALE",
@@ -43,7 +46,10 @@
             "经理未批准"       :"MANAGER_REJECTED",
             "待办公室审核"      :"OFFICE_PENDING",
             "办公室已分配宿舍"    :"OFFICE_APPROVED",
-            "办公室未批准"      :"OFFICE_REJECT"
+            "办公室未批准"      :"OFFICE_REJECT",
+            "集团办公室"       : "OFFICE",
+            "分管高层"        :   "VICE_MANAGER",
+            "中心"          :       "ZHONG_XIN"
         })
       ;
 

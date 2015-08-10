@@ -46,9 +46,7 @@
     "sref": "#",
     "icon": "icon-settings",
     "submenu": [
-      {"text": "系统账号管理", "sref": "app.account"},
-      {"text": "宿舍信息导入", "sref": "app.importDormitory"},
-      {"text": "员工信息导入", "sref": "app.importEmployee"}
+      {"text": "系统账号管理", "sref": "app.account"}
     ]
   },
   {

@@ -5,21 +5,21 @@
 	"result":[
 		{
 			"id":1,
-			"username":"鼓楼",
+			"username":"fasdf1234",
 			"password":"123456",
 			"type":"OFFICE",
 			"department":"物业"
 		},
 		{
 			"id":2,
-			"username":"仙林",
+			"username":"hqwe4t134",
 			"password":"123456",
 			"type":"VICE_MANAGER",
 			"department":"膳食"
 		},
 		{
 			"id":3,
-			"username":"鼓楼",
+			"username":"vvwet51363",
 			"password":"123456",
 			"type":"ZHONG_XIN",
 			"department":"接待"

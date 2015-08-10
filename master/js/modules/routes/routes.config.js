@@ -55,7 +55,7 @@
               url: '/employee',
               title: '员工列表',
               controller: 'EmployeeController',
-              templateUrl: helper.basepath('employee.html'),
+              templateUrl: helper.basepath('employee-list.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
           .state('app.accommodation-fee', {
@@ -84,6 +84,13 @@
               title: '维修申请管理',
               controller: 'MaintenanceApplicationController',
               templateUrl: helper.basepath('maintenance-apply-list.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog')
+          })
+          .state('app.account', {
+              url: '/account',
+              title: '系统账号管理',
+              controller: 'AccountController',
+              templateUrl: helper.basepath('account-list.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
           // 

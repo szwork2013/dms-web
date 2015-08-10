@@ -21,6 +21,9 @@
             },
             "maintenanceApplication" : {
                 "query" : "server/maintenance-apply-list.json"
+            },
+            "account" : {
+                "query" : "server/account-list.json"
             }
         })
       ;

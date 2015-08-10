@@ -1,0 +1,33 @@
+include mixins/dropdown
+include mixins/search
+include mixins/panel-title
+
+.container-fluid(ng-controller="AccountController as table")
+  .panel.panel-default
+    .panel-heading
+      form.pull-right.hidden-xs.form-inline
+        +accountTypeDrop(true)
+        +searchField()
+      +panelTitle('系统账号管理')
+    
+    table.table(ng-table='table.tableParams')
+      tbody
+        tr(ng-repeat='account in $data')
+          td(width="40", header="'ng-table/headers/checkbox.html'")
+            .checkbox.c-checkbox
+              label
+                input(type='checkbox', ng-model="checkboxes.items[account.employee.id]")
+                span.fa.fa-check
+          td.text-center(data-title="'用户名'", sortable="'username'") {{ account.username }}
+          td.text-center(data-title="'账号类型'", sortable="'typeCN'") {{ account.typeCN }}
+          td.text-center(data-title="'所属中心'", sortable="'department'") {{ account.department }}
+          td.text-center(data-title="'操作'", width="80")
+            button.btn.btn-warning.btn-xs(title='修改密码', data-ng-click='editPassword(account);')
+              i.fa.fa-pencil
+    // 自定义表头checkbox的template
+    script(type="text/ng-template", id="ng-table/headers/checkbox.html")
+      .checkbox.c-checkbox
+        label
+          input(type="checkbox", ng-model="checkboxes.checked", id="select_all", name="filter-checkbox", value="")
+          span.fa.fa-check
+  

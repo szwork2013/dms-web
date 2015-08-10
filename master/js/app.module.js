@@ -18,6 +18,7 @@
             'dms.accommodationFee',
             'dms.dormitoryApplication',
             'dms.maintenanceApplication',
+            'dms.account',
             'dms.util'
         ]);
 })();

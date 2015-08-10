@@ -18,6 +18,7 @@
             'dms.accommodationFee',
             'dms.dormitoryApplication',
             'dms.maintenanceApplication',
+            'dms.account',
             'dms.util'
         ]);
 })();
@@ -92,13 +93,13 @@
     'use strict';
 
     angular
-        .module('app.sidebar', []);
+        .module('app.translate', []);
 })();
 (function() {
     'use strict';
 
     angular
-        .module('app.translate', []);
+        .module('app.sidebar', []);
 })();
 (function() {
     'use strict';
@@ -826,7 +827,7 @@
               url: '/employee',
               title: '员工列表',
               controller: 'EmployeeController',
-              templateUrl: helper.basepath('employee.html'),
+              templateUrl: helper.basepath('employee-list.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
           .state('app.accommodation-fee', {
@@ -855,6 +856,13 @@
               title: '维修申请管理',
               controller: 'MaintenanceApplicationController',
               templateUrl: helper.basepath('maintenance-apply-list.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog')
+          })
+          .state('app.account', {
+              url: '/account',
+              title: '系统账号管理',
+              controller: 'AccountController',
+              templateUrl: helper.basepath('account-list.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
           // 
@@ -937,6 +945,68 @@
 
 })();
 
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .config(translateConfig)
+        ;
+    translateConfig.$inject = ['$translateProvider'];
+    function translateConfig($translateProvider){
+  
+      $translateProvider.useStaticFilesLoader({
+          prefix : 'app/i18n/',
+          suffix : '.json'
+      });
+      $translateProvider.preferredLanguage('en');
+      $translateProvider.useLocalStorage();
+      $translateProvider.usePostCompiling(true);
+
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('app.translate')
+        .run(translateRun)
+        ;
+    translateRun.$inject = ['$rootScope', '$translate'];
+    
+    function translateRun($rootScope, $translate){
+
+      // Internationalization
+      // ----------------------
+
+      $rootScope.language = {
+        // Handles language dropdown
+        listIsOpen: false,
+        // list of available languages
+        available: {
+          'en':       'English',
+          'es_AR':    'Español'
+        },
+        // display always the current ui language
+        init: function () {
+          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
+          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
+          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
+        },
+        set: function (localeId) {
+          // Set the new idiom
+          $translate.use(localeId);
+          // save a reference for the current language
+          $rootScope.language.selected = $rootScope.language.available[localeId];
+          // finally toggle dropdown
+          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+        }
+      };
+
+      $rootScope.language.init();
+
+    }
+})();
 /**=========================================================
  * Module: sidebar-menu.js
  * Handle sidebar collapsible elements
@@ -1290,68 +1360,6 @@
     }
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .config(translateConfig)
-        ;
-    translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider){
-  
-      $translateProvider.useStaticFilesLoader({
-          prefix : 'app/i18n/',
-          suffix : '.json'
-      });
-      $translateProvider.preferredLanguage('en');
-      $translateProvider.useLocalStorage();
-      $translateProvider.usePostCompiling(true);
-
-    }
-})();
-(function() {
-    'use strict';
-
-    angular
-        .module('app.translate')
-        .run(translateRun)
-        ;
-    translateRun.$inject = ['$rootScope', '$translate'];
-    
-    function translateRun($rootScope, $translate){
-
-      // Internationalization
-      // ----------------------
-
-      $rootScope.language = {
-        // Handles language dropdown
-        listIsOpen: false,
-        // list of available languages
-        available: {
-          'en':       'English',
-          'es_AR':    'Español'
-        },
-        // display always the current ui language
-        init: function () {
-          var proposedLanguage = $translate.proposedLanguage() || $translate.use();
-          var preferredLanguage = $translate.preferredLanguage(); // we know we have set a preferred one in app.config
-          $rootScope.language.selected = $rootScope.language.available[ (proposedLanguage || preferredLanguage) ];
-        },
-        set: function (localeId) {
-          // Set the new idiom
-          $translate.use(localeId);
-          // save a reference for the current language
-          $rootScope.language.selected = $rootScope.language.available[localeId];
-          // finally toggle dropdown
-          $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
-        }
-      };
-
-      $rootScope.language.init();
-
-    }
-})();
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -1787,6 +1795,10 @@
 })();
 (function() {
     'use strict';
+    angular.module('dms.account', ['dms']);
+})();
+(function() {
+    'use strict';
     angular.module('dms.dashboard', ['dms']);
 })();
 (function() {
@@ -1795,11 +1807,11 @@
 })();
 (function() {
     'use strict';
-    angular.module('dms.dormitoryApplication', ['dms']);
+    angular.module('dms.employee', ['dms']);
 })();
 (function() {
     'use strict';
-    angular.module('dms.employee', ['dms']);
+    angular.module('dms.dormitoryApplication', ['dms']);
 })();
 (function() {
     'use strict';
@@ -1870,7 +1882,10 @@
             "MANAGER_REJECTED" : "经理未批准",
             "OFFICE_PENDING"   : "待办公室审核",
             "OFFICE_APPROVED"  : "办公室已分配宿舍",
-            "OFFICE_REJECT"    : "办公室未批准"
+            "OFFICE_REJECT"    : "办公室未批准",
+            "OFFICE"           : "集团办公室",
+            "VICE_MANAGER"     : "分管高层",
+            "ZHONG_XIN"        : "中心"
         })
         .constant('VO_PO_DICT', {
             "集体宿舍 - 男"    : "GROUP_MALE",
@@ -1891,7 +1906,10 @@
             "经理未批准"       :"MANAGER_REJECTED",
             "待办公室审核"      :"OFFICE_PENDING",
             "办公室已分配宿舍"    :"OFFICE_APPROVED",
-            "办公室未批准"      :"OFFICE_REJECT"
+            "办公室未批准"      :"OFFICE_REJECT",
+            "集团办公室"       : "OFFICE",
+            "分管高层"        :   "VICE_MANAGER",
+            "中心"          :       "ZHONG_XIN"
         })
       ;
 
@@ -1919,6 +1937,9 @@
             },
             "maintenanceApplication" : {
                 "query" : "server/maintenance-apply-list.json"
+            },
+            "account" : {
+                "query" : "server/account-list.json"
             }
         })
       ;
@@ -2315,6 +2336,194 @@
     'use strict';
 
     angular
+        .module('dms.account')
+        .controller('AccountController', AccountController);
+
+    AccountController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'AccountService','ShareService'];
+    function AccountController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, AccountService, ShareService) {
+        var vm = this;
+        var data = null;
+        var updateTable = false;
+        // ========== 筛选 ========== 
+        $scope.select = {
+            data: {
+                campus: '',
+                department: '',
+                genderCN: ''
+            },
+            dropdown: {
+                campus: false,
+                department: false,
+                genderCN: false
+            }
+        };
+        $scope.searchkeywords = '';
+
+        $scope.dropSelect = function (name, value) {
+            $scope.select.data[name] = value;
+            $scope.select.dropdown[name] = false;
+            vm.tableParams.reload();
+        }
+
+        $scope.resetFilter = function() {
+            for(var key in $scope.select.data) {
+                $scope.select.data[key] = '';
+            }
+            $scope.searchkeywords = '';
+            vm.tableParams.reload();
+        }
+
+        $scope.refreshTable = function() {
+            updateTable = true;
+            vm.tableParams.reload();
+        }
+
+        $scope.$watch("searchKeywords", function () {
+            vm.tableParams.reload();
+        });
+        // =========================
+        
+        // ========== 数据显示 ==========
+        vm.tableParams = new ngTableParams({
+            page: 1,
+            count: 10
+        }, {
+            total: 0,
+            counts: [10, 20, 50],
+            getData: function ($defer, params) {
+                if (!data || updateTable) {
+                    AccountService.queryData({
+                        success: function (response) {
+                            if (response.status) {
+                                data = AccountService.preprocessData(response.result);
+                                showTableData($defer, params);
+                            } else {
+                                alert("列表获取失败");
+                            }
+                            updateTable = false;
+                            console.log("Query Employee List", data);
+                        },
+                        error: function (data, status, headers, config) {
+                            console.log(data, status, headers, config);
+                            alert("GET Error2");
+                        }
+                    },updateTable);
+                } else {
+                    showTableData($defer, params);
+                }
+            }
+        });
+        var showTableData = function($defer, params) {
+            var searchedData = searchData(data);
+            var orderedData = params.sorting() ? $filter('orderBy')(searchedData, params.orderBy()) : searchedData;
+            params.total(orderedData.length);
+            $defer.resolve($scope.dormitories = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+        var searchData = function(filterData) {
+            if($scope.searchKeywords) {
+                var keywords = $scope.searchKeywords.split(" ");
+                var i;
+                for(i in keywords) {
+                    filterData = $filter('filter')(filterData, keywords[i]);
+                }
+            }
+            
+            if($scope.select.data.campus) filterData = $filter('filter')(filterData, { employee : { workCampus : $scope.select.data.campus}});
+            if($scope.select.data.department) filterData = $filter('filter')(filterData, { employee : { department : $scope.select.data.department}});
+            if($scope.select.data.genderCN) filterData = $filter('filter')(filterData, { employee : { genderCN : $scope.select.data.genderCN}});
+            return filterData;
+        }
+        // =============================
+        
+        // ========== 表格Checkbox ==========
+        $scope.checkboxes = { 'checked': false, items: {} };
+        // 总checkbox
+        $scope.$watch('checkboxes.checked', function(value) {
+            angular.forEach($scope.dormitories, function(item) {
+                if (angular.isDefined(item.employee.id)) {
+                    $scope.checkboxes.items[item.employee.id] = value;
+                }
+            });
+        });
+        // 子checkbox
+        $scope.$watch('checkboxes.items', function(values) {
+            if (!$scope.dormitories) {
+                return;
+            }
+            var checked = 0, unchecked = 0,
+            total = $scope.dormitories.length;
+            angular.forEach($scope.dormitories, function(item) {
+                checked   +=  ($scope.checkboxes.items[item.employee.id]) || 0;
+                unchecked += (!$scope.checkboxes.items[item.employee.id]) || 0;
+            });
+            if ((unchecked == 0) || (checked == 0)) {
+                $scope.checkboxes.checked = (checked == total);
+            }
+            angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+        }, true);
+        // ==================================
+
+        $scope.editEmployee = function(employeeItem) {
+            ShareService.setData(angular.copy(employeeItem));
+            ngDialog.open({
+                template: 'app/views/dialogs/edit-employee.html',
+                controller: function ($scope, ngDialog, ShareService) {
+                    $scope.employee = ShareService.getData().employee;
+                    $scope.employee.canBeDelete = ShareService.getData().dormitory==null || ShareService.getData().dormitory=={};
+                    // ===== 对话框操作 ===== 
+                    $scope.selectGender = function(gender) {
+                        console.log(gender);
+                        $scope.genderOpen = false;
+                        $scope.employee.genderCN = gender;
+                    }
+                    $scope.selectDepartment = function(department) {
+                        $scope.departmentOpen = false;
+                        $scope.employee.department = department;
+                    }
+                    $scope.delete = function() {
+                        console.log("Delete", $scope.employee);
+                        // TODO 发送迁出消息
+                    }
+                    $scope.cancel = function() {
+                        ngDialog.close();
+                    }
+                    // ====================== 
+                }
+            });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.account')
+        .service('AccountService', AccountService);
+    AccountService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
+    function AccountService($http, VO_PO_DICT, PO_VO_DICT, URL, ngDialog, ShareService) {
+        
+        this.queryData = function(callback) {
+            $http.get(URL.account.query).success(callback.success).error(callback.error);
+        }
+    
+        this.preprocessData = function(data) {
+            angular.forEach(data, function(item) {
+                item.typeCN = PO_VO_DICT[item.type];
+            });
+            return data;
+        }
+    
+        this.postprocessData = function(data) {
+            return data;
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
         .module('dms.dashboard')
         .controller('DashboardController', DashboardController);
 
@@ -2607,6 +2816,198 @@
     'use strict';
 
     angular
+        .module('dms.employee')
+        .controller('EmployeeController', EmployeeController);
+
+    EmployeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'EmployeeService','ShareService'];
+    function EmployeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, EmployeeService, ShareService) {
+        var vm = this;
+        var data = null;
+        var updateTable = false;
+        // ========== 筛选 ========== 
+        $scope.select = {
+            data: {
+                campus: '',
+                department: '',
+                genderCN: ''
+            },
+            dropdown: {
+                campus: false,
+                department: false,
+                genderCN: false
+            }
+        };
+        $scope.searchkeywords = '';
+
+        $scope.dropSelect = function (name, value) {
+            $scope.select.data[name] = value;
+            $scope.select.dropdown[name] = false;
+            vm.tableParams.reload();
+        }
+
+        $scope.resetFilter = function() {
+            for(var key in $scope.select.data) {
+                $scope.select.data[key] = '';
+            }
+            $scope.searchkeywords = '';
+            vm.tableParams.reload();
+        }
+
+        $scope.refreshTable = function() {
+            updateTable = true;
+            vm.tableParams.reload();
+        }
+
+        $scope.$watch("searchKeywords", function () {
+            vm.tableParams.reload();
+        });
+        // =========================
+        
+        // ========== 数据显示 ==========
+        vm.tableParams = new ngTableParams({
+            page: 1,
+            count: 10
+        }, {
+            total: 0,
+            counts: [10, 20, 50],
+            getData: function ($defer, params) {
+                if (!data || updateTable) {
+                    EmployeeService.queryData({
+                        success: function (response) {
+                            if (response.status) {
+                                data = EmployeeService.preprocessData(response.result);
+                                showTableData($defer, params);
+                            } else {
+                                alert("列表获取失败");
+                            }
+                            updateTable = false;
+                            console.log("Query Employee List", data);
+                        },
+                        error: function (data, status, headers, config) {
+                            console.log(data, status, headers, config);
+                            alert("GET Error2");
+                        }
+                    },updateTable);
+                } else {
+                    showTableData($defer, params);
+                }
+            }
+        });
+        var showTableData = function($defer, params) {
+            var searchedData = searchData(data);
+            var orderedData = params.sorting() ? $filter('orderBy')(searchedData, params.orderBy()) : searchedData;
+            params.total(orderedData.length);
+            $defer.resolve($scope.dormitories = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+        var searchData = function(filterData) {
+            if($scope.searchKeywords) {
+                var keywords = $scope.searchKeywords.split(" ");
+                var i;
+                for(i in keywords) {
+                    filterData = $filter('filter')(filterData, keywords[i]);
+                }
+            }
+            
+            if($scope.select.data.campus) filterData = $filter('filter')(filterData, { employee : { workCampus : $scope.select.data.campus}});
+            if($scope.select.data.department) filterData = $filter('filter')(filterData, { employee : { department : $scope.select.data.department}});
+            if($scope.select.data.genderCN) filterData = $filter('filter')(filterData, { employee : { genderCN : $scope.select.data.genderCN}});
+            return filterData;
+        }
+        // =============================
+        
+        // ========== 表格Checkbox ==========
+        $scope.checkboxes = { 'checked': false, items: {} };
+        // 总checkbox
+        $scope.$watch('checkboxes.checked', function(value) {
+            angular.forEach($scope.dormitories, function(item) {
+                if (angular.isDefined(item.employee.id)) {
+                    $scope.checkboxes.items[item.employee.id] = value;
+                }
+            });
+        });
+        // 子checkbox
+        $scope.$watch('checkboxes.items', function(values) {
+            if (!$scope.dormitories) {
+                return;
+            }
+            var checked = 0, unchecked = 0,
+            total = $scope.dormitories.length;
+            angular.forEach($scope.dormitories, function(item) {
+                checked   +=  ($scope.checkboxes.items[item.employee.id]) || 0;
+                unchecked += (!$scope.checkboxes.items[item.employee.id]) || 0;
+            });
+            if ((unchecked == 0) || (checked == 0)) {
+                $scope.checkboxes.checked = (checked == total);
+            }
+            angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+        }, true);
+        // ==================================
+
+        $scope.editEmployee = function(employeeItem) {
+            ShareService.setData(angular.copy(employeeItem));
+            ngDialog.open({
+                template: 'app/views/dialogs/edit-employee.html',
+                controller: function ($scope, ngDialog, ShareService) {
+                    $scope.employee = ShareService.getData().employee;
+                    $scope.employee.canBeDelete = ShareService.getData().dormitory==null || ShareService.getData().dormitory=={};
+                    // ===== 对话框操作 ===== 
+                    $scope.selectGender = function(gender) {
+                        console.log(gender);
+                        $scope.genderOpen = false;
+                        $scope.employee.genderCN = gender;
+                    }
+                    $scope.selectDepartment = function(department) {
+                        $scope.departmentOpen = false;
+                        $scope.employee.department = department;
+                    }
+                    $scope.delete = function() {
+                        console.log("Delete", $scope.employee);
+                        // TODO 发送迁出消息
+                    }
+                    $scope.cancel = function() {
+                        ngDialog.close();
+                    }
+                    // ====================== 
+                }
+            });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.dormitory')
+        .service('EmployeeService', EmployeeService);
+    EmployeeService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
+    function EmployeeService($http, VO_PO_DICT, PO_VO_DICT, URL, ngDialog, ShareService) {
+        
+        this.queryData = function(callback) {
+            $http.get(URL.employee.query).success(callback.success).error(callback.error);
+        }
+    
+        this.preprocessData = function(data) {
+            angular.forEach(data, function(item) {
+                item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + "层 - " + item.dormitory.doorplate;
+                item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
+                item.employee.genderCN = PO_VO_DICT[item.employee.gender];
+                item.employee.spouseTypeCN = PO_VO_DICT[item.employee.spouseType];
+                item.employee.spouseGenderCN = PO_VO_DICT[item.employee.spouseGender];
+            });
+            return data;
+        }
+    
+        this.postprocessData = function(data) {
+            return data;
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
         .module('dms.dormitoryApplication')
         .controller('DormitoryApplicationController', DormitoryApplicationController);
 
@@ -2800,198 +3201,6 @@
                     employee.spouseTypeCN = PO_VO_DICT[employee.spouseType];
                     employee.spouseGenderCN = PO_VO_DICT[employee.spouseGender];
                 });
-            });
-            return data;
-        }
-    
-        this.postprocessData = function(data) {
-            return data;
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('dms.employee')
-        .controller('EmployeeController', EmployeeController);
-
-    EmployeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'EmployeeService','ShareService'];
-    function EmployeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, EmployeeService, ShareService) {
-        var vm = this;
-        var data = null;
-        var updateTable = false;
-        // ========== 筛选 ========== 
-        $scope.select = {
-            data: {
-                campus: '',
-                department: '',
-                genderCN: ''
-            },
-            dropdown: {
-                campus: false,
-                department: false,
-                genderCN: false
-            }
-        };
-        $scope.searchkeywords = '';
-
-        $scope.dropSelect = function (name, value) {
-            $scope.select.data[name] = value;
-            $scope.select.dropdown[name] = false;
-            vm.tableParams.reload();
-        }
-
-        $scope.resetFilter = function() {
-            for(var key in $scope.select.data) {
-                $scope.select.data[key] = '';
-            }
-            $scope.searchkeywords = '';
-            vm.tableParams.reload();
-        }
-
-        $scope.refreshTable = function() {
-            updateTable = true;
-            vm.tableParams.reload();
-        }
-
-        $scope.$watch("searchKeywords", function () {
-            vm.tableParams.reload();
-        });
-        // =========================
-        
-        // ========== 数据显示 ==========
-        vm.tableParams = new ngTableParams({
-            page: 1,
-            count: 10
-        }, {
-            total: 0,
-            counts: [10, 20, 50],
-            getData: function ($defer, params) {
-                if (!data || updateTable) {
-                    EmployeeService.queryData({
-                        success: function (response) {
-                            if (response.status) {
-                                data = EmployeeService.preprocessData(response.result);
-                                showTableData($defer, params);
-                            } else {
-                                alert("列表获取失败");
-                            }
-                            updateTable = false;
-                            console.log("Query Employee List", data);
-                        },
-                        error: function (data, status, headers, config) {
-                            console.log(data, status, headers, config);
-                            alert("GET Error2");
-                        }
-                    },updateTable);
-                } else {
-                    showTableData($defer, params);
-                }
-            }
-        });
-        var showTableData = function($defer, params) {
-            var searchedData = searchData(data);
-            var orderedData = params.sorting() ? $filter('orderBy')(searchedData, params.orderBy()) : searchedData;
-            params.total(orderedData.length);
-            $defer.resolve($scope.dormitories = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-        }
-        var searchData = function(filterData) {
-            if($scope.searchKeywords) {
-                var keywords = $scope.searchKeywords.split(" ");
-                var i;
-                for(i in keywords) {
-                    filterData = $filter('filter')(filterData, keywords[i]);
-                }
-            }
-            
-            if($scope.select.data.campus) filterData = $filter('filter')(filterData, { employee : { workCampus : $scope.select.data.campus}});
-            if($scope.select.data.department) filterData = $filter('filter')(filterData, { employee : { department : $scope.select.data.department}});
-            if($scope.select.data.genderCN) filterData = $filter('filter')(filterData, { employee : { genderCN : $scope.select.data.genderCN}});
-            return filterData;
-        }
-        // =============================
-        
-        // ========== 表格Checkbox ==========
-        $scope.checkboxes = { 'checked': false, items: {} };
-        // 总checkbox
-        $scope.$watch('checkboxes.checked', function(value) {
-            angular.forEach($scope.dormitories, function(item) {
-                if (angular.isDefined(item.employee.id)) {
-                    $scope.checkboxes.items[item.employee.id] = value;
-                }
-            });
-        });
-        // 子checkbox
-        $scope.$watch('checkboxes.items', function(values) {
-            if (!$scope.dormitories) {
-                return;
-            }
-            var checked = 0, unchecked = 0,
-            total = $scope.dormitories.length;
-            angular.forEach($scope.dormitories, function(item) {
-                checked   +=  ($scope.checkboxes.items[item.employee.id]) || 0;
-                unchecked += (!$scope.checkboxes.items[item.employee.id]) || 0;
-            });
-            if ((unchecked == 0) || (checked == 0)) {
-                $scope.checkboxes.checked = (checked == total);
-            }
-            angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
-        }, true);
-        // ==================================
-
-        $scope.editEmployee = function(employeeItem) {
-            ShareService.setData(angular.copy(employeeItem));
-            ngDialog.open({
-                template: 'app/views/dialogs/edit-employee.html',
-                controller: function ($scope, ngDialog, ShareService) {
-                    $scope.employee = ShareService.getData().employee;
-                    $scope.employee.canBeDelete = ShareService.getData().dormitory==null || ShareService.getData().dormitory=={};
-                    // ===== 对话框操作 ===== 
-                    $scope.selectGender = function(gender) {
-                        console.log(gender);
-                        $scope.genderOpen = false;
-                        $scope.employee.genderCN = gender;
-                    }
-                    $scope.selectDepartment = function(department) {
-                        $scope.departmentOpen = false;
-                        $scope.employee.department = department;
-                    }
-                    $scope.delete = function() {
-                        console.log("Delete", $scope.employee);
-                        // TODO 发送迁出消息
-                    }
-                    $scope.cancel = function() {
-                        ngDialog.close();
-                    }
-                    // ====================== 
-                }
-            });
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('dms.dormitory')
-        .service('EmployeeService', EmployeeService);
-    EmployeeService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
-    function EmployeeService($http, VO_PO_DICT, PO_VO_DICT, URL, ngDialog, ShareService) {
-        
-        this.queryData = function(callback) {
-            $http.get(URL.employee.query).success(callback.success).error(callback.error);
-        }
-    
-        this.preprocessData = function(data) {
-            angular.forEach(data, function(item) {
-                item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + "层 - " + item.dormitory.doorplate;
-                item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
-                item.employee.genderCN = PO_VO_DICT[item.employee.gender];
-                item.employee.spouseTypeCN = PO_VO_DICT[item.employee.spouseType];
-                item.employee.spouseGenderCN = PO_VO_DICT[item.employee.spouseGender];
             });
             return data;
         }

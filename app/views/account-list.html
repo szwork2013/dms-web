@@ -1,0 +1,61 @@
+<div ng-controller="AccountController as table" class="container-fluid">
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         <form class="pull-right hidden-xs form-inline">账号类型:
+            <div dropdown="dropdown" is-open="select.dropdown.typeCN" class="btn-group">
+               <button dropdown-toggle="" style="min-width:90px;" class="btn btn-info btn-sm">
+                  <span ng-show="select.data.typeCN" ng-bind="select.data.typeCN" class="pull-left"></span>
+                  <span ng-hide="select.data.typeCN" class="pull-left">所有类型</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="#" ng-click="dropSelect(&quot;typeCN&quot;, &quot;&quot;)">所有类型</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;typeCN&quot;, &quot;集团办公室&quot;)">集团办公室</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;typeCN&quot;, &quot;分管高层&quot;)">分管高层</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;typeCN&quot;, &quot;中心&quot;)">中心</a>
+                  </li>
+               </ul>
+            </div>
+            <span class="mr"></span>
+            <div class="btn-group">
+               <input type="search" ng-model="searchKeywords" placeholder="表格搜索..." class="form-control input-sm form-horizontal" />
+               <a ng-click="searchKeywords=&quot;&quot;" style="position: absolute; right: 8px; top: 0; bottom: 0; height: 22px; margin: auto; font-size: 14px; cursor: pointer; color: #ccc;" class="clear">
+                  <span class="fa fa-close"></span>
+               </a>
+            </div>
+         </form>
+         <div class="panel-title">系统账号管理
+            <button type="button" ng-click="refreshTable()" class="btn btn-xs btn-default">
+               <span class="fa fa-refresh"></span>
+            </button>
+         </div>
+      </div>
+      <table ng-table="table.tableParams" class="table">
+         <tbody>
+            <tr ng-repeat="account in $data">
+               <td width="40" header="'ng-table/headers/checkbox.html'">
+                  <div class="checkbox c-checkbox">
+                     <label>
+                        <input type="checkbox" ng-model="checkboxes.items[account.employee.id]" />
+                        <span class="fa fa-check"></span>
+                     </label>
+                  </div>
+               </td>
+               <td data-title="'用户名'" sortable="'username'" class="text-center">{{ account.username }}</td>
+               <td data-title="'账号类型'" sortable="'typeCN'" class="text-center">{{ account.typeCN }}</td>
+               <td data-title="'所属中心'" sortable="'department'" class="text-center">{{ account.department }}</td>
+               <td data-title="'操作'" width="80" class="text-center">
+                  <button title="修改密码" data-ng-click="editPassword(account);" class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i>
+                  </button>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+      <!-- 自定义表头checkbox的template-->
+      <script type="text/ng-template" id="ng-table/headers/checkbox.html">
+         <div class="checkbox c-checkbox"><label><input type="checkbox" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox" value=""/><span class="fa fa-check"></span></label></div>
+      </script>
+   </div>
+</div>
