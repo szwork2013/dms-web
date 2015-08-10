@@ -10,6 +10,7 @@
             'app.loadingbar',
             'app.translate',
             'app.settings',
+            'app.forms',
             'app.utils',
             'dms.dashboard',
             'dms.dormitory',

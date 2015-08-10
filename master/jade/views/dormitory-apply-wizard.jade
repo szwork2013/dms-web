@@ -1,68 +1,203 @@
 .container-fluid
   .panel.panel-default
-    .panel-heading  Form Wizard Horizontal (with validation)
+    .panel-heading  宿舍申请向导
     .panel-body
-      form(action='/', method='POST', form-wizard="", validate-steps="true", validate-form="", steps="4")
+      form(form-wizard="", validate-steps="true", validate-form="", steps="3")
         .form-wizard.wizard-horizontal
-          // START wizard steps indicator
           ol.row
-            li.col-md-3(ng-class="{'active':wizard.active(1)}", ng-click="wizard.go(1)")
-              h4 Login
-              small.text-muted Duis volutpat nunc at ligula tincidunt non aliquam. 
-            li.col-md-3(ng-class="{'active':wizard.active(2)}", ng-click="wizard.go(2)")
-              h4 Personal
-              small.text-muted Nulla pharetra imperdiet sapien ac faucibus. 
-            li.col-md-3(ng-class="{'active':wizard.active(3)}", ng-click="wizard.go(3)")
-              h4 Contact
-              small.text-muted Sed elementum lorem dolor, id fermentum metus. 
-            li.col-md-3(ng-class="{'active':wizard.active(4)}", ng-click="wizard.go(4)")
-              h4 Done!
-              small.text-muted Nullam sit amet magna vestibulum libero.
-          // END wizard steps indicator
+            li.col-md-4(ng-class="{'active':wizard.active(1)}")
+              h4 1、选择入住员工
+              small.text-muted 选择没有入住的员工或增加新的员工
+            li.col-md-4(ng-class="{'active':wizard.active(2)}")
+              h4 2、添加配偶
+              small.text-muted 添加随员工同时迁入的配偶信息
+            li.col-md-4(ng-class="{'active':wizard.active(3)}")
+              h4 3、填写申请信息
+              small.text-muted 填写申请的宿舍类型和申请理由
 
-          // START Wizard Step inputs 
           div#step1(ng-show="wizard.active(1)")
-            fieldset
-              legend Login
-              // START row 
-              .row
-                .col-md-4
-                  .form-group
-                    label Username
-                    .controls
-                      input.form-control(type='text', name='username', data-parsley-group="step1", placeholder='Your nick here', required)
-                .col-md-4
-                  .form-group
-                    label Password
-                    .controls
-                      input.form-control(type='password', name='password', data-parsley-group="step1", placeholder='Your password', required)
-                .col-md-4
-                  .form-group
-                    label Retype Password
-                    .controls
-                      input.form-control(type='password', name='password2', data-parsley-group="step1", placeholder='Confirmed password', required)
-              // END row 
+            legend
+              span(style="font-weight:bold;") 选择入住员工
+            .row
+              .col-md-3
+                .col-md-12
+                  h4 宿舍申请人来源
+                .col-md-12
+                  .radio.c-radio.c-radio-nofont
+                    label(style="font-size:15px")
+                      input(type='radio', name='selectEmployeeType', value='existed', checked='', ng-model='selectEmployeeType')
+                      span
+                      |  选择已有员工
+                .col-md-12
+                  .radio.c-radio.c-radio-nofont
+                    label(style="font-size:15px")
+                      input(type='radio', name='selectEmployeeType', value='new', ng-model='selectEmployeeType')
+                      span
+                      |  创建员工
+              .col-md-9
+                .col-md-12
+                  .panel.panel-primary(ng-if='selectEmployeeType=="existed"')
+                    .panel-heading(ng-class="{'panel-heading-collapsed':panelDemo1}")
+                      | 选择已有员工
+                    .panel-wrapper
+                      .panel-body
+                        ui-select(ng-model='uisel.person.selected', theme='bootstrap')
+                          ui-select-match(placeholder='选择需要申请宿舍的员工') {{$select.selected.name}}
+                          ui-select-choices(repeat='person in uisel.people | propsFilter: {name: $select.search, age: $select.search}')
+                            div(ng-bind-html='person.name | highlight: $select.search')
+                            small
+                              | email: {{person.email}}        age: 
+                              span(ng-bind-html="''+person.age | highlight: $select.search")
+                  .panel.panel-primary(ng-if='selectEmployeeType=="new"')
+                    .panel-heading(ng-class="{'panel-heading-collapsed':panelDemo1}")
+                      | 创建新员工
+                    .panel-wrapper
+                      .panel-body
+                        .col-md-4
+                          .form-group
+                            label 姓名
+                            .controls
+                              input.form-control(type='text', name='name', placeholder='输入员工姓名...', required)
+                        .col-md-4
+                          .form-group
+                            label 性别
+                            .controls
+                              input.form-control(type='text', name='gender', placeholder='选择员工性别...', required)
+                        .col-md-4
+                          .form-group
+                            label 身份证号
+                            .controls
+                              input.form-control(type='text', name='idNum', placeholder='输入员工身份证号...', required)
+                        .col-md-4
+                          .form-group
+                            label 所属中心
+                            .controls
+                              input.form-control(type='text', name='department', placeholder='选择所属中心...', required)
+                        .col-md-4
+                          .form-group
+                            label 工作地点
+                            .controls
+                              input.form-control(type='text', name='workLocationDetail', placeholder='输入员工工作的具体地点...', required)
+                        .col-md-4
+                          .form-group
+                            label 入职时间
+                            .controls
+                              input.form-control(type='text', name='dutyDate', placeholder='输入员工入职时间...', required)
+                        .col-md-12
+                          button.btn.btn-primary.pull-right 创建员工
+                          button.btn.btn-default.pull-right.mr 清空输入
+
             ul.pager
               li.next
                 a(href='#', ng-click="wizard.go(2)")
-                  | Next 
+                  | 下一步
                   span &rarr;
-          // END Wizard Step inputs 
-          // START Wizard Step inputs 
+
           div#step2(ng-show="wizard.active(2)")
-            fieldset
-              legend Personal
-              // START row 
-              .row
-                .col-md-6
-                  .form-group
-                    label First Name
-                    input.form-control(type='text', name='first-name', data-parsley-group="step2", placeholder='John', required)
-                .col-md-6
-                  .form-group
-                    label Last Name
-                    input.form-control(type='text', name='last-name', data-parsley-group="step2", placeholder='Snow', required)
-              // END row 
+            legend
+              span(style="font-weight:bold;") 添加配偶
+            .row
+              .col-md-3
+                .col-md-12
+                  h4 配偶来源
+                .col-md-12
+                  .radio.c-radio.c-radio-nofont
+                    label(style="font-size:15px")
+                      input(type='radio', name='selectSpouseType', value='existed', checked='', ng-model='selectSpouseType')
+                      span
+                      |  关联已有员工
+                .col-md-12
+                  .radio.c-radio.c-radio-nofont
+                    label(style="font-size:15px")
+                      input(type='radio', name='selectSpouseType', value='newInner', ng-model='selectSpouseType')
+                      span
+                      |  创建配偶（集团员工）
+                .col-md-12
+                  .radio.c-radio.c-radio-nofont
+                    label(style="font-size:15px")
+                      input(type='radio', name='selectSpouseType', value='newOuter', ng-model='selectSpouseType')
+                      span
+                      |  创建配偶（非集团员工）
+              .col-md-9
+                .col-md-12
+                  .panel.panel-primary(ng-if='selectSpouseType=="existed"')
+                    .panel-heading(ng-class="{'panel-heading-collapsed':panelDemo1}")
+                      | 关联已有员工
+                    .panel-wrapper
+                      .panel-body
+                        ui-select(ng-model='uisel.person.selected', theme='bootstrap')
+                          ui-select-match(placeholder='选择需要申请宿舍的员工') {{$select.selected.name}}
+                          ui-select-choices(repeat='person in uisel.people | propsFilter: {name: $select.search, age: $select.search}')
+                            div(ng-bind-html='person.name | highlight: $select.search')
+                            small
+                              | email: {{person.email}}        age: 
+                              span(ng-bind-html="''+person.age | highlight: $select.search")
+                  .panel.panel-primary(ng-if='selectSpouseType=="newInner"')
+                    .panel-heading(ng-class="{'panel-heading-collapsed':panelDemo1}")
+                      | 关联集团内配偶
+                    .panel-wrapper
+                      .panel-body
+                        .col-md-4
+                          .form-group
+                            label 姓名
+                            .controls
+                              input.form-control(type='text', name='name', placeholder='输入员工姓名...', required)
+                        .col-md-4
+                          .form-group
+                            label 性别
+                            .controls
+                              input.form-control(type='text', name='gender', placeholder='选择员工性别...', required)
+                        .col-md-4
+                          .form-group
+                            label 身份证号
+                            .controls
+                              input.form-control(type='text', name='idNum', placeholder='输入员工身份证号...', required)
+                        .col-md-4
+                          .form-group
+                            label 所属中心
+                            .controls
+                              input.form-control(type='text', name='department', placeholder='选择所属中心...', required)
+                        .col-md-4
+                          .form-group
+                            label 工作地点
+                            .controls
+                              input.form-control(type='text', name='workLocationDetail', placeholder='输入员工工作的具体地点...', required)
+                        .col-md-4
+                          .form-group
+                            label 入职时间
+                            .controls
+                              input.form-control(type='text', name='dutyDate', placeholder='输入员工入职时间...', required)
+                        .col-md-12
+                          button.btn.btn-primary.pull-right 创建员工
+                          button.btn.btn-default.pull-right.mr 清空输入
+                  .panel.panel-primary(ng-if='selectSpouseType=="newOuter"')
+                    .panel-heading(ng-class="{'panel-heading-collapsed':panelDemo1}")
+                      | 关联集团外配偶
+                    .panel-wrapper
+                      .panel-body
+                        .col-md-4
+                          .form-group
+                            label 姓名
+                            .controls
+                              input.form-control(type='text', name='name', placeholder='输入员工姓名...', required)
+                        .col-md-4
+                          .form-group
+                            label 性别
+                            .controls
+                              input.form-control(type='text', name='gender', placeholder='选择员工性别...', required)
+                        .col-md-4
+                          .form-group
+                            label 身份证号
+                            .controls
+                              input.form-control(type='text', name='idNum', placeholder='输入员工身份证号...', required)
+                        .col-md-4
+                          .form-group
+                            label 工作单位
+                            .controls
+                              input.form-control(type='text', name='workLocationDetail', placeholder='输入员工工作的具体地点...', required)
+                        .col-md-12
+                          button.btn.btn-primary.pull-right 关联配偶
+                          button.btn.btn-default.pull-right.mr 清空输入
             ul.pager
               li.previous
                 a(href='#', ng-click="wizard.go(1)")
@@ -71,41 +206,92 @@
                 a(href='#', ng-click="wizard.go(3)")
                   | Next 
                   span &rarr;
-          // END Wizard Step inputs 
-          // START Wizard Step inputs 
+
           div#step3(ng-show="wizard.active(3)")
-            fieldset
-              legend Contact
-              // START row 
-              .row
-                .col-md-6
-                  .form-group
-                    label Email
-                    input.form-control(type='text', name='email', data-parsley-group="step3", placeholder='john@snow.com', required)
-                .col-md-6
-                  .form-group
-                    label Phone
-                    input.form-control(type='text', name='phone', data-parsley-group="step3", placeholder='11-2345-6789', required)
-              // END row 
+            legend 
+              span(style="font-weight:bold;") 
+                span(style="font-weight:bold;") 填写申请信息
+            .row
+              .col-md-3
+                .col-md-12
+                  span 申请宿舍种类
+              .col-md-9
+                .col-md-4
+                  .radio.c-radio.c-radio-nofont
+                    label(style="font-size:15px")
+                      input(type='radio', name='dormitoryType', value='GROUP_MALE', checked='', ng-model='dormitoryType')
+                      span
+                      |  集体宿舍 - 男
+                .col-md-4
+                  .radio.c-radio.c-radio-nofont
+                    label(style="font-size:15px")
+                      input(type='radio', name='dormitoryType', value='GROUP_FEMALE', ng-model='dormitoryType')
+                      span
+                      |  集体宿舍 - 女
+                .col-md-4
+                  .radio.c-radio.c-radio-nofont
+                    label(style="font-size:15px")
+                      input(type='radio', name='dormitoryType', value='COUPLE', ng-model='dormitoryType')
+                      span
+                      |  夫妻房
+              .col-md-9
+                .col-md-12
+                  .panel.panel-primary(ng-if='selectEmployeeType=="existed"')
+                    .panel-heading(ng-class="{'panel-heading-collapsed':panelDemo1}")
+                      | 选择已有员工
+                    .panel-wrapper
+                      .panel-body
+                        ui-select(ng-model='uisel.person.selected', theme='bootstrap')
+                          ui-select-match(placeholder='选择需要申请宿舍的员工') {{$select.selected.name}}
+                          ui-select-choices(repeat='person in uisel.people | propsFilter: {name: $select.search, age: $select.search}')
+                            div(ng-bind-html='person.name | highlight: $select.search')
+                            small
+                              | email: {{person.email}}        age: 
+                              span(ng-bind-html="''+person.age | highlight: $select.search")
+                  .panel.panel-primary(ng-if='selectEmployeeType=="new"')
+                    .panel-heading(ng-class="{'panel-heading-collapsed':panelDemo1}")
+                      | 创建新员工
+                    .panel-wrapper
+                      .panel-body
+                        .col-md-4
+                          .form-group
+                            label 姓名
+                            .controls
+                              input.form-control(type='text', name='name', placeholder='输入员工姓名...', required)
+                        .col-md-4
+                          .form-group
+                            label 性别
+                            .controls
+                              input.form-control(type='text', name='gender', placeholder='选择员工性别...', required)
+                        .col-md-4
+                          .form-group
+                            label 身份证号
+                            .controls
+                              input.form-control(type='text', name='idNum', placeholder='输入员工身份证号...', required)
+                        .col-md-4
+                          .form-group
+                            label 所属中心
+                            .controls
+                              input.form-control(type='text', name='department', placeholder='选择所属中心...', required)
+                        .col-md-4
+                          .form-group
+                            label 工作地点
+                            .controls
+                              input.form-control(type='text', name='workLocationDetail', placeholder='输入员工工作的具体地点...', required)
+                        .col-md-4
+                          .form-group
+                            label 入职时间
+                            .controls
+                              input.form-control(type='text', name='dutyDate', placeholder='输入员工入职时间...', required)
+                        .col-md-12
+                          button.btn.btn-primary.pull-right 创建员工
+                          button.btn.btn-default.pull-right.mr 清空输入
             ul.pager
               li.previous
                 a(href='#', ng-click="wizard.go(2)")
                   span &larr; Previous
               li.next
-                a(href='#', ng-click="wizard.go(4)")
+                a(href='#', ng-click="")
                   | Next 
                   span &rarr;
-          // END Wizard Step inputs 
-          // START Wizard Step inputs 
-          div#step4(ng-show="wizard.active(4)")
-            .jumbotron
-              h1 Done!
-              p In vulputate mattis ipsum vitae vehicula. Praesent at arcu non arcu convallis pellentesque. Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-              p
-                button.btn.btn-info.btn-lg(type='button') You can Proceed Now
-            ul.pager
-              li.previous
-                a(href='#', ng-click="wizard.go(3)")
-                  span &larr; Previous
-          // END Wizard Step inputs 
-  // END panel 
+         

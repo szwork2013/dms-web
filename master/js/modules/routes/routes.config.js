@@ -98,7 +98,7 @@
               title: '宿舍申请向导',
               controller: 'DormitoryApplyWizardController',
               templateUrl: helper.basepath('dormitory-apply-wizard.html'),
-              resolve: helper.resolveFor('ngTable', 'ngDialog', 'parsley')
+              resolve: helper.resolveFor('ngTable', 'ngDialog', 'ngDialog', 'parsley', 'ui.select', 'taginput', 'inputmask', 'localytics.directives')
           })
           // 
           // CUSTOM RESOLVES
