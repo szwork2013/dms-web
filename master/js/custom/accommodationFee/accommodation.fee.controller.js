@@ -2,11 +2,11 @@
     'use strict';
 
     angular
-        .module('dms.accommodation')
+        .module('dms.accommodationFee')
         .controller('AccommodationFeeController', AccommodationFeeController);
 
-    AccommodationFeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'AccommodationService','ShareService'];
-    function AccommodationFeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, AccommodationService, ShareService) {
+    AccommodationFeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'AccommodationFeeService','ShareService'];
+    function AccommodationFeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, AccommodationFeeService, ShareService) {
         var vm = this;
         var data = null;
         var updateTable = false;
@@ -61,10 +61,10 @@
             counts: [10, 20, 50],
             getData: function ($defer, params) {
                 if (!data || updateTable) {
-                    AccommodationService.queryFeeData({
+                    AccommodationFeeService.queryData({
                         success: function (response) {
                             if (response.status) {
-                                data = AccommodationService.preprocessData(response.result);
+                                data = AccommodationFeeService.preprocessData(response.result);
                                 showTableData($defer, params);
                             } else {
                                 alert("列表获取失败");

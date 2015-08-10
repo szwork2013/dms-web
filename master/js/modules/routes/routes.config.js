@@ -65,11 +65,18 @@
               templateUrl: helper.basepath('accommodation-fee-audit.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
-          .state('app.dormitory-apply-list', {
-              url: '/dormitory-apply-list',
+          .state('app.dormitory-apply', {
+              url: '/dormitory-apply',
               title: '入住申请管理',
               controller: 'DormitoryApplicationController',
               templateUrl: helper.basepath('dormitory-apply-list.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog')
+          })
+          .state('app.accommodation', {
+              url: '/accommodation',
+              title: '入住历史记录',
+              controller: 'DormitoryApplicationController',
+              templateUrl: helper.basepath('accommodation-list.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
           // 

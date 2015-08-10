@@ -15,6 +15,7 @@
             'dms.dormitory',
             'dms.employee',
             'dms.accommodation',
+            'dms.accommodationFee',
             'dms.dormitoryApplication',
             'dms.maintenanceApplication',
             'dms.util'
@@ -835,11 +836,18 @@
               templateUrl: helper.basepath('accommodation-fee-audit.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
-          .state('app.dormitory-apply-list', {
-              url: '/dormitory-apply-list',
+          .state('app.dormitory-apply', {
+              url: '/dormitory-apply',
               title: '入住申请管理',
               controller: 'DormitoryApplicationController',
               templateUrl: helper.basepath('dormitory-apply-list.html'),
+              resolve: helper.resolveFor('ngTable', 'ngDialog')
+          })
+          .state('app.accommodation', {
+              url: '/accommodation',
+              title: '入住历史记录',
+              controller: 'DormitoryApplicationController',
+              templateUrl: helper.basepath('accommodation-list.html'),
               resolve: helper.resolveFor('ngTable', 'ngDialog')
           })
           // 
@@ -1768,6 +1776,10 @@
 })();
 (function() {
     'use strict';
+    angular.module('dms.accommodationFee', ['dms']);
+})();
+(function() {
+    'use strict';
     angular.module('dms.dashboard', ['dms']);
 })();
 (function() {
@@ -1890,7 +1902,10 @@
                 "query" : "server/employee-list.json"
             },
             "accommodation" : {
-                "queryFee" : "server/accommodation-fee-list.json"
+                "query" : "server/accommodation-list.json"
+            },
+            "accommodationFee" : {
+                "query" : "server/accommodation-fee-list.json"
             },
             "dormitoryApplication" : {
                 "query" : "server/dormitory-apply-list.json"
@@ -1904,10 +1919,152 @@
 
     angular
         .module('dms.accommodation')
-        .controller('Accommodation', Accommodation);
+        .controller('AccommodationController', AccommodationController);
 
-    Accommodation.$inject = ['$rootScope', '$scope'];
-    function Accommodation($rootScope, $scope) {
+    AccommodationController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'AccommodationService','ShareService'];
+    function AccommodationController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, AccommodationService, ShareService) {
+    var vm = this;
+        var data = null;
+        var updateTable = false;
+        // ========== 筛选 ========== 
+        $scope.select = {
+            data: {
+                campus: '',
+                dormitoryTypeCN: ''
+            },
+            dropdown: {
+                campus: false,
+                dormitoryTypeCN: false
+            }
+        };
+        $scope.searchkeywords = '';
+
+        $scope.dropSelect = function (name, value) {
+            $scope.select.data[name] = value;
+            $scope.select.dropdown[name] = false;
+            if(name == 'year') {
+                $scope.select.data.month = '';
+            }
+            vm.tableParams.reload();
+        }
+
+        $scope.resetFilter = function() {
+            for(var key in $scope.select.data) {
+                $scope.select.data[key] = '';
+            }
+            $scope.searchkeywords = '';
+            vm.tableParams.reload();
+        }
+
+        $scope.refreshTable = function() {
+            updateTable = true;
+            vm.tableParams.reload();
+        }
+
+        $scope.$watch("searchKeywords", function () {
+            vm.tableParams.reload();
+        });
+        // =========================
+        
+        // ========== 数据显示 ==========
+        vm.tableParams = new ngTableParams({
+            page: 1,
+            count: 10
+        }, {
+            total: 0,
+            counts: [10, 20, 50],
+            getData: function ($defer, params) {
+                if (!data || updateTable) {
+                    AccommodationService.queryData({
+                        success: function (response) {
+                            if (response.status) {
+                                data = AccommodationService.preprocessData(response.result);
+                                showTableData($defer, params);
+                            } else {
+                                alert("列表获取失败");
+                            }
+                            updateTable = false;
+                            console.log("Query AccommodationService List", data);
+                        },
+                        error: function (data, status, headers, config) {
+                            console.log(data, status, headers, config);
+                            alert("GET Error2");
+                        }
+                    },updateTable);
+                } else {
+                    showTableData($defer, params);
+                }
+            }
+        });
+        var showTableData = function($defer, params) {
+            var searchedData = searchData(data);
+            var orderedData = params.sorting() ? $filter('orderBy')(searchedData, params.orderBy()) : searchedData;
+            params.total(orderedData.length);
+            $defer.resolve($scope.dormitories = orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+        }
+        var searchData = function(filterData) {
+            if($scope.searchKeywords) {
+                var keywords = $scope.searchKeywords.split(" ");
+                var i;
+                for(i in keywords) {
+                    filterData = $filter('filter')(filterData, keywords[i]);
+                }
+            }
+            
+            if($scope.select.data.campus) filterData = $filter('filter')(filterData, { dormitory : { campus : $scope.select.data.campus}});
+            if($scope.select.data.dormitoryTypeCN) filterData = $filter('filter')(filterData, { dormitoryTypeCN : { department : $scope.select.data.dormitoryTypeCN}});
+            return filterData;
+        }
+        // =============================
+        
+        // ========== 表格Checkbox ==========
+        $scope.checkboxes = { 'checked': false, items: {} };
+        // 总checkbox
+        $scope.$watch('checkboxes.checked', function(value) {
+            angular.forEach($scope.dormitories, function(item) {
+                if (angular.isDefined(item.employee.id)) {
+                    $scope.checkboxes.items[item.employee.id] = value;
+                }
+            });
+        });
+        // 子checkbox
+        $scope.$watch('checkboxes.items', function(values) {
+            if (!$scope.dormitories) {
+                return;
+            }
+            var checked = 0, unchecked = 0,
+            total = $scope.dormitories.length;
+            angular.forEach($scope.dormitories, function(item) {
+                checked   +=  ($scope.checkboxes.items[item.employee.id]) || 0;
+                unchecked += (!$scope.checkboxes.items[item.employee.id]) || 0;
+            });
+            if ((unchecked == 0) || (checked == 0)) {
+                $scope.checkboxes.checked = (checked == total);
+            }
+            angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+        }, true);
+        // ==================================
+
+        $scope.showEmployee = function(employee) {
+            ShareService.setData(angular.copy(employee));
+            ngDialog.open({
+                template: 'app/views/dialogs/show-employee.html',
+                controller: function ($scope, ngDialog, ShareService) {
+                    $scope.employee = ShareService.getData();
+
+                    // ===== 对话框操作 ===== 
+                    $scope.checkOut = function() {
+                        console.log("Check Out", $scope.employee);
+                        // TODO 发送迁出消息
+                    }
+                    $scope.cancel = function() {
+                        ngDialog.close();
+                    }
+                    // ====================== 
+                }
+            });
+        }
+
     }
 })();
 
@@ -1916,10 +2073,41 @@
 
     angular
         .module('dms.accommodation')
+        .service('AccommodationService', AccommodationService);
+    AccommodationService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
+    function AccommodationService($http, VO_PO_DICT, PO_VO_DICT, URL, ngDialog, ShareService) {
+        
+        this.queryData = function(callback) {
+            $http.get(URL.accommodation.query).success(callback.success).error(callback.error);
+        }
+    
+        this.preprocessData = function(data) {
+            angular.forEach(data, function(item) {
+                // item.dormitory.addressDetailCN = item.dormitory.campus + " - " + item.dormitory.address + " - " + item.dormitory.floor + "层 - " + item.dormitory.doorplate;
+                // item.dormitory.typeCN = PO_VO_DICT[item.dormitory.type];
+                // item.employee.genderCN = PO_VO_DICT[item.employee.gender];
+                // item.employee.spouseTypeCN = PO_VO_DICT[item.employee.spouseType];
+                // item.employee.spouseGenderCN = PO_VO_DICT[item.employee.spouseGender];
+                // item.statusCN = PO_VO_DICT[item.status];
+            });
+            return data;
+        }
+    
+        this.postprocessData = function(data) {
+            return data;
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.accommodationFee')
         .controller('AccommodationFeeController', AccommodationFeeController);
 
-    AccommodationFeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'AccommodationService','ShareService'];
-    function AccommodationFeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, AccommodationService, ShareService) {
+    AccommodationFeeController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout', 'ngTableParams', 'ngDialog', 'AccommodationFeeService','ShareService'];
+    function AccommodationFeeController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, AccommodationFeeService, ShareService) {
         var vm = this;
         var data = null;
         var updateTable = false;
@@ -1974,10 +2162,10 @@
             counts: [10, 20, 50],
             getData: function ($defer, params) {
                 if (!data || updateTable) {
-                    AccommodationService.queryFeeData({
+                    AccommodationFeeService.queryData({
                         success: function (response) {
                             if (response.status) {
-                                data = AccommodationService.preprocessData(response.result);
+                                data = AccommodationFeeService.preprocessData(response.result);
                                 showTableData($defer, params);
                             } else {
                                 alert("列表获取失败");
@@ -2072,13 +2260,13 @@
     'use strict';
 
     angular
-        .module('dms.dormitory')
-        .service('AccommodationService', AccommodationService);
-    AccommodationService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
-    function AccommodationService($http, VO_PO_DICT, PO_VO_DICT, URL, ngDialog, ShareService) {
+        .module('dms.accommodationFee')
+        .service('AccommodationFeeService', AccommodationFeeService);
+    AccommodationFeeService.$inject = ['$http', 'VO_PO_DICT', 'PO_VO_DICT', 'URL'];
+    function AccommodationFeeService($http, VO_PO_DICT, PO_VO_DICT, URL, ngDialog, ShareService) {
         
-        this.queryFeeData = function(callback) {
-            $http.get(URL.accommodation.queryFee).success(callback.success).error(callback.error);
+        this.queryData = function(callback) {
+            $http.get(URL.accommodationFee.query).success(callback.success).error(callback.error);
         }
     
         this.preprocessData = function(data) {

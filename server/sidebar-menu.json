@@ -32,7 +32,7 @@
     "sref": "#",
     "icon": "icon-docs",
     "submenu" : [
-      {"text": "入住审核", "sref": "app.dormitory-apply-list"},
+      {"text": "入住审核", "sref": "app.dormitory-apply"},
       {"text": "入住历史信息", "sref": "app.accommodation"}
     ]
   },

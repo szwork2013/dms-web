@@ -15,6 +15,7 @@
             'dms.dormitory',
             'dms.employee',
             'dms.accommodation',
+            'dms.accommodationFee',
             'dms.dormitoryApplication',
             'dms.maintenanceApplication',
             'dms.util'

@@ -1,0 +1,81 @@
+<div ng-controller="AccommodationController as table" class="container-fluid">
+   <div class="panel panel-default">
+      <div class="panel-heading">
+         <form class="pull-right hidden-xs form-inline">校区:
+            <div dropdown="dropdown" is-open="select.dropdown.campus" class="btn-group">
+               <button dropdown-toggle="" style="min-width:90px;" class="btn btn-info btn-sm">
+                  <span ng-show="select.data.campus" ng-bind="select.data.campus" class="pull-left"></span>
+                  <span ng-hide="select.data.campus" class="pull-left">所有校区</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="javascript:;" ng-click="dropSelect(&quot;campus&quot;, &quot;&quot;)">所有校区</a>
+                  </li>
+                  <li ng-repeat="(key, value) in addressTree">
+                     <a href="javascript:;" ng-click="dropSelect(&quot;campus&quot;, key)" ng-bind="key"></a>
+                  </li>
+               </ul>
+            </div>
+            <span class="mr"></span>申请类型:
+            <div dropdown="dropdown" is-open="select.dropdown.typeCN" class="btn-group">
+               <button dropdown-toggle="" style="min-width:105px;" class="btn btn-info btn-sm">
+                  <span ng-show="select.data.typeCN" ng-bind="select.data.typeCN" class="pull-left"></span>
+                  <span ng-hide="select.data.typeCN" class="pull-left">所有类型</span><b style="margin-top:8px" class="caret pull-right"></b>
+               </button>
+               <ul role="menu" class="dropdown-menu">
+                  <li><a href="#" ng-click="dropSelect(&quot;typeCN&quot;, &quot;&quot;)">所有类型</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;typeCN&quot;, &quot;集体宿舍 - 男&quot;)">集体宿舍 - 男</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;typeCN&quot;, &quot;集体宿舍 - 女&quot;)">集体宿舍 - 女</a>
+                  </li>
+                  <li><a href="#" ng-click="dropSelect(&quot;typeCN&quot;, &quot;夫妻房&quot;)">夫妻房</a>
+                  </li>
+               </ul>
+            </div>
+            <span class="mr"></span>
+            <div class="btn-group">
+               <input type="search" ng-model="searchKeywords" placeholder="表格搜索..." class="form-control input-sm form-horizontal" />
+               <a ng-click="searchKeywords=&quot;&quot;" style="position: absolute; right: 8px; top: 0; bottom: 0; height: 22px; margin: auto; font-size: 14px; cursor: pointer; color: #ccc;" class="clear">
+                  <span class="fa fa-close"></span>
+               </a>
+            </div>
+         </form>
+         <div class="panel-title">入住信息列表
+            <button type="button" ng-click="refreshTable()" class="btn btn-xs btn-default">
+               <span class="fa fa-refresh"></span>
+            </button>
+         </div>
+      </div>
+      <table ng-table="table.tableParams" class="table">
+         <tbody>
+            <tr ng-repeat="accommodation in $data">
+               <td width="40" header="'ng-table/headers/checkbox.html'">
+                  <div class="checkbox c-checkbox">
+                     <label>
+                        <input type="checkbox" ng-model="checkboxes.items[accommodation.id]" />
+                        <span class="fa fa-check"></span>
+                     </label>
+                  </div>
+               </td>
+               <td data-title="'员工'" sortable="'employee.name'">
+                  <div ng-repeat="employee in accommodation.employees" ng-click="showEmployee(employee)" style="margin-right:5px;min-width:55px;" class="btn btn-primary btn-xs">{{employee.name}}</div>
+               </td>
+               <td data-title="'宿舍类型'" sortable="'dormitory.typeCN'" width="100" class="text-center">{{accommodation.dormitory.typeCN}}</td>
+               <td data-title="'宿舍地址'" sortable="'dormitory.addressDetailCN'" width="130" class="text-center">{{accommodation.dormitory.addressDetailCN}}</td>
+               <td data-title="'迁入时间'" sortable="'checkInDate'" class="text-center">{{accommodation.checkInDate}}</td>
+               <td data-title="'迁出时间'" sortable="'checkOutDate'" class="text-center">{{accommodation.checkOutDate}}</td>
+               <td data-title="'当前状态'" sortable="'statusCN'" class="text-center">{{accommodation.statusCN}}</td>
+               <td data-title="'操作'" width="70" class="text-center">
+                  <button title="迁出" data-ng-click="checkout(accommodation)" class="btn btn-danger btn-xs">
+                     <span class="fa fa-sign-out"></span>
+                  </button>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+      <!-- 自定义表头checkbox的template-->
+      <script type="text/ng-template" id="ng-table/headers/checkbox.html">
+         <div class="checkbox c-checkbox"><label><input type="checkbox" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox" value=""/><span class="fa fa-check"></span></label></div>
+      </script>
+   </div>
+</div>

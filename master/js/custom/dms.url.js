@@ -11,7 +11,10 @@
                 "query" : "server/employee-list.json"
             },
             "accommodation" : {
-                "queryFee" : "server/accommodation-fee-list.json"
+                "query" : "server/accommodation-list.json"
+            },
+            "accommodationFee" : {
+                "query" : "server/accommodation-fee-list.json"
             },
             "dormitoryApplication" : {
                 "query" : "server/dormitory-apply-list.json"
