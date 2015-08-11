@@ -29,5 +29,12 @@
 		}
 
 		initDropdown();
+
+		// ===== 初始化系统共用的变量 =====
+		$rootScope.DEPARTMENTS = ["办公室","物业","运输","校园","接待","工贸","动力","膳食","幼教","监理","其他"];
+		$rootScope.GENDERS = [{name: '男', code: 'MALE'},
+							  {name: '女', code: 'FEMALE'},
+							  {name: '其他', code: 'UNKNOWN'}];
+		// ================================
     }
 })();

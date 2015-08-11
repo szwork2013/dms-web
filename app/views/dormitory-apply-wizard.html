@@ -1,423 +1,464 @@
-<div class="container-fluid">
-   <div class="panel panel-default">
-      <div class="panel-heading">宿舍申请向导</div>
-      <div class="panel-body">
-         <form form-wizard="" validate-steps="true" validate-form="" steps="3">
-            <div class="form-wizard wizard-horizontal">
-               <ol class="row">
-                  <li ng-class="{'active':wizard.active(1)}" class="col-md-4">
-                     <h4>1、选择入住员工</h4>
-                     <small class="text-muted">选择没有入住的员工或增加新的员工</small>
-                  </li>
-                  <li ng-class="{'active':wizard.active(2)}" class="col-md-4">
-                     <h4>2、添加配偶</h4>
-                     <small class="text-muted">添加随员工同时迁入的配偶信息</small>
-                  </li>
-                  <li ng-class="{'active':wizard.active(3)}" class="col-md-4">
-                     <h4>3、填写申请信息</h4>
-                     <small class="text-muted">填写申请的宿舍类型和申请理由</small>
-                  </li>
-               </ol>
-               <div id="step1" ng-show="wizard.active(1)">
-                  <legend>
-                     <span style="font-weight:bold;">选择入住员工</span>
-                  </legend>
-                  <div class="row">
-                     <div class="col-md-3">
-                        <div class="col-md-12">
-                           <h4>宿舍申请人来源</h4>
-                        </div>
-                        <div class="col-md-12">
-                           <div class="radio c-radio c-radio-nofont">
-                              <label style="font-size:15px">
-                                 <input type="radio" name="selectEmployeeType" value="existed" checked="" ng-model="selectEmployeeType" />
-                                 <span></span>选择已有员工</label>
-                           </div>
-                        </div>
-                        <div class="col-md-12">
-                           <div class="radio c-radio c-radio-nofont">
-                              <label style="font-size:15px">
-                                 <input type="radio" name="selectEmployeeType" value="new" ng-model="selectEmployeeType" />
-                                 <span></span>创建员工</label>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-md-9">
-                        <div class="col-md-12">
-                           <div ng-if="selectEmployeeType==&quot;existed&quot;" class="panel panel-primary">
-                              <div ng-class="{'panel-heading-collapsed':panelDemo1}" class="panel-heading">选择已有员工</div>
-                              <div class="panel-wrapper">
-                                 <div class="panel-body">
-                                    <ui-select ng-model="uisel.person.selected" theme="bootstrap">
-                                       <ui-select-match placeholder="选择需要申请宿舍的员工">{{$select.selected.name}}</ui-select-match>
-                                       <ui-select-choices repeat="person in uisel.people | propsFilter: {name: $select.search, age: $select.search}">
-                                          <div ng-bind-html="person.name | highlight: $select.search"></div>
-                                          <small>email: {{person.email}} age:
-                                             <span ng-bind-html="''+person.age | highlight: $select.search"></span>
-                                          </small>
-                                       </ui-select-choices>
-                                    </ui-select>
-                                 </div>
-                              </div>
-                           </div>
-                           <div ng-if="selectEmployeeType==&quot;new&quot;" class="panel panel-primary">
-                              <div ng-class="{'panel-heading-collapsed':panelDemo1}" class="panel-heading">创建新员工</div>
-                              <div class="panel-wrapper">
-                                 <div class="panel-body">
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>姓名</label>
-                                          <div class="controls">
-                                             <input type="text" name="name" placeholder="输入员工姓名..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>性别</label>
-                                          <div class="controls">
-                                             <input type="text" name="gender" placeholder="选择员工性别..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>身份证号</label>
-                                          <div class="controls">
-                                             <input type="text" name="idNum" placeholder="输入员工身份证号..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>所属中心</label>
-                                          <div class="controls">
-                                             <input type="text" name="department" placeholder="选择所属中心..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>工作地点</label>
-                                          <div class="controls">
-                                             <input type="text" name="workLocationDetail" placeholder="输入员工工作的具体地点..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>入职时间</label>
-                                          <div class="controls">
-                                             <input type="text" name="dutyDate" placeholder="输入员工入职时间..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                       <button class="btn btn-primary pull-right">创建员工</button>
-                                       <button class="btn btn-default pull-right mr">清空输入</button>
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
+<div class="panel panel-default">
+   <div class="panel-heading">宿舍申请向导</div>
+   <div class="panel-body">
+      <form form-wizard="" action="/" method="POST" steps="4">
+         <div class="form-wizard wizard-vertical">
+            <!-- 左侧的向导栏-->
+            <ol style="width:28%">
+               <li ng-class="{'active':wizard.active(1)}" ng-click="wizard.go(1)">
+                  <h4 class="mb0 mt0">1、选择入住员工</h4>
+                  <small class="text-muted">选择未入住员工或新增员工</small>
+               </li>
+               <li ng-class="{'active':wizard.active(2)}" ng-click="wizard.go(2)">
+                  <h4 class="mb0 mt0">2、关联配偶</h4>
+                  <small class="text-muted">添加随员工同时迁入的配偶</small>
+               </li>
+               <li ng-class="{'active':wizard.active(3)}" ng-click="wizard.go(3)">
+                  <h4 class="mb0 mt0">3、填写申请信息</h4>
+                  <small class="text-muted">填写申请的宿舍类型和说明</small>
+               </li>
+               <li ng-class="{'active':wizard.active(4)}" ng-click="wizard.go(4)">
+                  <h4 class="mb0 mt0">4、完成!</h4>
+                  <small class="text-muted">查看申请提交的结果</small>
+               </li>
+            </ol>
+            <!-- ============-->
+            <!-- 选择入住员工 -->
+            <div ng-show="wizard.active(1)" style="width:69%">
+               <div style="padding-left:20px;" class="row"><b class="pull-left mr">请选择迁入员工的来源：</b>
+                  <div style="margin-top: 0;" class="radio c-radio c-radio-nofont pull-left mr">
+                     <label>
+                        <input type="radio" name="selectEmployeeType" value="new" ng-model="selectEmployeeType" />
+                        <span></span>创建员工</label>
                   </div>
-                  <ul class="pager">
-                     <li class="next"><a href="#" ng-click="wizard.go(2)">下一步<span>&rarr;</span></a>
-                     </li>
-                  </ul>
-               </div>
-               <div id="step2" ng-show="wizard.active(2)">
-                  <legend>
-                     <span style="font-weight:bold;">添加配偶</span>
-                  </legend>
-                  <div class="row">
-                     <div class="col-md-3">
-                        <div class="col-md-12">
-                           <h4>配偶来源</h4>
-                        </div>
-                        <div class="col-md-12">
-                           <div class="radio c-radio c-radio-nofont">
-                              <label style="font-size:15px">
-                                 <input type="radio" name="selectSpouseType" value="existed" checked="" ng-model="selectSpouseType" />
-                                 <span></span>关联已有员工</label>
-                           </div>
-                        </div>
-                        <div class="col-md-12">
-                           <div class="radio c-radio c-radio-nofont">
-                              <label style="font-size:15px">
-                                 <input type="radio" name="selectSpouseType" value="newInner" ng-model="selectSpouseType" />
-                                 <span></span>创建配偶（集团员工）</label>
-                           </div>
-                        </div>
-                        <div class="col-md-12">
-                           <div class="radio c-radio c-radio-nofont">
-                              <label style="font-size:15px">
-                                 <input type="radio" name="selectSpouseType" value="newOuter" ng-model="selectSpouseType" />
-                                 <span></span>创建配偶（非集团员工）</label>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-md-9">
-                        <div class="col-md-12">
-                           <div ng-if="selectSpouseType==&quot;existed&quot;" class="panel panel-primary">
-                              <div ng-class="{'panel-heading-collapsed':panelDemo1}" class="panel-heading">关联已有员工</div>
-                              <div class="panel-wrapper">
-                                 <div class="panel-body">
-                                    <ui-select ng-model="uisel.person.selected" theme="bootstrap">
-                                       <ui-select-match placeholder="选择需要申请宿舍的员工">{{$select.selected.name}}</ui-select-match>
-                                       <ui-select-choices repeat="person in uisel.people | propsFilter: {name: $select.search, age: $select.search}">
-                                          <div ng-bind-html="person.name | highlight: $select.search"></div>
-                                          <small>email: {{person.email}} age:
-                                             <span ng-bind-html="''+person.age | highlight: $select.search"></span>
-                                          </small>
-                                       </ui-select-choices>
-                                    </ui-select>
-                                 </div>
-                              </div>
-                           </div>
-                           <div ng-if="selectSpouseType==&quot;newInner&quot;" class="panel panel-primary">
-                              <div ng-class="{'panel-heading-collapsed':panelDemo1}" class="panel-heading">关联集团内配偶</div>
-                              <div class="panel-wrapper">
-                                 <div class="panel-body">
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>姓名</label>
-                                          <div class="controls">
-                                             <input type="text" name="name" placeholder="输入员工姓名..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>性别</label>
-                                          <div class="controls">
-                                             <input type="text" name="gender" placeholder="选择员工性别..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>身份证号</label>
-                                          <div class="controls">
-                                             <input type="text" name="idNum" placeholder="输入员工身份证号..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>所属中心</label>
-                                          <div class="controls">
-                                             <input type="text" name="department" placeholder="选择所属中心..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>工作地点</label>
-                                          <div class="controls">
-                                             <input type="text" name="workLocationDetail" placeholder="输入员工工作的具体地点..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>入职时间</label>
-                                          <div class="controls">
-                                             <input type="text" name="dutyDate" placeholder="输入员工入职时间..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                       <button class="btn btn-primary pull-right">创建员工</button>
-                                       <button class="btn btn-default pull-right mr">清空输入</button>
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
-                           <div ng-if="selectSpouseType==&quot;newOuter&quot;" class="panel panel-primary">
-                              <div ng-class="{'panel-heading-collapsed':panelDemo1}" class="panel-heading">关联集团外配偶</div>
-                              <div class="panel-wrapper">
-                                 <div class="panel-body">
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>姓名</label>
-                                          <div class="controls">
-                                             <input type="text" name="name" placeholder="输入员工姓名..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>性别</label>
-                                          <div class="controls">
-                                             <input type="text" name="gender" placeholder="选择员工性别..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>身份证号</label>
-                                          <div class="controls">
-                                             <input type="text" name="idNum" placeholder="输入员工身份证号..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>工作单位</label>
-                                          <div class="controls">
-                                             <input type="text" name="workLocationDetail" placeholder="输入员工工作的具体地点..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                       <button class="btn btn-primary pull-right">关联配偶</button>
-                                       <button class="btn btn-default pull-right mr">清空输入</button>
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
+                  <div style="margin-top: 0;" class="radio c-radio c-radio-nofont pull-left mr">
+                     <label>
+                        <input type="radio" name="selectEmployeeType" value="existed" checked="" ng-model="selectEmployeeType" />
+                        <span></span>选择已有员工</label>
                   </div>
-                  <ul class="pager">
-                     <li class="previous">
-                        <a href="#" ng-click="wizard.go(1)">
-                           <span>&larr; Previous</span>
-                        </a>
-                     </li>
-                     <li class="next"><a href="#" ng-click="wizard.go(3)">Next <span>&rarr;</span></a>
-                     </li>
-                  </ul>
                </div>
-               <div id="step3" ng-show="wizard.active(3)">
-                  <legend>
-                     <span style="font-weight:bold;">
-                        <span style="font-weight:bold;">填写申请信息</span>
-                     </span>
-                  </legend>
-                  <div class="row">
-                     <div class="col-md-3">
-                        <div class="col-md-12">
-                           <span>申请宿舍种类</span>
-                        </div>
-                     </div>
-                     <div class="col-md-9">
-                        <div class="col-md-4">
-                           <div class="radio c-radio c-radio-nofont">
-                              <label style="font-size:15px">
-                                 <input type="radio" name="dormitoryType" value="GROUP_MALE" checked="" ng-model="dormitoryType" />
-                                 <span></span>集体宿舍 - 男</label>
-                           </div>
-                        </div>
-                        <div class="col-md-4">
-                           <div class="radio c-radio c-radio-nofont">
-                              <label style="font-size:15px">
-                                 <input type="radio" name="dormitoryType" value="GROUP_FEMALE" ng-model="dormitoryType" />
-                                 <span></span>集体宿舍 - 女</label>
-                           </div>
-                        </div>
-                        <div class="col-md-4">
-                           <div class="radio c-radio c-radio-nofont">
-                              <label style="font-size:15px">
-                                 <input type="radio" name="dormitoryType" value="COUPLE" ng-model="dormitoryType" />
-                                 <span></span>夫妻房</label>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-md-9">
-                        <div class="col-md-12">
-                           <div ng-if="selectEmployeeType==&quot;existed&quot;" class="panel panel-primary">
-                              <div ng-class="{'panel-heading-collapsed':panelDemo1}" class="panel-heading">选择已有员工</div>
-                              <div class="panel-wrapper">
-                                 <div class="panel-body">
-                                    <ui-select ng-model="uisel.person.selected" theme="bootstrap">
-                                       <ui-select-match placeholder="选择需要申请宿舍的员工">{{$select.selected.name}}</ui-select-match>
-                                       <ui-select-choices repeat="person in uisel.people | propsFilter: {name: $select.search, age: $select.search}">
-                                          <div ng-bind-html="person.name | highlight: $select.search"></div>
-                                          <small>email: {{person.email}} age:
-                                             <span ng-bind-html="''+person.age | highlight: $select.search"></span>
-                                          </small>
-                                       </ui-select-choices>
-                                    </ui-select>
+               <div ng-if="selectEmployeeType==&quot;new&quot;" class="panel panel-default">
+                  <div class="panel-body">
+                     <table style="width: 100%;">
+                        <tbody>
+                           <tr style="text-align: right;" height="50">
+                              <td width="80"><b class="mr">员工姓名</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="name" placeholder="输入员工姓名..." required="required" ng-model="applicant.name" class="form-control" />
                                  </div>
-                              </div>
-                           </div>
-                           <div ng-if="selectEmployeeType==&quot;new&quot;" class="panel panel-primary">
-                              <div ng-class="{'panel-heading-collapsed':panelDemo1}" class="panel-heading">创建新员工</div>
-                              <div class="panel-wrapper">
-                                 <div class="panel-body">
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>姓名</label>
-                                          <div class="controls">
-                                             <input type="text" name="name" placeholder="输入员工姓名..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>性别</label>
-                                          <div class="controls">
-                                             <input type="text" name="gender" placeholder="选择员工性别..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>身份证号</label>
-                                          <div class="controls">
-                                             <input type="text" name="idNum" placeholder="输入员工身份证号..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>所属中心</label>
-                                          <div class="controls">
-                                             <input type="text" name="department" placeholder="选择所属中心..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>工作地点</label>
-                                          <div class="controls">
-                                             <input type="text" name="workLocationDetail" placeholder="输入员工工作的具体地点..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                       <div class="form-group">
-                                          <label>入职时间</label>
-                                          <div class="controls">
-                                             <input type="text" name="dutyDate" placeholder="输入员工入职时间..." required="required" class="form-control" />
-                                          </div>
-                                       </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                       <button class="btn btn-primary pull-right">创建员工</button>
-                                       <button class="btn btn-default pull-right mr">清空输入</button>
-                                    </div>
+                              </td>
+                              <td width="80"><b class="mr">员工性别</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <select type="text" name="gender" ng-options="gender.code as gender.name for gender in GENDERS" required="required" ng-model="applicant.gender" class="form-control">
+                                       <option value="" disabled="" selected="" style="display:none;">选择员工性别...</option>
+                                       <option value="MALE">男</option>
+                                       <option value="FEMALE">女</option>
+                                       <option value="NONE">其他</option>
+                                    </select>
                                  </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
+                              </td>
+                           </tr>
+                           <tr style="text-align: right;" height="50" ng-model="applicant.idNum" class="pt">
+                              <td width="80"><b class="mr">身份证号</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="idNum" placeholder="输入员工身份证号..." required="required" ng-model="applicant.idNum" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">所属中心</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <select type="text" name="department" ng-options="department as department for department in DEPARTMENTS" ng-model="applicant.department" required="required" class="form-control">
+                                       <option value="" disabled="" selected="" style="display:none;">选择员工所属中心...</option>
+                                    </select>
+                                 </div>
+                              </td>
+                           </tr>
+                           <tr style="text-align: right;" height="50" class="pt">
+                              <td width="80"><b class="mr">工作地点</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="workLocationDetail" placeholder="输入员工工作的具体地点..." required="required" ng-model="applicant.workLocationDetail" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">入职时间</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="dutyDate" placeholder="输入员工入职时间..." required="required" ng-model="applicant.dutyDate" class="form-control" />
+                                 </div>
+                              </td>
+                           </tr>
+                        </tbody>
+                     </table>
+                     <button class="btn btn-primary pull-right">创建员工</button>
+                     <button class="btn btn-default pull-right mr">清空输入</button>
                   </div>
-                  <ul class="pager">
-                     <li class="previous">
-                        <a href="#" ng-click="wizard.go(2)">
-                           <span>&larr; Previous</span>
-                        </a>
-                     </li>
-                     <li class="next"><a href="#" ng-click="">Next <span>&rarr;</span></a>
-                     </li>
-                  </ul>
                </div>
+               <div ng-if="selectEmployeeType==&quot;existed&quot;" class="panel panel-default">
+                  <div class="panel-body">
+                     <table style="width: 100%;">
+                        <tbody>
+                           <tr style="text-align: right;">
+                              <td width="80"><b class="mr">选择员工</b>
+                              </td>
+                              <td>
+                                 <ui-select ng-model="nonHouseholders.selected" theme="bootstrap">
+                                    <ui-select-match placeholder="选择迁入的员工...">{{$select.selected.name}}</ui-select-match>
+                                    <ui-select-choices repeat="employee in nonHouseholders.employees | propsFilter: {name: $select.search, age: $select.search}">
+                                       <div ng-bind-html="employee.name | highlight: $select.search"></div>
+                                       <small>身份证:
+                                          <span ng-bind-html="employee.idNum | highlight: $select.search"></span>所属中心:
+                                          <span ng-bind-html="employee.department | highlight: $select.search"></span>
+                                       </small>
+                                    </ui-select-choices>
+                                 </ui-select>
+                              </td>
+                           </tr>
+                        </tbody>
+                     </table>
+                     <hr style="margin:15px 0" />
+                     <table style="width: 100%;">
+                        <tbody>
+                           <tr style="text-align: right;" height="50">
+                              <td width="80"><b class="mr">员工姓名</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="name" placeholder="输入员工姓名..." required="required" ng-model="applicant.name" disabled="" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">员工性别</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <select type="text" name="gender" ng-options="gender.code as gender.name for gender in GENDERS" required="required" ng-model="applicant.gender" disabled="" class="form-control">
+                                       <option value="" disabled="" selected="" style="display:none;">选择员工性别...</option>
+                                       <option value="MALE">男</option>
+                                       <option value="FEMALE">女</option>
+                                       <option value="NONE">其他</option>
+                                    </select>
+                                 </div>
+                              </td>
+                           </tr>
+                           <tr style="text-align: right;" height="50" ng-model="applicant.idNum" class="pt">
+                              <td width="80"><b class="mr">身份证号</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="idNum" placeholder="输入员工身份证号..." required="required" ng-model="applicant.idNum" disabled="" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">所属中心</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <select type="text" name="department" ng-options="department as department for department in DEPARTMENTS" ng-model="applicant.department" required="required" disabled="" class="form-control">
+                                       <option value="" disabled="" selected="" style="display:none;">选择员工所属中心...</option>
+                                    </select>
+                                 </div>
+                              </td>
+                           </tr>
+                           <tr style="text-align: right;" height="50" class="pt">
+                              <td width="80"><b class="mr">工作地点</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="workLocationDetail" placeholder="输入员工工作的具体地点..." required="required" ng-model="applicant.workLocationDetail" disabled="" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">入职时间</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="dutyDate" placeholder="输入员工入职时间..." required="required" ng-model="applicant.dutyDate" disabled="" class="form-control" />
+                                 </div>
+                              </td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+               <ul class="pager">
+                  <li class="next"><a href="javascript:;" ng-click="wizard.go(2)">Next <span>&rarr;</span></a>
+                  </li>
+               </ul>
             </div>
-         </form>
-      </div>
+            <div ng-show="wizard.active(2)" style="width:69%">
+               <div style="padding-left:20px;" class="row"><b class="pull-left mr">请选择关联配偶的来源：</b>
+                  <div style="margin-top: 0;" class="radio c-radio c-radio-nofont pull-left mr">
+                     <label>
+                        <input type="radio" name="selectSpouseType" value="INNER" ng-model="selectSpouseType" />
+                        <span></span>创建配偶（集团员工）</label>
+                  </div>
+                  <div style="margin-top: 0;" class="radio c-radio c-radio-nofont pull-left mr">
+                     <label>
+                        <input type="radio" name="selectSpouseType" value="OUTER" ng-model="selectSpouseType" />
+                        <span></span>创建配偶（非集团员工）</label>
+                  </div>
+                  <div style="margin-top: 0;" class="radio c-radio c-radio-nofont pull-left mr">
+                     <label>
+                        <input type="radio" name="selectSpouseType" value="NONE" checked="" ng-model="selectSpouseType" />
+                        <span></span>关联已有员工</label>
+                  </div>
+               </div>
+               <div ng-if="selectSpouseType==&quot;INNER&quot;" class="panel panel-default">
+                  <div class="panel-body">
+                     <table style="width: 100%;">
+                        <tbody>
+                           <tr style="text-align: right;" height="50">
+                              <td width="80"><b class="mr">员工姓名</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="name" placeholder="输入配偶姓名..." required="required" ng-model="applicant.name" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">员工性别</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <select type="text" name="gender" ng-options="gender.code as gender.name for gender in GENDERS" required="required" ng-model="applicant.gender" class="form-control">
+                                       <option value="" disabled="" selected="" style="display:none;">选择配偶性别...</option>
+                                       <option value="MALE">男</option>
+                                       <option value="FEMALE">女</option>
+                                       <option value="NONE">其他</option>
+                                    </select>
+                                 </div>
+                              </td>
+                           </tr>
+                           <tr style="text-align: right;" height="50" ng-model="applicant.idNum" class="pt">
+                              <td width="80"><b class="mr">身份证号</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="idNum" placeholder="输入配偶身份证号..." required="required" ng-model="applicant.idNum" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">所属中心</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <select type="text" name="department" ng-options="department as department for department in DEPARTMENTS" ng-model="applicant.department" required="required" class="form-control">
+                                       <option value="" disabled="" selected="" style="display:none;">选择配偶所属中心...</option>
+                                    </select>
+                                 </div>
+                              </td>
+                           </tr>
+                           <tr style="text-align: right;" height="50" class="pt">
+                              <td width="80"><b class="mr">工作地点</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="workLocationDetail" placeholder="输入配偶工作的具体地点..." required="required" ng-model="applicant.workLocationDetail" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">入职时间</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="dutyDate" placeholder="输入配偶入职时间..." required="required" ng-model="applicant.dutyDate" class="form-control" />
+                                 </div>
+                              </td>
+                           </tr>
+                        </tbody>
+                     </table>
+                     <button class="btn btn-primary pull-right">创建员工并关联为配偶</button>
+                     <button class="btn btn-default pull-right mr">清空输入</button>
+                  </div>
+               </div>
+               <div ng-if="selectSpouseType==&quot;OUTER&quot;" class="panel panel-default">
+                  <div class="panel-body">
+                     <table style="width: 100%;">
+                        <tbody>
+                           <tr style="text-align: right;" height="50">
+                              <td width="80"><b class="mr">员工姓名</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="name" placeholder="输入配偶姓名..." required="required" ng-model="applicant.name" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">员工性别</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <select type="text" name="gender" ng-options="gender.code as gender.name for gender in GENDERS" required="required" ng-model="applicant.gender" class="form-control">
+                                       <option value="" disabled="" selected="" style="display:none;">选择员工性别...</option>
+                                       <option value="MALE">男</option>
+                                       <option value="FEMALE">女</option>
+                                       <option value="NONE">其他</option>
+                                    </select>
+                                 </div>
+                              </td>
+                           </tr>
+                           <tr style="text-align: right;" height="50" ng-model="applicant.idNum" class="pt">
+                              <td width="80"><b class="mr">身份证号</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="idNum" placeholder="输入配偶身份证号..." required="required" ng-model="applicant.idNum" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">工作单位</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="workLocationDetail" placeholder="输入配偶的工作单位..." required="required" ng-model="applicant.workLocationDetail" class="form-control" />
+                                 </div>
+                              </td>
+                           </tr>
+                        </tbody>
+                     </table>
+                     <button class="btn btn-primary pull-right">创建员工并关联</button>
+                     <button class="btn btn-default pull-right mr">清空输入</button>
+                  </div>
+               </div>
+               <div ng-if="selectSpouseType==&quot;NONE&quot;" class="panel panel-default">
+                  <div class="panel-body">
+                     <table style="width: 100%;">
+                        <tbody>
+                           <tr style="text-align: right;">
+                              <td width="80"><b class="mr">选择员工</b>
+                              </td>
+                              <td>
+                                 <ui-select ng-model="nonHouseholders.selected" theme="bootstrap">
+                                    <ui-select-match placeholder="选择关联为配偶的员工...">{{$select.selected.name}}</ui-select-match>
+                                    <ui-select-choices repeat="employee in nonHouseholders.employees | propsFilter: {name: $select.search, age: $select.search}">
+                                       <div ng-bind-html="employee.name | highlight: $select.search"></div>
+                                       <small>身份证:
+                                          <span ng-bind-html="employee.idNum | highlight: $select.search"></span>所属中心:
+                                          <span ng-bind-html="employee.department | highlight: $select.search"></span>
+                                       </small>
+                                    </ui-select-choices>
+                                 </ui-select>
+                              </td>
+                           </tr>
+                        </tbody>
+                     </table>
+                     <hr style="margin:15px 0" />
+                     <table style="width: 100%;">
+                        <tbody>
+                           <tr style="text-align: right;" height="50">
+                              <td width="80"><b class="mr">员工姓名</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="name" placeholder="输入员工姓名..." required="required" ng-model="applicant.name" disabled="" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">员工性别</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <select type="text" name="gender" ng-options="gender.code as gender.name for gender in GENDERS" required="required" ng-model="applicant.gender" disabled="" class="form-control">
+                                       <option value="" disabled="" selected="" style="display:none;">选择员工性别...</option>
+                                       <option value="MALE">男</option>
+                                       <option value="FEMALE">女</option>
+                                       <option value="NONE">其他</option>
+                                    </select>
+                                 </div>
+                              </td>
+                           </tr>
+                           <tr style="text-align: right;" height="50" ng-model="applicant.idNum" class="pt">
+                              <td width="80"><b class="mr">身份证号</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="idNum" placeholder="输入员工身份证号..." required="required" ng-model="applicant.idNum" disabled="" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">所属中心</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <select type="text" name="department" ng-options="department as department for department in DEPARTMENTS" ng-model="applicant.department" required="required" disabled="" class="form-control">
+                                       <option value="" disabled="" selected="" style="display:none;">选择员工所属中心...</option>
+                                    </select>
+                                 </div>
+                              </td>
+                           </tr>
+                           <tr style="text-align: right;" height="50" class="pt">
+                              <td width="80"><b class="mr">工作地点</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="workLocationDetail" placeholder="输入员工工作的具体地点..." required="required" ng-model="applicant.workLocationDetail" disabled="" class="form-control" />
+                                 </div>
+                              </td>
+                              <td width="80"><b class="mr">入职时间</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <input type="text" name="dutyDate" placeholder="输入员工入职时间..." required="required" ng-model="applicant.dutyDate" disabled="" class="form-control" />
+                                 </div>
+                              </td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+               <ul class="pager">
+                  <li class="previous">
+                     <a href="javascript:;" ng-click="wizard.go(1)">
+                        <span>&larr; Previous</span>
+                     </a>
+                  </li>
+                  <li class="next"><a href="javascript:;" ng-click="wizard.go(3)">Next <span>&rarr;</span></a>
+                  </li>
+               </ul>
+            </div>
+            <!-- END Wizard Step inputs -->
+            <!-- START Wizard Step inputs -->
+            <div ng-show="wizard.active(3)">
+               <fieldset>
+                  <div class="form-group">
+                     <label>Email</label>
+                     <input type="text" name="email" placeholder="john@snow.com" class="form-control" />
+                  </div>
+                  <div class="form-group">
+                     <label>Phone</label>
+                     <input type="text" name="phone" placeholder="11-2345-6789" class="form-control" />
+                  </div>
+               </fieldset>
+               <ul class="pager">
+                  <li class="previous">
+                     <a href="javascript:;" ng-click="wizard.go(2)">
+                        <span>&larr; Previous</span>
+                     </a>
+                  </li>
+                  <li class="next"><a href="javascript:;" ng-click="wizard.go(4)">Next <span>&rarr;</span></a>
+                  </li>
+               </ul>
+            </div>
+            <!-- END Wizard Step inputs -->
+            <!-- START Wizard Step inputs -->
+            <div ng-show="wizard.active(4)">
+               <div class="jumbotron m0">
+                  <h3 class="mt0">Done!</h3>
+                  <p>In vulputate mattis ipsum vitae vehicula.</p>
+                  <p class="m0">
+                     <button type="button" class="btn btn-info">You can Proceed Now</button>
+                  </p>
+               </div>
+               <ul class="pager">
+                  <li class="previous">
+                     <a href="javascript:;" ng-click="wizard.go(3)">
+                        <span>&larr; Previous</span>
+                     </a>
+                  </li>
+               </ul>
+            </div>
+            <!-- END Wizard Step inputs -->
+         </div>
+      </form>
    </div>
 </div>
+<!-- END panel -->
