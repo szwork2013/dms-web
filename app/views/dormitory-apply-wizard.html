@@ -37,7 +37,7 @@
                         <span></span>选择已有员工</label>
                   </div>
                </div>
-               <div ng-if="selectEmployeeType==&quot;new&quot;" class="panel panel-default">
+               <div ng-if="selectEmployeeType==&quot;new&quot;" style="min-height: 250px;" class="panel panel-default">
                   <div class="panel-body">
                      <table style="width: 100%;">
                         <tbody>
@@ -98,11 +98,9 @@
                            </tr>
                         </tbody>
                      </table>
-                     <button class="btn btn-primary pull-right">创建员工</button>
-                     <button class="btn btn-default pull-right mr">清空输入</button>
                   </div>
                </div>
-               <div ng-if="selectEmployeeType==&quot;existed&quot;" class="panel panel-default">
+               <div ng-if="selectEmployeeType==&quot;existed&quot;" style="min-height: 250px;" class="panel panel-default">
                   <div class="panel-body">
                      <table style="width: 100%;">
                         <tbody>
@@ -187,7 +185,9 @@
                   </div>
                </div>
                <ul class="pager">
-                  <li class="next"><a href="javascript:;" ng-click="wizard.go(2)">Next <span>&rarr;</span></a>
+                  <li ng-if="selectEmployeeType==&quot;new&quot;" class="next"><a href="javascript:;" ng-click="wizard.go(2)">创建员工并继续<span>&rarr;</span></a>
+                  </li>
+                  <li ng-if="selectEmployeeType==&quot;existed&quot;" class="next"><a href="javascript:;" ng-click="wizard.go(2)">选择员工并继续<span>&rarr;</span></a>
                   </li>
                </ul>
             </div>
@@ -195,21 +195,21 @@
                <div style="padding-left:20px;" class="row"><b class="pull-left mr">请选择关联配偶的来源：</b>
                   <div style="margin-top: 0;" class="radio c-radio c-radio-nofont pull-left mr">
                      <label>
-                        <input type="radio" name="selectSpouseType" value="INNER" ng-model="selectSpouseType" />
+                        <input type="radio" name="selectSpouseType" value="newInner" ng-model="selectSpouseType" />
                         <span></span>创建配偶（集团员工）</label>
                   </div>
                   <div style="margin-top: 0;" class="radio c-radio c-radio-nofont pull-left mr">
                      <label>
-                        <input type="radio" name="selectSpouseType" value="OUTER" ng-model="selectSpouseType" />
+                        <input type="radio" name="selectSpouseType" value="newOuter" ng-model="selectSpouseType" />
                         <span></span>创建配偶（非集团员工）</label>
                   </div>
                   <div style="margin-top: 0;" class="radio c-radio c-radio-nofont pull-left mr">
                      <label>
-                        <input type="radio" name="selectSpouseType" value="NONE" checked="" ng-model="selectSpouseType" />
+                        <input type="radio" name="selectSpouseType" value="existed" checked="" ng-model="selectSpouseType" />
                         <span></span>关联已有员工</label>
                   </div>
                </div>
-               <div ng-if="selectSpouseType==&quot;INNER&quot;" class="panel panel-default">
+               <div ng-if="selectSpouseType==&quot;newInner&quot;" style="min-height: 250px;" class="panel panel-default">
                   <div class="panel-body">
                      <table style="width: 100%;">
                         <tbody>
@@ -270,11 +270,9 @@
                            </tr>
                         </tbody>
                      </table>
-                     <button class="btn btn-primary pull-right">创建员工并关联为配偶</button>
-                     <button class="btn btn-default pull-right mr">清空输入</button>
                   </div>
                </div>
-               <div ng-if="selectSpouseType==&quot;OUTER&quot;" class="panel panel-default">
+               <div ng-if="selectSpouseType==&quot;newOuter&quot;" style="min-height: 250px;" class="panel panel-default">
                   <div class="panel-body">
                      <table style="width: 100%;">
                         <tbody>
@@ -317,11 +315,9 @@
                            </tr>
                         </tbody>
                      </table>
-                     <button class="btn btn-primary pull-right">创建员工并关联</button>
-                     <button class="btn btn-default pull-right mr">清空输入</button>
                   </div>
                </div>
-               <div ng-if="selectSpouseType==&quot;NONE&quot;" class="panel panel-default">
+               <div ng-if="selectSpouseType==&quot;existed&quot;" style="min-height: 250px;" class="panel panel-default">
                   <div class="panel-body">
                      <table style="width: 100%;">
                         <tbody>
@@ -408,57 +404,77 @@
                <ul class="pager">
                   <li class="previous">
                      <a href="javascript:;" ng-click="wizard.go(1)">
-                        <span>&larr; Previous</span>
+                        <span>&larr; 返回员工选择</span>
                      </a>
                   </li>
-                  <li class="next"><a href="javascript:;" ng-click="wizard.go(3)">Next <span>&rarr;</span></a>
+                  <li ng-if="selectSpouseType!=&quot;existed&quot;" class="next"><a href="javascript:;" ng-click="wizard.go(3)">创建配偶并继续<span>&rarr;</span></a>
+                  </li>
+                  <li ng-if="selectSpouseType==&quot;existed&quot;" class="next"><a href="javascript:;" ng-click="wizard.go(3)">关联配偶并继续<span>&rarr;</span></a>
+                  </li>
+                  <li class="next"><a href="javascript:;" ng-click="wizard.go(3)">跳过该步骤</a>
                   </li>
                </ul>
             </div>
-            <!-- END Wizard Step inputs -->
-            <!-- START Wizard Step inputs -->
-            <div ng-show="wizard.active(3)">
-               <fieldset>
-                  <div class="form-group">
-                     <label>Email</label>
-                     <input type="text" name="email" placeholder="john@snow.com" class="form-control" />
+            <div ng-show="wizard.active(3)" style="width:69%">
+               <div style="padding-left:20px;" class="row"><b class="pull-left mr">点击申请人查看详细信息（只包含员工），选择申请的宿舍类型以及申请说明</b>
+               </div>
+               <div style="min-height: 250px;" class="panel panel-default">
+                  <div class="panel-body">
+                     <table style="width: 100%;">
+                        <tbody>
+                           <tr style="text-align: right;" height="50">
+                              <td width="80"><b class="mr">申请人</b>
+                              </td>
+                              <td style="text-align: left;">
+                                 <button style="margin-right:5px; min-width:55px;" class="btn btn-primary btn-xs">员工1</button>
+                                 <button style="margin-right:5px; min-width:55px;" class="btn btn-primary btn-xs">员工2</button>
+                              </td>
+                              <td width="80"><b class="mr">宿舍类型</b>
+                              </td>
+                              <td>
+                                 <div class="controls">
+                                    <select type="text" name="gender" ng-options="gender.code as gender.name for gender in GENDERS" required="required" ng-model="applicant.gender" class="form-control">
+                                       <option value="" disabled="" selected="" style="display:none;">选择申请宿舍类型...</option>
+                                       <option value="GROUP_MALE">集体宿舍 - 男</option>
+                                       <option value="GROUP_FEMALE">集体宿舍 - 女</option>
+                                       <option value="COUPLE">夫妻房</option>
+                                    </select>
+                                 </div>
+                              </td>
+                           </tr>
+                           <tr style="text-align: right;" height="50" ng-model="applicant.idNum" class="pt">
+                              <td width="80"><b class="mr">申请说明</b>
+                              </td>
+                              <td colspan="3">
+                                 <div class="controls">
+                                    <textarea style="width:100%;height: 160px; resize: none;" placeholder="请填写申请说明..." class="form-control"></textarea>
+                                 </div>
+                              </td>
+                           </tr>
+                        </tbody>
+                     </table>
                   </div>
-                  <div class="form-group">
-                     <label>Phone</label>
-                     <input type="text" name="phone" placeholder="11-2345-6789" class="form-control" />
-                  </div>
-               </fieldset>
-               <ul class="pager">
-                  <li class="previous">
-                     <a href="javascript:;" ng-click="wizard.go(2)">
-                        <span>&larr; Previous</span>
-                     </a>
-                  </li>
-                  <li class="next"><a href="javascript:;" ng-click="wizard.go(4)">Next <span>&rarr;</span></a>
-                  </li>
-               </ul>
-            </div>
-            <!-- END Wizard Step inputs -->
-            <!-- START Wizard Step inputs -->
-            <div ng-show="wizard.active(4)">
-               <div class="jumbotron m0">
-                  <h3 class="mt0">Done!</h3>
-                  <p>In vulputate mattis ipsum vitae vehicula.</p>
-                  <p class="m0">
-                     <button type="button" class="btn btn-info">You can Proceed Now</button>
-                  </p>
                </div>
                <ul class="pager">
                   <li class="previous">
-                     <a href="javascript:;" ng-click="wizard.go(3)">
-                        <span>&larr; Previous</span>
+                     <a href="javascript:;" ng-click="wizard.go(2)">
+                        <span>&larr; 返回配偶选择</span>
                      </a>
+                  </li>
+                  <li class="next"><a href="javascript:;" ng-click="wizard.go(4)">提交申请 </a>
                   </li>
                </ul>
             </div>
-            <!-- END Wizard Step inputs -->
+            <div ng-show="wizard.active(4)" style="width:69%">
+               <div style="min-height: 250px;" class="jumbotron m0">
+                  <h3 class="mt0">成功！</h3>
+                  <p>您的申请已经发送给相关领导进行审核，请等候回复。</p>
+                  <p class="m0">
+                     <button type="button" class="btn btn-info">继续创建新的申请</button>
+                  </p>
+               </div>
+            </div>
          </div>
       </form>
    </div>
 </div>
-<!-- END panel -->

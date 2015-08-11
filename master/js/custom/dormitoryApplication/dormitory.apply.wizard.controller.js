@@ -9,7 +9,7 @@
     function DormitoryApplyWizardController($rootScope, $scope, $state, $filter, $resource, $timeout, ngTableParams, ngDialog, DormitoryApplicationService, ShareService) {
     	// ===== 缺省值 =====
         $scope.selectEmployeeType = "new";
-        $scope.selectSpouseType = "INNER";
+        $scope.selectSpouseType = "newInner";
         // ==================
 
         // ===== 申请人 =====

@@ -35,7 +35,7 @@
                 span
                 |  选择已有员工
           //- 新建员工
-          .panel.panel-default(ng-if='selectEmployeeType=="new"')
+          .panel.panel-default(ng-if='selectEmployeeType=="new"', style='min-height: 250px;')
             .panel-body
               table(style="width: 100%;")
                 tbody
@@ -77,10 +77,8 @@
                     td
                       .controls
                         input.form-control(type='text', name='dutyDate', placeholder='输入员工入职时间...', required, ng-model='applicant.dutyDate')
-              button.btn.btn-primary.pull-right 创建员工
-              button.btn.btn-default.pull-right.mr 清空输入
           //- 选择已有员工
-          .panel.panel-default(ng-if='selectEmployeeType=="existed"')
+          .panel.panel-default(ng-if='selectEmployeeType=="existed"', style='min-height: 250px;')
             .panel-body
               table(style="width: 100%;")
                 tbody
@@ -139,9 +137,13 @@
                       .controls
                         input.form-control(type='text', name='dutyDate', placeholder='输入员工入职时间...', required, ng-model='applicant.dutyDate', disabled='')
           ul.pager
-            li.next
+            li.next(ng-if='selectEmployeeType=="new"')
               a(href='javascript:;', ng-click="wizard.go(2)")
-                | Next 
+                | 创建员工并继续
+                span &rarr;
+            li.next(ng-if='selectEmployeeType=="existed"')
+              a(href='javascript:;', ng-click="wizard.go(2)")
+                | 选择员工并继续
                 span &rarr;
 
         div(ng-show="wizard.active(2)", style="width:69%")
@@ -150,21 +152,21 @@
               | 请选择关联配偶的来源：
             .radio.c-radio.c-radio-nofont.pull-left.mr(style='margin-top: 0;')
               label
-                input(type='radio', name='selectSpouseType', value='INNER', ng-model='selectSpouseType')
+                input(type='radio', name='selectSpouseType', value='newInner', ng-model='selectSpouseType')
                 span
                 |  创建配偶（集团员工）
             .radio.c-radio.c-radio-nofont.pull-left.mr(style='margin-top: 0;')
               label
-                input(type='radio', name='selectSpouseType', value='OUTER', ng-model='selectSpouseType')
+                input(type='radio', name='selectSpouseType', value='newOuter', ng-model='selectSpouseType')
                 span
                 |  创建配偶（非集团员工）
             .radio.c-radio.c-radio-nofont.pull-left.mr(style='margin-top: 0;')
               label
-                input(type='radio', name='selectSpouseType', value='NONE', checked='', ng-model='selectSpouseType')
+                input(type='radio', name='selectSpouseType', value='existed', checked='', ng-model='selectSpouseType')
                 span
                 |  关联已有员工
           //- 创建配偶（集团员工）
-          .panel.panel-default(ng-if='selectSpouseType=="INNER"')
+          .panel.panel-default(ng-if='selectSpouseType=="newInner"', style='min-height: 250px;')
             .panel-body
               table(style="width: 100%;")
                 tbody
@@ -206,11 +208,9 @@
                     td
                       .controls
                         input.form-control(type='text', name='dutyDate', placeholder='输入配偶入职时间...', required, ng-model='applicant.dutyDate')
-              button.btn.btn-primary.pull-right 创建员工并关联为配偶
-              button.btn.btn-default.pull-right.mr 清空输入
           
           //- 创建配偶（非集团员工）
-          .panel.panel-default(ng-if='selectSpouseType=="OUTER"')
+          .panel.panel-default(ng-if='selectSpouseType=="newOuter"', style='min-height: 250px;')
             .panel-body
               table(style="width: 100%;")
                 tbody
@@ -240,11 +240,9 @@
                     td
                       .controls
                         input.form-control(type='text', name='workLocationDetail', placeholder='输入配偶的工作单位...', required, ng-model='applicant.workLocationDetail')
-              button.btn.btn-primary.pull-right 创建员工并关联
-              button.btn.btn-default.pull-right.mr 清空输入
 
           //- 关联已有员工
-          .panel.panel-default(ng-if='selectSpouseType=="NONE"')
+          .panel.panel-default(ng-if='selectSpouseType=="existed"', style='min-height: 250px;')
             .panel-body
               table(style="width: 100%;")
                 tbody
@@ -307,41 +305,59 @@
           ul.pager
             li.previous
               a(href='javascript:;', ng-click="wizard.go(1)")
-                span &larr; Previous
+                span &larr; 返回员工选择
+            li.next(ng-if='selectSpouseType!="existed"')
+              a(href='javascript:;', ng-click="wizard.go(3)")
+                | 创建配偶并继续
+                span &rarr;
+            li.next(ng-if='selectSpouseType=="existed"')
+              a(href='javascript:;', ng-click="wizard.go(3)")
+                | 关联配偶并继续
+                span &rarr;
             li.next
               a(href='javascript:;', ng-click="wizard.go(3)")
-                | Next 
-                span &rarr;
+                | 跳过该步骤
 
-        // END Wizard Step inputs 
-        // START Wizard Step inputs 
-        div(ng-show="wizard.active(3)")
-          fieldset
-            .form-group
-              label Email
-              input.form-control(type='text', name='email', placeholder='john@snow.com')
-            .form-group
-              label Phone
-              input.form-control(type='text', name='phone', placeholder='11-2345-6789')
+        div(ng-show="wizard.active(3)", style="width:69%")
+          .row(style='padding-left:20px;')
+            b.pull-left.mr
+              | 点击申请人查看详细信息（只包含员工），选择申请的宿舍类型以及申请说明
+          .panel.panel-default(style='min-height: 250px;')
+            .panel-body
+              table(style="width: 100%;")
+                tbody
+                  tr(style="text-align: right;", height=50)
+                    td(width=80)
+                      b.mr 申请人
+                    td(style='text-align: left;')
+                      button.btn.btn-primary.btn-xs(style="margin-right:5px; min-width:55px;") 员工1
+                      button.btn.btn-primary.btn-xs(style="margin-right:5px; min-width:55px;") 员工2
+                    td(width=80)
+                      b.mr 宿舍类型
+                    td
+                      .controls
+                        select.form-control(type='text', name='gender', ng-options="gender.code as gender.name for gender in GENDERS", required, ng-model='applicant.gender')
+                          option(value="", disabled='',selected='', style='display:none;') 选择申请宿舍类型...
+                          option(value='GROUP_MALE') 集体宿舍 - 男
+                          option(value='GROUP_FEMALE') 集体宿舍 - 女
+                          option(value='COUPLE') 夫妻房
+                  tr.pt(style="text-align: right;", height=50, ng-model='applicant.idNum')
+                    td(width=80)
+                      b.mr 申请说明
+                    td(colspan='3')
+                      .controls
+                        textarea.form-control(style='width:100%;height: 160px; resize: none;', placeholder='请填写申请说明...')
           ul.pager
             li.previous
               a(href='javascript:;', ng-click="wizard.go(2)")
-                span &larr; Previous
+                span &larr; 返回配偶选择
             li.next
               a(href='javascript:;', ng-click="wizard.go(4)")
-                | Next 
-                span &rarr;
-        // END Wizard Step inputs 
-        // START Wizard Step inputs 
-        div(ng-show="wizard.active(4)")
-          .jumbotron.m0
-            h3.mt0 Done!
-            p In vulputate mattis ipsum vitae vehicula. 
+                | 提交申请 
+
+        div(ng-show="wizard.active(4)", style="width:69%")
+          .jumbotron.m0(style='min-height: 250px;')
+            h3.mt0 成功！
+            p 您的申请已经发送给相关领导进行审核，请等候回复。
             p.m0
-              button.btn.btn-info(type='button') You can Proceed Now
-          ul.pager
-            li.previous
-              a(href='javascript:;', ng-click="wizard.go(3)")
-                span &larr; Previous
-        // END Wizard Step inputs 
-// END panel 
+              button.btn.btn-info(type='button') 继续创建新的申请
