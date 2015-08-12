@@ -12,6 +12,7 @@
             'app.settings',
             'app.forms',
             'app.utils',
+            'dms.login',
             'dms.dashboard',
             'dms.dormitory',
             'dms.employee',

@@ -12,6 +12,7 @@
             'app.settings',
             'app.forms',
             'app.utils',
+            'dms.login',
             'dms.dashboard',
             'dms.dormitory',
             'dms.employee',
@@ -2086,6 +2087,10 @@
 })();
 (function() {
     'use strict';
+    angular.module('dms.login', ['dms']);
+})();
+(function() {
+    'use strict';
     angular.module('dms.maintenanceApplication', ['dms']);
 })();
 (function() {
@@ -3506,6 +3511,19 @@
         this.postprocessData = function(data) {
             return data;
         }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('dms.login')
+        .controller('LoginFormController', LoginFormController);
+
+    LoginFormController.$inject = ['$rootScope', '$scope', '$state', '$filter', '$resource', '$timeout'];
+    function LoginFormController($rootScope, $scope, $state, $filter, $resource, $timeout) {
+
     }
 })();
 
