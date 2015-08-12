@@ -19,12 +19,18 @@
         $locationProvider.html5Mode(false);
 
         // defaults to dashboard
-        $urlRouterProvider.otherwise('/app/dashboard');
+        $urlRouterProvider.otherwise('/login');
 
         // 
         // application Routes
         // -----------------------------------   
         $stateProvider
+          .state('login', {
+              url: '/login',
+              title: '登录',
+              controller: 'LoginFormController',
+              templateUrl: helper.basepath('pages/login.html')
+          })
           .state('app', {
               url: '/app',
               abstract: true,
